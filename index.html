@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prof. Dr. Selçuk ALBUT</title>
+  <meta name="description" content="Prof. Dr. Selçuk ALBUT — GIS, Remote Sensing, Irrigation & iOS Developer" />
+  <link rel="canonical" href="https://selcukalbut.net" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary: #0d6e6e;
+      --primary-light: #e6f4f4;
+      --primary-dark: #094f4f;
+      --accent: #f0a500;
+      --text: #1a1a2e;
+      --text-muted: #6b7280;
+      --bg: #f8fbfb;
+      --card: #ffffff;
+      --border: #d1e8e8;
+      --radius: 12px;
+      --shadow: 0 2px 16px rgba(13,110,110,0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    a { color: var(--primary); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(248,251,251,0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+    }
+
+    .nav-brand {
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--primary-dark);
+      letter-spacing: -0.3px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      list-style: none;
+      align-items: center;
+    }
+
+    .nav-links a {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--primary); text-decoration: none; }
+
+    .lang-toggle {
+      display: flex;
+      gap: 4px;
+      background: var(--primary-light);
+      border-radius: 8px;
+      padding: 4px;
+    }
+
+    .lang-btn {
+      padding: 4px 10px;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: transparent;
+      color: var(--text-muted);
+    }
+    .lang-btn.active {
+      background: var(--primary);
+      color: white;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 5rem 2rem 4rem;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 3rem;
+      align-items: center;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: var(--primary-light);
+      color: var(--primary);
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 1rem;
+      letter-spacing: 0.5px;
+    }
+
+    .hero h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -1px;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+
+    .hero h1 span { color: var(--primary); }
+
+    .hero-sub {
+      font-size: 1rem;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+      line-height: 1.7;
+    }
+
+    .hero-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 2rem;
+    }
+
+    .tag {
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-weight: 500;
+    }
+    .tag.accent { background: var(--accent); color: white; border-color: var(--accent); }
+
+    .hero-cta {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: var(--primary-dark); text-decoration: none; }
+    .btn-outline { background: white; color: var(--primary); border: 1.5px solid var(--primary); }
+    .btn-outline:hover { background: var(--primary-light); text-decoration: none; }
+
+    .hero-avatar {
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4rem;
+      border: 4px solid var(--border);
+      box-shadow: var(--shadow);
+      flex-shrink: 0;
+    }
+
+    /* ── SECTIONS ── */
+    section {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .section-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .section-title {
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 1rem;
+    }
+
+    .section-desc {
+      color: var(--text-muted);
+      max-width: 640px;
+      margin-bottom: 2rem;
+    }
+
+    /* ── CARDS ── */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1rem;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(13,110,110,0.12); }
+
+    .card-icon { font-size: 2rem; margin-bottom: 0.75rem; }
+    .card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.4rem; }
+    .card p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; }
+
+    /* app cards */
+    .app-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      transition: transform 0.2s;
+    }
+    .app-card:hover { transform: translateY(-2px); }
+
+    .app-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      flex-shrink: 0;
+    }
+    .app-icon.green { background: #e6f9f0; }
+    .app-icon.blue  { background: #e6f0ff; }
+    .app-icon.orange{ background: #fff4e0; }
+    .app-icon.teal  { background: var(--primary-light); }
+
+    .app-info h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.3rem; }
+    .app-info p  { font-size: 0.82rem; color: var(--text-muted); line-height: 1.55; margin-bottom: 0.6rem; }
+
+    .platform-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+    .ptag {
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+    .ptag.watch { background: #f0f0ff; color: #5555cc; }
+    .ptag.coming { background: #fff4e0; color: #b97a00; }
+
+    /* ── ACADEMIC LINKS ── */
+    .profile-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 2rem;
+    }
+
+    .profile-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--text);
+      transition: all 0.2s;
+    }
+    .profile-link:hover { border-color: var(--primary); color: var(--primary); text-decoration: none; background: var(--primary-light); }
+    .profile-link img { width: 18px; height: 18px; border-radius: 3px; }
+
+    /* ── EXPERTISE ── */
+    .expertise-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+
+    .exp-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      text-align: center;
+    }
+    .exp-card .icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+    .exp-card h3 { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.5rem; }
+    .exp-card p { font-size: 0.8rem; color: var(--text-muted); }
+
+    /* ── CONTACT ── */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .contact-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      transition: all 0.2s;
+    }
+    .contact-card:hover { border-color: var(--primary); background: var(--primary-light); text-decoration: none; }
+    .contact-card .icon { font-size: 1.5rem; }
+    .contact-card .label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
+    .contact-card .value { font-size: 0.875rem; font-weight: 500; color: var(--text); }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      text-align: center;
+      padding: 2rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    footer a { color: var(--primary); }
+
+    /* ── MOBILE ── */
+    @media (max-width: 640px) {
+      .hero { grid-template-columns: 1fr; text-align: center; }
+      .hero-avatar { margin: 0 auto; width: 120px; height: 120px; font-size: 3rem; }
+      .hero h1 { font-size: 1.8rem; }
+      .hero-tags, .hero-cta { justify-content: center; }
+      .expertise-grid { grid-template-columns: 1fr; }
+      .contact-grid { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+    }
+
+    /* ── I18N ── */
+    [data-lang] { display: none; }
+    html[lang="tr"] [data-lang="tr"] { display: revert; }
+    html[lang="en"] [data-lang="en"] { display: revert; }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <span class="nav-brand">selcukalbut.com</span>
+  <ul class="nav-links">
+    <li><a href="#about" data-tr="Hakkımda" data-en="About" onclick="navClick(this)">Hakkımda</a></li>
+    <li><a href="#academic" data-tr="Akademik" data-en="Academic" onclick="navClick(this)">Akademik</a></li>
+    <li><a href="#apps" data-tr="Uygulamalar" data-en="Apps" onclick="navClick(this)">Uygulamalar</a></li>
+    <li><a href="#expertise" data-tr="Uzmanlık" data-en="Expertise" onclick="navClick(this)">Uzmanlık</a></li>
+    <li><a href="#contact" data-tr="İletişim" data-en="Contact" onclick="navClick(this)">İletişim</a></li>
+  </ul>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('tr')">TR</button>
+    <button class="lang-btn" onclick="setLang('en')">EN</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div>
+    <div class="hero-badge" data-lang="tr">📍 Tekirdağ, Türkiye</div>
+    <div class="hero-badge" data-lang="en">📍 Tekirdağ, Turkey</div>
+
+    <h1>
+      <span data-lang="tr">Prof. Dr.<br/>Selçuk <span>ALBUT</span></span>
+      <span data-lang="en">Prof. Dr.<br/>Selçuk <span>ALBUT</span></span>
+    </h1>
+
+    <p class="hero-sub">
+      <span data-lang="tr">Akademisyen · CBS & Uzaktan Algılama Uzmanı · iOS Uygulama Geliştirici</span>
+      <span data-lang="en">Academic · GIS & Remote Sensing Expert · iOS App Developer</span>
+    </p>
+
+    <div class="hero-tags">
+      <span class="tag">🗺️ GIS / CBS</span>
+      <span class="tag">🛰️ Uzaktan Algılama</span>
+      <span class="tag">💧 Sulama</span>
+      <span class="tag accent">⚡ Swift / Xcode</span>
+      <span class="tag">🍎 iOS · iPadOS · watchOS</span>
+    </div>
+
+    <div class="hero-cta">
+      <a href="#apps" class="btn btn-primary">
+        <span data-lang="tr">🚀 Uygulamalarım</span>
+        <span data-lang="en">🚀 My Apps</span>
+      </a>
+      <a href="#contact" class="btn btn-outline">
+        <span data-lang="tr">✉️ İletişim</span>
+        <span data-lang="en">✉️ Contact</span>
+      </a>
+    </div>
+  </div>
+  <div class="hero-avatar">🧑‍💻</div>
+</div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-label" data-lang="tr">Hakkımda</div>
+  <div class="section-label" data-lang="en">About</div>
+
+  <h2 class="section-title">
+    <span data-lang="tr">Merhaba, Ben Selçuk</span>
+    <span data-lang="en">Hello, I'm Selçuk</span>
+  </h2>
+
+  <p class="section-desc">
+    <span data-lang="tr">
+      Tekirdağ Namık Kemal Üniversitesi Ziraat Fakültesi Biyosistem Mühendisliği Bölümü'nde öğretim üyesiyim.
+      Akademik kariyerimde CBS, Uzaktan Algılama ve Sulama sistemleri üzerine yoğunlaştım.
+      Şu sıralar Swift ve Xcode kullanarak Apple ekosistemi için uygulamalar geliştiriyorum.
+      Amacım; uzmanlık alanlarımı ve spor tutkumu küresel ölçekte faydalı uygulamalara dönüştürmek.
+    </span>
+    <span data-lang="en">
+      I am a faculty member at the Department of Biosystems Engineering, Faculty of Agriculture,
+      Tekirdağ Namık Kemal University. My academic career has focused on GIS, Remote Sensing, and Irrigation Systems.
+      I am now developing apps for the Apple ecosystem using Swift and Xcode.
+      My goal is to transform my expertise and passion for sports into globally useful applications.
+    </span>
+  </p>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-icon">🎓</div>
+      <h3 data-lang="tr">Akademisyen</h3>
+      <h3 data-lang="en">Academic</h3>
+      <p data-lang="tr">Yıllarca CBS ve Uzaktan Algılama alanında araştırma, ders ve proje yürüttüm.</p>
+      <p data-lang="en">Years of research, teaching and projects in GIS and Remote Sensing.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">📱</div>
+      <h3 data-lang="tr">Uygulama Geliştirici</h3>
+      <h3 data-lang="en">App Developer</h3>
+      <p data-lang="tr">Swift ile iOS, iPadOS ve watchOS için uygulamalar geliştiriyorum.</p>
+      <p data-lang="en">Building apps for iOS, iPadOS and watchOS with Swift and Xcode.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">⚽</div>
+      <h3 data-lang="tr">Spor Tutkunu</h3>
+      <h3 data-lang="en">Sports Enthusiast</h3>
+      <p data-lang="tr">Spor turnuvalarını takip etmek bir tutkum — bu tutkuyu uygulamaya döküyorum.</p>
+      <p data-lang="en">Following sports tournaments is my passion — turning it into apps.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ACADEMIC -->
+<section id="academic">
+  <div class="section-label" data-lang="tr">Akademik Profil</div>
+  <div class="section-label" data-lang="en">Academic Profile</div>
+
+  <h2 class="section-title">
+    <span data-lang="tr">Yayınlar & Profiller</span>
+    <span data-lang="en">Publications & Profiles</span>
+  </h2>
+
+  <p class="section-desc">
+    <span data-lang="tr">Akademik çalışmalarıma aşağıdaki platformlardan ulaşabilirsiniz.</span>
+    <span data-lang="en">You can access my academic work through the platforms below.</span>
+  </p>
+
+  <div class="profile-links">
+    <a class="profile-link" href="https://scholar.google.com/citations?hl=tr&user=yFfDdcYAAAAJ" target="_blank" rel="noopener">
+      🎓 Google Scholar
+    </a>
+    <a class="profile-link" href="https://www.researchgate.net/profile/Selcuk-Albut" target="_blank" rel="noopener">
+      🔬 ResearchGate
+    </a>
+    <a class="profile-link" href="https://orcid.org/0000-0002-0055-632X" target="_blank" rel="noopener">
+      🆔 ORCID <span style="font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:#999">0000-0002-0055-632X</span>
+    </a>
+    <a class="profile-link" href="https://github.com/selcukalbut" target="_blank" rel="noopener">
+      💻 GitHub
+    </a>
+  </div>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-icon">🗺️</div>
+      <h3 data-lang="tr">CBS (Coğrafi Bilgi Sistemleri)</h3>
+      <h3 data-lang="en">GIS (Geographic Information Systems)</h3>
+      <p data-lang="tr">Tarımsal ve çevresel amaçlı CBS uygulamaları ve mekansal veri analizi.</p>
+      <p data-lang="en">GIS applications for agricultural and environmental purposes with spatial data analysis.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🛰️</div>
+      <h3 data-lang="tr">Uzaktan Algılama</h3>
+      <h3 data-lang="en">Remote Sensing</h3>
+      <p data-lang="tr">Uydu görüntüleri ile tarımsal arazi izleme ve sınıflandırma çalışmaları.</p>
+      <p data-lang="en">Agricultural land monitoring and classification using satellite imagery.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">💧</div>
+      <h3 data-lang="tr">Sulama Sistemleri</h3>
+      <h3 data-lang="en">Irrigation Systems</h3>
+      <p data-lang="tr">Sulama planlaması, su tasarrufu ve akıllı sulama yönetimi üzerine araştırmalar.</p>
+      <p data-lang="en">Research on irrigation planning, water conservation and smart irrigation management.</p>
+    </div>
+  </div>
+</section>
+
+<!-- APPS -->
+<section id="apps">
+  <div class="section-label" data-lang="tr">Uygulamalar</div>
+  <div class="section-label" data-lang="en">Apps</div>
+
+  <h2 class="section-title">
+    <span data-lang="tr">iOS & Apple Uygulamalarım</span>
+    <span data-lang="en">My iOS & Apple Apps</span>
+  </h2>
+
+  <p class="section-desc">
+    <span data-lang="tr">
+      Swift ve Xcode ile geliştirdiğim uygulamalar. CBS/Uzaktan Algılama uzmanlığımı ve spor tutkumu
+      global ölçekte faydalı araçlara dönüştürüyorum.
+    </span>
+    <span data-lang="en">
+      Apps I develop with Swift and Xcode. Transforming my GIS/Remote Sensing expertise
+      and sports passion into globally useful tools.
+    </span>
+  </p>
+
+  <div style="display:flex; flex-direction:column; gap:1rem;">
+
+    <div class="app-card">
+      <div class="app-icon teal">🗺️</div>
+      <div class="app-info">
+        <h3 data-lang="tr">GIS Field Tools <span style="color:#999;font-weight:400;font-size:0.8rem">— Yakında</span></h3>
+        <h3 data-lang="en">GIS Field Tools <span style="color:#999;font-weight:400;font-size:0.8rem">— Coming Soon</span></h3>
+        <p data-lang="tr">Arazi çalışmaları için CBS tabanlı mobil araçlar. Nokta toplama, alan hesaplama ve harita görüntüleme.</p>
+        <p data-lang="en">Mobile GIS tools for fieldwork. Point collection, area calculation and map visualization.</p>
+        <div class="platform-tags">
+          <span class="ptag">iPhone</span>
+          <span class="ptag">iPad</span>
+          <span class="ptag coming">Geliştiriliyor / In Dev</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="app-card">
+      <div class="app-icon orange">🏆</div>
+      <div class="app-info">
+        <h3 data-lang="tr">Tournament Tracker <span style="color:#999;font-weight:400;font-size:0.8rem">— Yakında</span></h3>
+        <h3 data-lang="en">Tournament Tracker <span style="color:#999;font-weight:400;font-size:0.8rem">— Coming Soon</span></h3>
+        <p data-lang="tr">Spor turnuvalarını takip edin. Fikstür, puan tablosu ve anlık güncellemeler.</p>
+        <p data-lang="en">Follow sports tournaments. Fixtures, standings, and live updates.</p>
+        <div class="platform-tags">
+          <span class="ptag">iPhone</span>
+          <span class="ptag">iPad</span>
+          <span class="ptag watch">Apple Watch</span>
+          <span class="ptag coming">Geliştiriliyor / In Dev</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="app-card">
+      <div class="app-icon blue">💧</div>
+      <div class="app-info">
+        <h3 data-lang="tr">Smart Irrigation Planner <span style="color:#999;font-weight:400;font-size:0.8rem">— Yakında</span></h3>
+        <h3 data-lang="en">Smart Irrigation Planner <span style="color:#999;font-weight:400;font-size:0.8rem">— Coming Soon</span></h3>
+        <p data-lang="tr">Tarımsal sulama planlaması için akıllı hesaplama ve zamanlama aracı.</p>
+        <p data-lang="en">Smart calculation and scheduling tool for agricultural irrigation planning.</p>
+        <div class="platform-tags">
+          <span class="ptag">iPhone</span>
+          <span class="ptag">iPad</span>
+          <span class="ptag coming">Geliştiriliyor / In Dev</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <p style="margin-top:1.5rem; font-size:0.82rem; color:var(--text-muted);">
+    <span data-lang="tr">📦 Tüm uygulamalar Apple App Store'da yayınlanacaktır. Güncel gelişmeler için GitHub'ı takip edin.</span>
+    <span data-lang="en">📦 All apps will be published on the Apple App Store. Follow GitHub for updates.</span>
+  </p>
+</section>
+
+<!-- EXPERTISE -->
+<section id="expertise">
+  <div class="section-label" data-lang="tr">Uzmanlık Alanları</div>
+  <div class="section-label" data-lang="en">Areas of Expertise</div>
+
+  <h2 class="section-title">
+    <span data-lang="tr">Ne Yapıyorum?</span>
+    <span data-lang="en">What I Do</span>
+  </h2>
+
+  <div class="expertise-grid">
+    <div class="exp-card">
+      <div class="icon">🗺️</div>
+      <h3>CBS / GIS</h3>
+      <p data-lang="tr">Coğrafi Bilgi Sistemleri ile mekansal analiz ve haritalama</p>
+      <p data-lang="en">Spatial analysis and mapping with Geographic Information Systems</p>
+    </div>
+    <div class="exp-card">
+      <div class="icon">🛰️</div>
+      <h3 data-lang="tr">Uzaktan Algılama</h3>
+      <h3 data-lang="en">Remote Sensing</h3>
+      <p data-lang="tr">Uydu ve hava fotoğrafları ile arazi analizi</p>
+      <p data-lang="en">Land analysis using satellite and aerial imagery</p>
+    </div>
+    <div class="exp-card">
+      <div class="icon">💧</div>
+      <h3 data-lang="tr">Sulama</h3>
+      <h3 data-lang="en">Irrigation</h3>
+      <p data-lang="tr">Sulama sistemleri tasarımı ve su yönetimi</p>
+      <p data-lang="en">Irrigation system design and water management</p>
+    </div>
+    <div class="exp-card">
+      <div class="icon">🍎</div>
+      <h3 data-lang="tr">iOS Geliştirme</h3>
+      <h3 data-lang="en">iOS Development</h3>
+      <p data-lang="tr">Swift ile iPhone, iPad ve Apple Watch uygulamaları</p>
+      <p data-lang="en">iPhone, iPad & Apple Watch apps with Swift</p>
+    </div>
+    <div class="exp-card">
+      <div class="icon">🌾</div>
+      <h3 data-lang="tr">Biyosistem Mühendisliği</h3>
+      <h3 data-lang="en">Biosystems Engineering</h3>
+      <p data-lang="tr">Tarımsal sistemlerin mühendislik temelli analizi</p>
+      <p data-lang="en">Engineering-based analysis of agricultural systems</p>
+    </div>
+    <div class="exp-card">
+      <div class="icon">🏆</div>
+      <h3 data-lang="tr">Spor Takip</h3>
+      <h3 data-lang="en">Sports Tracking</h3>
+      <p data-lang="tr">Turnuva ve lig uygulamaları geliştirme</p>
+      <p data-lang="en">Tournament and league app development</p>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-label" data-lang="tr">İletişim</div>
+  <div class="section-label" data-lang="en">Contact</div>
+
+  <h2 class="section-title">
+    <span data-lang="tr">Bana Ulaşın</span>
+    <span data-lang="en">Get in Touch</span>
+  </h2>
+
+  <p class="section-desc">
+    <span data-lang="tr">Araştırma işbirlikleri, uygulama geliştirme veya genel sorularınız için.</span>
+    <span data-lang="en">For research collaborations, app development or general inquiries.</span>
+  </p>
+
+  <div class="contact-grid">
+    <a class="contact-card" href="mailto:salbut@nku.edu.tr">
+      <span class="icon">✉️</span>
+      <div>
+        <div class="label" data-lang="tr">Kurumsal E-posta</div>
+        <div class="label" data-lang="en">University Email</div>
+        <div class="value">salbut@nku.edu.tr</div>
+      </div>
+    </a>
+    <a class="contact-card" href="https://github.com/selcukalbut" target="_blank" rel="noopener">
+      <span class="icon">💻</span>
+      <div>
+        <div class="label">GitHub</div>
+        <div class="value">github.com/selcukalbut</div>
+      </div>
+    </a>
+    <a class="contact-card" href="https://scholar.google.com/citations?hl=tr&user=yFfDdcYAAAAJ" target="_blank" rel="noopener">
+      <span class="icon">🎓</span>
+      <div>
+        <div class="label">Google Scholar</div>
+        <div class="value" data-lang="tr">Yayınlarım</div>
+        <div class="value" data-lang="en">My Publications</div>
+      </div>
+    </a>
+    <a class="contact-card" href="https://orcid.org/0000-0002-0055-632X" target="_blank" rel="noopener">
+      <span class="icon">🆔</span>
+      <div>
+        <div class="label">ORCID</div>
+        <div class="value" style="font-family:'JetBrains Mono',monospace;font-size:0.8rem;">0000-0002-0055-632X</div>
+      </div>
+    </a>
+    <a class="contact-card" href="https://www.researchgate.net/profile/Selcuk-Albut" target="_blank" rel="noopener">
+      <span class="icon">🔬</span>
+      <div>
+        <div class="label">ResearchGate</div>
+        <div class="value">Selcuk-Albut</div>
+      </div>
+    </a>
+    <a class="contact-card" href="https://nku.edu.tr" target="_blank" rel="noopener">
+      <span class="icon">🏛️</span>
+      <div>
+        <div class="label" data-lang="tr">Üniversite</div>
+        <div class="label" data-lang="en">University</div>
+        <div class="value" data-lang="tr">Namık Kemal Üniversitesi</div>
+        <div class="value" data-lang="en">Namık Kemal University</div>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>
+    <span data-lang="tr">© 2025 Prof. Dr. Selçuk ALBUT · selcukalbut.net · Swift ile ❤️ yapıldı</span>
+    <span data-lang="en">© 2025 Prof. Dr. Selçuk ALBUT · selcukalbut.net · Made with ❤️ in Swift</span>
+  </p>
+</footer>
+
+<script>
+  // Language toggle
+  function setLang(lang) {
+    document.documentElement.lang = lang;
+    document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+    // update nav link labels
+    document.querySelectorAll('.nav-links a[data-tr]').forEach(a => {
+      a.textContent = a.dataset[lang];
+    });
+    localStorage.setItem('lang', lang);
+  }
+
+  // Nav smooth scroll
+  function navClick(el) { /* default href handles it */ }
+
+  // Restore language preference
+  const savedLang = localStorage.getItem('lang') || 'tr';
+  setLang(savedLang);
+
+  // Smooth scroll
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+</script>
+
+</body>
+</html>

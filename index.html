@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Prof. Dr. Selçuk ALBUT</title>
 <meta name="description" content="Prof. Dr. Selçuk ALBUT — GIS, Remote Sensing, Irrigation & iOS Developer"/>
-<link rel="canonical" href="https://selcukalbut.net"/>
+<link rel="canonical" href="https://selcukalbut.com"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
@@ -271,6 +271,17 @@ nav {
   gap: 10px;
   flex-wrap: wrap;
 }
+.home-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.75rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+.home-stats .stat { display: flex; flex-direction: column; }
+.home-stats .stat b { font-size: 1.4rem; font-weight: 800; color: var(--primary); letter-spacing: -0.5px; }
+.home-stats .stat span { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
 .btn {
   display: inline-flex;
   align-items: center;
@@ -301,6 +312,14 @@ nav {
   font-size: 5rem;
   border: 5px solid white;
   box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+.home-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.avatar-initials {
+  color: #fff;
+  font-weight: 800;
+  font-size: 3.4rem;
+  letter-spacing: 1px;
 }
 
 /* ══ ABOUT ══ */
@@ -523,6 +542,15 @@ nav {
   color: var(--text-muted);
   margin-top: 0.5rem;
 }
+.pub-empty-note {
+  background: var(--card);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 1.1rem 1.4rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
 
 /* ══ CONTACT ══ */
 .contact-grid {
@@ -583,7 +611,7 @@ footer {
   .home-inner { grid-template-columns: 1fr; text-align: center; }
   .home-avatar { margin: 0 auto; width: 150px; height: 150px; font-size: 3.5rem; }
   .home-name { font-size: 2.2rem; }
-  .home-tags, .home-cta { justify-content: center; }
+  .home-tags, .home-cta, .home-stats { justify-content: center; }
   .about-grid { grid-template-columns: 1fr; }
   .expertise-grid { grid-template-columns: 1fr 1fr; }
   .contact-grid { grid-template-columns: 1fr; }
@@ -604,11 +632,10 @@ html[lang="en"] [data-lang="en"] { display: revert; }
 
 <!-- NAV -->
 <nav>
-  <span class="nav-brand" onclick="showPage('home')">selcukalbut.net</span>
+  <span class="nav-brand" onclick="showPage('home')">Selçuk Albut</span>
   <ul class="nav-links">
     <li><button onclick="showPage('about')"    id="nav-about"></button></li>
     <li><button onclick="showPage('academic')" id="nav-academic"></button></li>
-    <li><button onclick="showPage('books')"    id="nav-books"></button></li>
     <li><button onclick="showPage('projects')" id="nav-projects"></button></li>
     <li><button onclick="showPage('apps')"     id="nav-apps"></button></li>
     <li><button onclick="showPage('contact')"  id="nav-contact"></button></li>
@@ -626,7 +653,6 @@ html[lang="en"] [data-lang="en"] { display: revert; }
 <div class="mobile-menu" id="mobileMenu">
   <button onclick="showPage('about');toggleMenu()"    id="mob-about"></button>
   <button onclick="showPage('academic');toggleMenu()" id="mob-academic"></button>
-  <button onclick="showPage('books');toggleMenu()"    id="mob-books"></button>
   <button onclick="showPage('projects');toggleMenu()" id="mob-projects"></button>
   <button onclick="showPage('apps');toggleMenu()"     id="mob-apps"></button>
   <button onclick="showPage('contact');toggleMenu()"  id="mob-contact"></button>
@@ -667,8 +693,30 @@ html[lang="en"] [data-lang="en"] { display: revert; }
             <span data-lang="en">About Me →</span>
           </button>
         </div>
+        <div class="home-stats">
+          <div class="stat">
+            <b>6</b>
+            <span data-lang="tr">AB Projesi</span>
+            <span data-lang="en">EU Projects</span>
+          </div>
+          <div class="stat">
+            <b>€4.5M+</b>
+            <span data-lang="tr">Proje Bütçesi</span>
+            <span data-lang="en">Project Budget</span>
+          </div>
+          <div class="stat">
+            <b>5</b>
+            <span data-lang="tr">Yayınlanan Kitap</span>
+            <span data-lang="en">Published Books</span>
+          </div>
+          <div class="stat">
+            <b>3</b>
+            <span data-lang="tr">iOS Uygulaması</span>
+            <span data-lang="en">iOS Apps</span>
+          </div>
+        </div>
       </div>
-      <div class="home-avatar">🧑‍💻</div>
+      <div class="home-avatar"><img src="assets/profile-photo.png" alt="Selçuk Albut"></div>
     </div>
   </div>
 
@@ -779,8 +827,8 @@ html[lang="en"] [data-lang="en"] { display: revert; }
   <div class="page" id="page-academic">
     <div class="page-inner">
       <div class="page-header">
-        <div class="eyebrow" data-lang="tr">Akademik Profil</div>
-        <div class="eyebrow" data-lang="en">Academic Profile</div>
+        <div class="eyebrow" data-lang="tr">Akademik Yayınlar</div>
+        <div class="eyebrow" data-lang="en">Academic Publications</div>
         <h1 data-lang="tr">Yayınlar & Akademik Profiller</h1>
         <h1 data-lang="en">Publications & Academic Profiles</h1>
         <p data-lang="tr">Akademik çalışmalarıma aşağıdaki platformlardan ulaşabilirsiniz.</p>
@@ -806,45 +854,8 @@ html[lang="en"] [data-lang="en"] { display: revert; }
       </div>
 
       <div class="section-divider"></div>
-      <div class="section-subtitle" data-lang="tr">Araştırma Alanları</div>
-      <div class="section-subtitle" data-lang="en">Research Areas</div>
-
-      <div class="expertise-grid">
-        <div class="exp-card">
-          <div class="icon">🗺️</div>
-          <h3>CBS / GIS</h3>
-          <p data-lang="tr">Tarımsal ve çevresel CBS uygulamaları, mekansal veri analizi</p>
-          <p data-lang="en">Agricultural and environmental GIS applications, spatial data analysis</p>
-        </div>
-        <div class="exp-card">
-          <div class="icon">🛰️</div>
-          <h3 data-lang="tr">Uzaktan Algılama</h3>
-          <h3 data-lang="en">Remote Sensing</h3>
-          <p data-lang="tr">Uydu görüntüleri ile tarımsal arazi izleme ve sınıflandırma</p>
-          <p data-lang="en">Agricultural land monitoring and classification using satellite imagery</p>
-        </div>
-        <div class="exp-card">
-          <div class="icon">💧</div>
-          <h3 data-lang="tr">Sulama Sistemleri</h3>
-          <h3 data-lang="en">Irrigation Systems</h3>
-          <p data-lang="tr">Sulama planlaması, su tasarrufu ve akıllı sulama yönetimi</p>
-          <p data-lang="en">Irrigation planning, water conservation and smart irrigation management</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ══ BOOKS ══ -->
-  <div class="page" id="page-books">
-    <div class="page-inner">
-      <div class="page-header">
-        <div class="eyebrow" data-lang="tr">Yayınlar</div>
-        <div class="eyebrow" data-lang="en">Publications</div>
-        <h1 data-lang="tr">Bilimsel Kitaplar</h1>
-        <h1 data-lang="en">Scientific Books</h1>
-        <p data-lang="tr">Yayımlanmış ders kitapları ve bilimsel kitaplar.</p>
-        <p data-lang="en">Published textbooks and scientific books.</p>
-      </div>
+      <div class="section-subtitle" data-lang="tr">Kitaplar</div>
+      <div class="section-subtitle" data-lang="en">Books</div>
 
       <div class="books-grid">
         <div class="book-card">
@@ -921,6 +932,45 @@ html[lang="en"] [data-lang="en"] { display: revert; }
             <div class="publisher" data-lang="en">Textbook</div>
             <span class="book-year">1993</span>
           </div>
+        </div>
+      </div>
+
+      <div class="section-divider"></div>
+      <div class="section-subtitle" data-lang="tr">Kitap Bölümleri</div>
+      <div class="section-subtitle" data-lang="en">Book Chapters</div>
+      <div class="pub-empty-note" data-lang="tr">Bu bölüm yakında eklenecek.</div>
+      <div class="pub-empty-note" data-lang="en">This section will be added soon.</div>
+
+      <div class="section-divider"></div>
+      <div class="section-subtitle" data-lang="tr">Seçilmiş Bilimsel Makaleler</div>
+      <div class="section-subtitle" data-lang="en">Selected Scientific Articles</div>
+      <div class="pub-empty-note" data-lang="tr">Bu bölüm yakında eklenecek.</div>
+      <div class="pub-empty-note" data-lang="en">This section will be added soon.</div>
+
+      <div class="section-divider"></div>
+      <div class="section-subtitle" data-lang="tr">Araştırma Alanları</div>
+      <div class="section-subtitle" data-lang="en">Research Areas</div>
+
+      <div class="expertise-grid">
+        <div class="exp-card">
+          <div class="icon">🗺️</div>
+          <h3>CBS / GIS</h3>
+          <p data-lang="tr">Tarımsal ve çevresel CBS uygulamaları, mekansal veri analizi</p>
+          <p data-lang="en">Agricultural and environmental GIS applications, spatial data analysis</p>
+        </div>
+        <div class="exp-card">
+          <div class="icon">🛰️</div>
+          <h3 data-lang="tr">Uzaktan Algılama</h3>
+          <h3 data-lang="en">Remote Sensing</h3>
+          <p data-lang="tr">Uydu görüntüleri ile tarımsal arazi izleme ve sınıflandırma</p>
+          <p data-lang="en">Agricultural land monitoring and classification using satellite imagery</p>
+        </div>
+        <div class="exp-card">
+          <div class="icon">💧</div>
+          <h3 data-lang="tr">Sulama Sistemleri</h3>
+          <h3 data-lang="en">Irrigation Systems</h3>
+          <p data-lang="tr">Sulama planlaması, su tasarrufu ve akıllı sulama yönetimi</p>
+          <p data-lang="en">Irrigation planning, water conservation and smart irrigation management</p>
         </div>
       </div>
     </div>
@@ -1207,11 +1257,11 @@ html[lang="en"] [data-lang="en"] { display: revert; }
 </footer>
 
 <script>
-const PAGES = ['home','about','academic','books','projects','apps','contact'];
+const PAGES = ['home','about','academic','projects','apps','contact'];
 
 const NAV_LABELS = {
-  tr: { home:'Ana Sayfa', about:'Hakkımda', academic:'Akademik', books:'Kitaplar', projects:'Projeler', apps:'Uygulamalar', contact:'İletişim' },
-  en: { home:'Home',      about:'About',    academic:'Academic', books:'Books',   projects:'Projects', apps:'Apps',        contact:'Contact' }
+  tr: { home:'Ana Sayfa', about:'Hakkımda', academic:'Akademik Yayınlar',      projects:'Projeler', apps:'Uygulamalar', contact:'İletişim' },
+  en: { home:'Home',      about:'About',    academic:'Academic Publications',  projects:'Projects', apps:'Apps',        contact:'Contact' }
 };
 
 let currentLang = localStorage.getItem('lang') || 'tr';

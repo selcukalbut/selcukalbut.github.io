@@ -551,6 +551,29 @@ nav {
   color: var(--text-muted);
   font-style: italic;
 }
+.pub-list { display: flex; flex-direction: column; gap: 0.7rem; }
+.pub-item {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.9rem 1.2rem;
+  font-size: 0.82rem;
+  line-height: 1.65;
+  color: var(--text-muted);
+}
+.pub-item strong { color: var(--text); }
+.pub-item .pub-title { color: var(--text); font-weight: 600; }
+.pub-item .pub-year { color: var(--primary); font-weight: 700; }
+.pub-item .pub-pdf {
+  display: inline-block;
+  margin-left: 6px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--primary);
+  background: var(--primary-light);
+  padding: 2px 9px;
+  border-radius: 10px;
+}
 
 /* ══ CONTACT ══ */
 .contact-grid {
@@ -938,14 +961,163 @@ html[lang="en"] [data-lang="en"] { display: revert; }
       <div class="section-divider"></div>
       <div class="section-subtitle" data-lang="tr">Kitap Bölümleri</div>
       <div class="section-subtitle" data-lang="en">Book Chapters</div>
-      <div class="pub-empty-note" data-lang="tr">Bu bölüm yakında eklenecek.</div>
-      <div class="pub-empty-note" data-lang="en">This section will be added soon.</div>
+      <div class="pub-list">
+        <div class="pub-item">
+          <span class="pub-authors"><strong>Albut Selçuk</strong>.</span>
+          <span class="pub-title">"Geospatial Artificial Intelligence (GeoAI): A Literature Review"</span>
+          — In: <span class="pub-venue">International Compilation of Research and Studies in the Field of Agriculture, Forestry and Aquaculture Sciences</span> (Ed. Koray Özrenk, Ali Bolat), pp. 91-124.
+          <span class="pub-publisher">Serüven Publishing</span>, <span class="pub-year">2025</span>
+        </div>
+        <div class="pub-item">
+          <span class="pub-authors">Konukcu Fatih, <strong>Albut Selçuk</strong>, Kocaman İsrafil, Erdem Tolga.</span>
+          <span class="pub-title">"İklime Duyarlı Tarım (İDT) Konsepti"</span>
+          — In: <span class="pub-venue">İklime Duyarlı Bitkisel Üretim</span> (Ed. Fatih Konukcu, Selçuk Albut, İsrafil Kocaman, Tolga Erdem), pp. 1-16.
+          <span class="pub-publisher">Nobel Bilimsel Eserler</span>, <span class="pub-year">2025</span>
+        </div>
+        <div class="pub-item">
+          <span class="pub-authors"><strong>Albut Selçuk</strong>.</span>
+          <span class="pub-title">"Pansharpening Techniques in Remote Sensing: A Comprehensive Review of Methods, Applications and Advances"</span>
+          — In: <span class="pub-venue">New Concepts and Advanced Studies in Agriculture, Forest and Water Issues</span> (Ed. Nigar Yarpuz Bozdoğan), pp. 42-54.
+          <span class="pub-publisher">All Sciences Academy</span>, <span class="pub-year">2025</span>
+        </div>
+        <div class="pub-item">
+          <span class="pub-authors"><strong>Albut Selçuk</strong>, Şener Mehmet.</span>
+          <span class="pub-title">"Methodology for Calculating the Normalized Difference Vegetation Index (NDVI) Utilizing Landsat Data in Remote Sensing"</span>
+          — In: <span class="pub-venue">New Trends and Frontiers in Engineering</span> (Ed. Umut Özkaya), pp. 434-449.
+          <span class="pub-publisher">All Sciences Academy</span>, <span class="pub-year">2024</span>
+        </div>
+        <div class="pub-item">
+          <span class="pub-authors">Şener Mehmet, <strong>Albut Selçuk</strong>.</span>
+          <span class="pub-title">"The Potential Use of Remote Sensing Technologies and Unmanned Aerial Vehicles (UAVs) in Agricultural Fields"</span>
+          — In: <span class="pub-venue">Agriculture, Forest and Aquatic Sciences in Theory and Practice</span> (Ed. Vedat Çavuş, Senem Güneş Şen), pp. 170-189.
+          <span class="pub-publisher">Duvar Yayınları</span>, <span class="pub-year">2024</span>
+        </div>
+        <div class="pub-item">
+          <span class="pub-authors"><strong>Albut Selçuk</strong>.</span>
+          <span class="pub-title">"Land Surface Temperature (LST) Calculation Processes with Landsat 8"</span>
+          — In: <span class="pub-venue">Pioneer and Innovative Studies in Engineering</span> (Ed. Umut Özkaya), pp. 133-148.
+          <span class="pub-publisher">All Science Academy</span>, <span class="pub-year">2024</span>
+        </div>
+        <div class="pub-item">
+          <span class="pub-authors"><strong>Albut Selçuk</strong>.</span>
+          <span class="pub-title">"Land Use Land Change Utilizing the QGIS MOLUSCE Plugin"</span>
+          — In: <span class="pub-venue">Mimarlıkta İleri Araştırmalar</span> (Ed. Saadet Gündoğdu), pp. 170-187.
+          <span class="pub-publisher">Yaz Yayınları</span>, <span class="pub-year">2024</span>
+        </div>
+        <div class="pub-item">
+          <span class="pub-authors"><strong>Albut Selçuk</strong>, Şener Mehmet.</span>
+          <span class="pub-title">"QGIS ile Coğrafi Bilgi Sistemi Temel Uygulamaları"</span>
+          (Ed. Selçuk Albut, Mehmet Şener).
+          <span class="pub-publisher">Platanus Publishing</span>, <span class="pub-year">2023</span>
+        </div>
+        <div class="pub-item">
+          <span class="pub-authors"><strong>Albut Selçuk</strong>.</span>
+          <span class="pub-title">"QGIS: Open Source GIS Software and Plugins"</span>
+          — In: <span class="pub-venue">Innovative Research in Engineering</span> (Ed. Berkan Balpetek), pp. 338-357.
+          <span class="pub-publisher">Duvar Publishing</span>, <span class="pub-year">2023</span>
+        </div>
+      </div>
 
       <div class="section-divider"></div>
       <div class="section-subtitle" data-lang="tr">Seçilmiş Bilimsel Makaleler</div>
       <div class="section-subtitle" data-lang="en">Selected Scientific Articles</div>
-      <div class="pub-empty-note" data-lang="tr">Bu bölüm yakında eklenecek.</div>
-      <div class="pub-empty-note" data-lang="en">This section will be added soon.</div>
+      <div class="pub-list">
+        <div class="pub-item">
+          <span class="pub-authors"><strong>Albut Selçuk</strong>.</span>
+          <span class="pub-title">"Google Earth Engine and QGIS Integration: A Comprehensive Assessment of Cloud-Based and Desktop GIS System Integration"</span>
+          <span class="pub-venue">Journal of Scientific and Engineering Research</span>, vol. 12, pp. 100-106, <span class="pub-year">2025</span>
+        </div>
+        <div class="pub-item">
+          <span class="pub-authors"><strong>Albut Selçuk</strong>, Türkoğlu Tülin Tuanna.</span>
+          <span class="pub-title">"Determination of Land Surface Temperature (LST) with Landsat 8: Application of Tekirdağ-Şarköy Region"</span>
+          <span class="pub-venue">Journal of Scientific and Engineering Research</span>, vol. 12, pp. 15-24, <span class="pub-year">2025</span>
+        </div>
+        <div class="pub-item">
+          <span class="pub-authors"><strong>Albut Selçuk</strong>.</span>
+          <span class="pub-title">"Using Open Source GIS Based RUSLE Model in Erosion Risk Assessment"</span>
+          <span class="pub-venue">Journal of Multidisciplinary Engineering Science and Technology</span>, vol. 7, pp. 13183-13189, <span class="pub-year">2020</span>
+        </div>
+        <div class="pub-item">
+          <span class="pub-authors"><strong>Albut Selçuk</strong>.</span>
+          <span class="pub-title">"Estimation of Slope Length (L) and Slope Steepness Factor (S) of RUSLE Equation by QGIS"</span>
+          <span class="pub-venue">International Journal of Research in Engineering and Science</span>, vol. 8, pp. 43-48, <span class="pub-year">2020</span>
+        </div>
+        <div class="pub-item">
+          <span class="pub-authors"><strong>Albut Selçuk</strong>.</span>
+          <span class="pub-title">"Estimating of Soil Erosion Sensitivity Factor (K) with Open Sources Quantum GIS (QGIS) Software"</span>
+          <span class="pub-venue">Journal of Scientific and Engineering Research</span>, vol. 7, pp. 90-95, <span class="pub-year">2020</span>
+        </div>
+        <div class="pub-item">
+          <span class="pub-authors"><strong>Albut Selçuk</strong>.</span>
+          <span class="pub-title">"Estimating the Soil Erosion Crop Factor (C) with Open Sources Geographical Information System (GIS) Software"</span>
+          <span class="pub-venue">European Journal of Advances in Engineering and Technology</span>, vol. 7, pp. 4-10, <span class="pub-year">2020</span>
+        </div>
+        <div class="pub-item">
+          <span class="pub-authors">Camuroğlu Ayhan, <strong>Albut Selçuk</strong>.</span>
+          <span class="pub-title">"Modeling of Soil Erosion from Rains and Wind Using Remote Sensing and Geographic Information Systems"</span>
+          <span class="pub-venue">International Journal of Innovation Engineering and Science Research</span>, vol. 4, pp. 26-37, <span class="pub-year">2020</span>
+        </div>
+        <div class="pub-item">
+          <span class="pub-authors"><strong>Albut Selçuk</strong>.</span>
+          <span class="pub-title">"Determination of R Factor in Revised Universal Soil Loss Equation (RUSLE) with Open Sources Geographical Information System (GIS) Software"</span>
+          <span class="pub-venue">Journal of Multidisciplinary Engineering Science and Technology (JMEST)</span>, vol. 7, pp. 12507-12510, <span class="pub-year">2020</span>
+        </div>
+        <div class="pub-item">
+          <span class="pub-authors">Akkaya Nurseda, <strong>Albut Selçuk</strong>.</span>
+          <span class="pub-title">"Determination of Suitable Areas in the Use of Renewable Energy Resources by Geographical Information System (GIS): The Case of Tekirdağ Province"</span>
+          <span class="pub-venue">Journal of Scientific and Engineering Research</span>, vol. 6, pp. 130-136, <span class="pub-year">2019</span>
+        </div>
+        <div class="pub-item">
+          <span class="pub-authors">Danışman Abdülkadir, <strong>Albut Selçuk</strong>.</span>
+          <span class="pub-title">"A Database for Orchards with Free GIS Software: Tekirdağ-Işıklar Region Example"</span>
+          <span class="pub-venue">Journal of Multidisciplinary Engineering Science and Technology</span>, vol. 6, pp. 10990-10993, <span class="pub-year">2019</span>
+        </div>
+        <div class="pub-item">
+          <span class="pub-authors"><strong>Albut Selçuk</strong>, Bağdatlı Muhammed Cüneyt, Dumanlı Ömer.</span>
+          <span class="pub-title">"Remote Sensing Determination of Variation in Adjacent Agricultural Fields in the Ergene River"</span>
+          <span class="pub-venue">Journal of Scientific and Engineering Research</span>, vol. 5, pp. 113-122, <span class="pub-year">2018</span>
+        </div>
+        <div class="pub-item">
+          <span class="pub-authors">Bostancı Abdulhakim, <strong>Albut Selçuk</strong>, Şener Mehmet.</span>
+          <span class="pub-title">"Watershed Database Management with ArcHydro Model Builder Processing: Case Study of Tekirdağ Süleymanpaşa District"</span>
+          <span class="pub-venue">Journal of Scientific and Engineering Research</span>, vol. 4, pp. 52-59, <span class="pub-year">2017</span>
+        </div>
+        <div class="pub-item">
+          <span class="pub-authors">Konukcu Fatih, <strong>Albut Selçuk</strong>, Altürk Bahadır.</span>
+          <span class="pub-title">"Land Use/Land Cover Change Modelling of Ergene River Basin in Western Turkey Using CORINE Land Use/Land Cover Data"</span>
+          <span class="pub-venue">Agronomy Research</span>, vol. 15, pp. 435-443, <span class="pub-year">2017</span>
+        </div>
+        <div class="pub-item">
+          <span class="pub-authors">Duygu Candan, <strong>Albut Selçuk</strong>, Bağdatlı Muhammed Cüneyt.</span>
+          <span class="pub-title">"Coğrafi Bilgi Sistemleri (CBS) Entegrasyonu ile Çorlu Deresi Havza Alanı Sayısal Yükseklik Modelinin (SYM) Oluşturulması"</span>
+          <span class="pub-venue">Journal of Tekirdag Agricultural Faculty</span>, vol. 12, pp. 8-17, <span class="pub-year">2015</span>
+        </div>
+        <div class="pub-item">
+          <span class="pub-authors">Kocaman İsrafil, Konukcu Fatih, <strong>Albut Selçuk</strong>, İstanbulluoğlu Ahmet.</span>
+          <span class="pub-title">"Effect of Irrigation with Maritza and Ergene Rivers Water on Soil Contamination and Heavy Metal Accumulation in Rice Crop"</span>
+          <span class="pub-venue">Bulgarian Journal of Agricultural Science</span>, vol. 21, pp. 71-77, <span class="pub-year">2015</span>
+        </div>
+        <div class="pub-item">
+          <span class="pub-authors">İstanbulluoğlu Ahmet, Konukcu Fatih, Kocaman İsrafil, <strong>Albut Selçuk</strong>.</span>
+          <span class="pub-title">"MRRSSW Model of Rainfall Runoff in Small Sub Watershed"</span>
+          <span class="pub-venue">Journal of Environmental Protection and Ecology</span>, vol. 14, pp. 1107-1114, <span class="pub-year">2013</span>
+        </div>
+        <div class="pub-item">
+          <span class="pub-authors">Şener Mehmet, <strong>Albut Selçuk</strong>.</span>
+          <span class="pub-title">"Irrigation Performance Assessment in Turkey Thrace Region Case Study"</span>
+          <span class="pub-venue">Bulgarian Journal of Agricultural Science</span>, vol. 17, pp. 521-530, <span class="pub-year">2011</span>
+        </div>
+        <div class="pub-item">
+          <span class="pub-authors">Şişman Can Burak, <strong>Albut Selçuk</strong>, Gezer Erhan, Göçmen Erhan.</span>
+          <span class="pub-title">"Digitizing and Preparing Application and Setting Plan by Using GPS: A Case Study from Agricultural Faculty Area of Tekirdağ"</span>
+          <span class="pub-venue">African Journal of Agricultural Research</span>, vol. 5, pp. 1772-1779, <span class="pub-year">2010</span>
+        </div>
+        <div class="pub-item">
+          <span class="pub-authors"><strong>Albut Selçuk</strong>, İstanbulluoğlu Ahmet, Konukcu Fatih, Kocaman İsrafil.</span>
+          <span class="pub-title">"Probable Water Crisis in Thrace and Istanbul in the Near Future and a Sustainable Strategy to Overcome It"</span>
+          <span class="pub-venue">Water International</span>, vol. 32, pp. 590-603, <span class="pub-year">2007</span>
+        </div>
+      </div>
 
       <div class="section-divider"></div>
       <div class="section-subtitle" data-lang="tr">Araştırma Alanları</div>

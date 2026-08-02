@@ -257,31 +257,41 @@ nav {
   margin-bottom: 2rem;
 }
 .tag {
-  background: var(--card);
-  border: 1px solid var(--border);
+  border: 1px solid transparent;
   color: var(--text-muted);
   font-size: 0.8rem;
   padding: 5px 12px;
   border-radius: 20px;
-  font-weight: 500;
+  font-weight: 600;
 }
-.tag.accent { background: var(--accent); color: white; border-color: var(--accent); }
+.tag.teal { background: var(--primary-light); color: var(--primary-dark); }
+.tag.blue { background: #e6f0ff; color: #2a5bd7; }
+.tag.green { background: #e6f9f0; color: #0f9d58; }
+.tag.purple { background: #f0e6ff; color: #7038c4; }
+.tag.accent { background: var(--accent); color: white; }
 .home-cta {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
 }
 .home-stats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.75rem;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.9rem;
   margin-top: 2rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--border);
 }
-.home-stats .stat { display: flex; flex-direction: column; }
-.home-stats .stat b { font-size: 1.4rem; font-weight: 800; color: var(--primary); letter-spacing: -0.5px; }
-.home-stats .stat span { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
+.home-stats .stat {
+  display: flex;
+  flex-direction: column;
+  padding: 0.9rem 1rem;
+  border-radius: var(--radius);
+}
+.home-stats .stat.teal { background: var(--primary-light); }
+.home-stats .stat.orange { background: #fff4e0; }
+.home-stats .stat.blue { background: #e6f0ff; }
+.home-stats .stat.green { background: #e6f9f0; }
+.home-stats .stat b { font-size: 1.4rem; font-weight: 800; color: var(--text); letter-spacing: -0.5px; }
+.home-stats .stat span { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; font-weight: 600; }
 .btn {
   display: inline-flex;
   align-items: center;
@@ -575,6 +585,75 @@ nav {
   border-radius: 10px;
 }
 
+/* ══ TESVIK CALC ══ */
+.calc-config {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.calc-field { display: flex; flex-direction: column; gap: 0.35rem; }
+.calc-field label { font-size: 0.78rem; font-weight: 700; color: var(--text-muted); }
+.calc-field select, .calc-field input[type=number] {
+  font-family: inherit;
+  font-size: 0.88rem;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+}
+.calc-field .calc-hint { font-size: 0.7rem; color: var(--text-muted); }
+.calc-summary {
+  position: sticky;
+  top: calc(var(--nav-h) + 10px);
+  z-index: 5;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 1.1rem 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-lg);
+}
+.calc-summary .item b { display: block; font-size: 1.5rem; font-weight: 800; letter-spacing: -0.5px; }
+.calc-summary .item span { font-size: 0.75rem; opacity: 0.85; }
+.calc-cat { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem 1.5rem; margin-bottom: 1rem; }
+.calc-cat-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.9rem; flex-wrap: wrap; gap: 6px; }
+.calc-cat-head h3 { font-size: 1rem; font-weight: 700; }
+.calc-cat-badge { font-size: 0.72rem; font-weight: 700; color: var(--primary); background: var(--primary-light); padding: 3px 10px; border-radius: 10px; }
+.calc-add-row { display: grid; grid-template-columns: 2fr repeat(4, 0.8fr) auto; gap: 8px; align-items: end; margin-bottom: 0.9rem; }
+.calc-add-row .calc-field { min-width: 0; }
+.calc-add-row select, .calc-add-row input { width: 100%; }
+.calc-add-btn {
+  background: var(--primary); color: #fff; border: none; border-radius: 8px;
+  padding: 8px 14px; font-weight: 700; font-size: 0.82rem; cursor: pointer; white-space: nowrap;
+}
+.calc-add-btn:hover { background: var(--primary-dark); }
+.calc-entries { display: flex; flex-direction: column; gap: 6px; margin-bottom: 0.6rem; }
+.calc-entry {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 0.8rem;
+}
+.calc-entry .desc { color: var(--text-muted); }
+.calc-entry .pts { font-weight: 700; color: var(--primary); white-space: nowrap; }
+.calc-entry .remove { background: none; border: none; color: #cc4444; font-size: 1rem; cursor: pointer; padding: 0 4px; }
+.calc-cat-total { text-align: right; font-size: 0.85rem; font-weight: 700; color: var(--text); }
+.calc-cat-total .max { color: var(--text-muted); font-weight: 500; }
+.calc-note { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.5rem; font-style: italic; }
+.calc-empty { font-size: 0.78rem; color: var(--text-muted); font-style: italic; padding: 4px 0; }
+@media (max-width: 860px) {
+  .calc-config { grid-template-columns: 1fr; }
+  .calc-summary { grid-template-columns: 1fr; position: static; }
+  .calc-add-row { grid-template-columns: 1fr 1fr; }
+}
+
 /* ══ CONTACT ══ */
 .contact-grid {
   display: grid;
@@ -634,7 +713,8 @@ footer {
   .home-inner { grid-template-columns: 1fr; text-align: center; }
   .home-avatar { margin: 0 auto; width: 150px; height: 150px; font-size: 3.5rem; }
   .home-name { font-size: 2.2rem; }
-  .home-tags, .home-cta, .home-stats { justify-content: center; }
+  .home-tags, .home-cta { justify-content: center; }
+  .home-stats { grid-template-columns: repeat(2, 1fr); text-align: left; }
   .about-grid { grid-template-columns: 1fr; }
   .expertise-grid { grid-template-columns: 1fr 1fr; }
   .contact-grid { grid-template-columns: 1fr; }
@@ -660,6 +740,7 @@ html[lang="en"] [data-lang="en"] { display: revert; }
     <li><button onclick="showPage('about')"    id="nav-about"></button></li>
     <li><button onclick="showPage('academic')" id="nav-academic"></button></li>
     <li><button onclick="showPage('projects')" id="nav-projects"></button></li>
+    <li><button onclick="showPage('tesvik')"   id="nav-tesvik"></button></li>
     <li><button onclick="showPage('apps')"     id="nav-apps"></button></li>
     <li><button onclick="showPage('contact')"  id="nav-contact"></button></li>
   </ul>
@@ -677,6 +758,7 @@ html[lang="en"] [data-lang="en"] { display: revert; }
   <button onclick="showPage('about');toggleMenu()"    id="mob-about"></button>
   <button onclick="showPage('academic');toggleMenu()" id="mob-academic"></button>
   <button onclick="showPage('projects');toggleMenu()" id="mob-projects"></button>
+  <button onclick="showPage('tesvik');toggleMenu()"   id="mob-tesvik"></button>
   <button onclick="showPage('apps');toggleMenu()"     id="mob-apps"></button>
   <button onclick="showPage('contact');toggleMenu()"  id="mob-contact"></button>
 </div>
@@ -700,11 +782,11 @@ html[lang="en"] [data-lang="en"] { display: revert; }
           <span data-lang="en">Academic · GIS & Remote Sensing Expert · iOS Developer</span>
         </p>
         <div class="home-tags">
-          <span class="tag">🗺️ GIS / CBS</span>
-          <span class="tag">🛰️ Uzaktan Algılama</span>
-          <span class="tag">💧 Sulama</span>
+          <span class="tag teal">🗺️ GIS / CBS</span>
+          <span class="tag green">🛰️ Uzaktan Algılama</span>
+          <span class="tag blue">💧 Sulama</span>
           <span class="tag accent">⚡ Swift / Xcode</span>
-          <span class="tag">🍎 iOS · iPadOS · watchOS</span>
+          <span class="tag purple">🍎 iOS · iPadOS · watchOS</span>
         </div>
         <div class="home-cta">
           <button class="btn btn-primary" onclick="showPage('apps')">
@@ -717,22 +799,22 @@ html[lang="en"] [data-lang="en"] { display: revert; }
           </button>
         </div>
         <div class="home-stats">
-          <div class="stat">
+          <div class="stat teal">
             <b>6</b>
             <span data-lang="tr">AB Projesi</span>
             <span data-lang="en">EU Projects</span>
           </div>
-          <div class="stat">
-            <b>€4.5M+</b>
-            <span data-lang="tr">Proje Bütçesi</span>
-            <span data-lang="en">Project Budget</span>
+          <div class="stat orange">
+            <b>28+</b>
+            <span data-lang="tr">Bilimsel Yayın</span>
+            <span data-lang="en">Publications</span>
           </div>
-          <div class="stat">
+          <div class="stat blue">
             <b>5</b>
             <span data-lang="tr">Yayınlanan Kitap</span>
             <span data-lang="en">Published Books</span>
           </div>
-          <div class="stat">
+          <div class="stat green">
             <b>3</b>
             <span data-lang="tr">iOS Uygulaması</span>
             <span data-lang="en">iOS Apps</span>
@@ -1365,6 +1447,65 @@ html[lang="en"] [data-lang="en"] { display: revert; }
     </div>
   </div>
 
+  <!-- ══ TESVIK HESAPLAMA ══ -->
+  <div class="page" id="page-tesvik">
+    <div class="page-inner">
+      <div class="page-header">
+        <div class="eyebrow" data-lang="tr">Araç</div>
+        <div class="eyebrow" data-lang="en">Tool</div>
+        <h1 data-lang="tr">Akademik Teşvik Hesaplama</h1>
+        <h1 data-lang="en">Academic Incentive Calculator</h1>
+        <p data-lang="tr">14/5/2018 tarihli Akademik Teşvik Ödeneği Yönetmeliği'ne (Tablo 4) göre akademik teşvik puanınızı ve tahmini aylık ödeneğinizi hesaplayın. Faaliyetlerinizi aşağıdaki kategorilere ekleyin.</p>
+        <p data-lang="en">Estimate your academic incentive score and monthly payment based on Turkey's Academic Incentive Regulation (Table 4). Add your activities to the categories below.</p>
+      </div>
+
+      <div class="calc-config">
+        <div class="calc-field">
+          <label data-lang="tr">Kadro Unvanı</label>
+          <label data-lang="en">Academic Title</label>
+          <select id="calcUnvan"></select>
+        </div>
+        <div class="calc-field">
+          <label data-lang="tr">Bilim Alanı</label>
+          <label data-lang="en">Science Area</label>
+          <select id="calcArea"></select>
+        </div>
+        <div class="calc-field">
+          <label data-lang="tr">En Yüksek Devlet Memuru Brüt Aylığı (₺)</label>
+          <label data-lang="en">Highest Civil Servant Gross Salary (₺)</label>
+          <input type="number" id="calcBrutAylik" value="30000" min="0" step="100">
+          <span class="calc-hint" data-lang="tr">Dönemsel olarak güncellenir — güncel tutarı buraya girin.</span>
+          <span class="calc-hint" data-lang="en">Updated periodically — enter the current figure here.</span>
+        </div>
+      </div>
+
+      <div class="calc-summary">
+        <div class="item">
+          <b id="calcTotalPuan">0.00</b>
+          <span data-lang="tr">Toplam Teşvik Puanı (/100)</span>
+          <span data-lang="en">Total Incentive Score (/100)</span>
+        </div>
+        <div class="item">
+          <b id="calcTutar">0 ₺</b>
+          <span data-lang="tr">Tahmini Aylık Ödenek</span>
+          <span data-lang="en">Estimated Monthly Payment</span>
+        </div>
+        <div class="item">
+          <b id="calcEsik">-</b>
+          <span data-lang="tr">Ödeme Eşiği (min. 30 puan)</span>
+          <span data-lang="en">Payment Threshold (min. 30 pts)</span>
+        </div>
+      </div>
+
+      <div id="calcCategories"></div>
+
+      <div class="apps-note">
+        <span data-lang="tr">ℹ️ Bu hesaplayıcı bilgilendirme amaçlıdır, resmi bir başvuru veya kurum kararı yerine geçmez. Nihai puan, ilgili birim/üniversite akademik teşvik komisyonunca belirlenir.</span>
+        <span data-lang="en">ℹ️ This calculator is for informational purposes only and does not replace an official application or institutional decision. The final score is determined by your university's academic incentive committee.</span>
+      </div>
+    </div>
+  </div>
+
   <!-- ══ CONTACT ══ -->
   <div class="page" id="page-contact">
     <div class="page-inner">
@@ -1444,11 +1585,11 @@ html[lang="en"] [data-lang="en"] { display: revert; }
 </footer>
 
 <script>
-const PAGES = ['home','about','academic','projects','apps','contact'];
+const PAGES = ['home','about','academic','projects','tesvik','apps','contact'];
 
 const NAV_LABELS = {
-  tr: { home:'Ana Sayfa', about:'Hakkımda', academic:'Akademik Yayınlar',      projects:'Projeler', apps:'Uygulamalar', contact:'İletişim' },
-  en: { home:'Home',      about:'About',    academic:'Academic Publications',  projects:'Projects', apps:'Apps',        contact:'Contact' }
+  tr: { home:'Ana Sayfa', about:'Hakkımda', academic:'Akademik Yayınlar',      projects:'Projeler', tesvik:'Akademik Teşvik Hesaplama',    apps:'Uygulamalar', contact:'İletişim' },
+  en: { home:'Home',      about:'About',    academic:'Academic Publications',  projects:'Projects', tesvik:'Academic Incentive Calculator', apps:'Apps',        contact:'Contact' }
 };
 
 let currentLang = localStorage.getItem('lang') || 'tr';
@@ -1461,6 +1602,7 @@ function setLang(lang) {
   document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.textContent === lang.toUpperCase()));
   updateNavLabels();
   localStorage.setItem('lang', lang);
+  if (typeof tesvikRefreshLang === 'function') tesvikRefreshLang();
 }
 
 function updateNavLabels() {
@@ -1507,6 +1649,291 @@ function showPage(id) {
 function toggleMenu() {
   document.getElementById('mobileMenu').classList.toggle('open');
 }
+
+/* ══ TESVIK CALC ENGINE ══ */
+// Table 4 (Faaliyet Hesaplama Tablosu) — base values ordered [A1, A2, A3, A4]. null = not applicable for that area.
+const TESVIK_CATEGORIES = [
+  { id:'proje', maxPuan:20, tr:'Proje', en:'Project', needs:['r'],
+    items:[
+      { tr:'TÜBİTAK 1001, 1003, 1004, 1007, 1505, 2244, 3501, SAYEM, COST, Uluslararası İkili İşbirliği Programları', en:'TÜBİTAK 1001/1003/1004/1007/1505/2244/3501, SAYEM, COST, Int\'l Bilateral Cooperation Programs', base:[80,80,80,80] },
+      { tr:'TÜBİTAK 1005, 3001', en:'TÜBİTAK 1005, 3001', base:[70,70,70,70] },
+      { tr:'H2020 projesi', en:'H2020 project', base:[100,100,100,100] },
+      { tr:'Diğer uluslararası özel/resmi kurum destekli proje (destek süresi ≥9 ay)', en:'Other internationally funded project (≥9 months)', base:[40,40,40,40] },
+      { tr:'Diğer ulusal kamu/özel kurum destekli proje (destek süresi ≥9 ay)', en:'Other nationally funded project (≥9 months)', base:[20,20,20,20] },
+    ]
+  },
+  { id:'arastirma', maxPuan:15, tr:'Araştırma', en:'Research', needs:['ay'],
+    items:[
+      { tr:'Yurt dışı araştırma (ay başına)', en:'Research abroad (per month)', base:[15,15,15,15] },
+      { tr:'Yurt içi araştırma (ay başına)', en:'Domestic research (per month)', base:[10,10,10,10] },
+    ]
+  },
+  { id:'yayin', maxPuan:30, tr:'Yayın', en:'Publication', needs:['k','p'],
+    items:[
+      { tr:'SCI/SCI-Exp/SSCI/AHCI dergide araştırma makalesi', en:'Research article in SCI/SCI-Exp/SSCI/AHCI journal', base:[60,80,60,80], needs:['k','p'] },
+      { tr:'SCI/SCI-Exp/SSCI/AHCI dergide derleme makale (müstakil)', en:'Review article in SCI/SCI-Exp/SSCI/AHCI journal', base:[30,40,30,40], needs:['k','p'] },
+      { tr:'Alan endeksleri (ÜAK) kapsamındaki dergide araştırma makalesi', en:'Research article in a ÜAK field index journal', base:[20,25,20,25], needs:['k'] },
+      { tr:'Diğer uluslararası hakemli dergide araştırma makalesi', en:'Research article in another international refereed journal', base:[15,20,15,20], needs:['k'] },
+      { tr:'ULAKBİM TR Dizin ulusal hakemli dergide araştırma makalesi', en:'Research article in a ULAKBİM TR Index journal', base:[15,20,15,20], needs:['k'] },
+      { tr:'SCI/SCI-Exp/SSCI/AHCI dergide editörlük', en:'Editorship of an SCI/SCI-Exp/SSCI/AHCI journal', base:[25,25,25,25], needs:[] },
+      { tr:'Alan endeksleri kapsamındaki dergide editörlük', en:'Editorship of a field index journal', base:[15,15,15,15], needs:[] },
+      { tr:'Diğer uluslararası hakemli dergide editörlük', en:'Editorship of another international refereed journal', base:[10,10,10,10], needs:[] },
+      { tr:'ULAKBİM TR Dizin dergide editörlük', en:'Editorship of a ULAKBİM TR Index journal', base:[10,10,10,10], needs:[] },
+      { tr:'Tanınmış uluslararası yayınevince yayımlanmış özgün bilimsel kitap', en:'Original scholarly book by a recognized international publisher', base:[100,100,100,100], needs:['k'] },
+      { tr:'Tanınmış uluslararası yayınevince yayımlanmış kitap editörlüğü', en:'Editorship of a book by a recognized international publisher', base:[60,60,60,60], needs:['k'] },
+      { tr:'Tanınmış uluslararası yayınevince yayımlanmış kitapta bölüm yazarlığı (aynı kitapta en çok 2 bölüm)', en:'Book chapter with a recognized international publisher (max 2 per book)', base:[25,25,25,25], needs:['k'] },
+      { tr:'Ulusal yayınevince yayımlanmış özgün bilimsel kitap', en:'Original scholarly book by a national publisher', base:[50,50,50,50], needs:['k'] },
+      { tr:'Ulusal yayınevince yayımlanmış kitapta bölüm yazarlığı (aynı kitapta en çok 2 bölüm)', en:'Book chapter with a national publisher (max 2 per book)', base:[15,15,15,15], needs:['k'] },
+      { tr:'Uluslararası boyutta performansa dayalı kişisel ses/görüntü kaydı (yalnız A4)', en:'International performance-based solo recording (A4 only)', base:[null,null,null,20], needs:['k'] },
+      { tr:'Uluslararası boyutta performansa dayalı karma ses/görüntü kaydı (yalnız A4)', en:'International performance-based joint recording (A4 only)', base:[null,null,null,10], needs:['k'] },
+      { tr:'Ulusal boyutta performansa dayalı kişisel ses/görüntü kaydı (yalnız A4)', en:'National performance-based solo recording (A4 only)', base:[null,null,null,10], needs:['k'] },
+    ]
+  },
+  { id:'tasarim', maxPuan:15, tr:'Tasarım', en:'Design', needs:[],
+    items:[
+      { tr:'Endüstriyel, çevresel (bina, peyzaj, iç mekan) tasarım; sahne, moda veya çalgı tasarımı', en:'Industrial/environmental, stage, fashion or instrument design', base:[15,15,15,15] },
+    ]
+  },
+  { id:'sergi', maxPuan:15, tr:'Sergi', en:'Exhibition', needs:[],
+    items:[
+      { tr:'Özgün yurt dışı bireysel etkinlik (sergi, biennal, trienal, gösteri, dinleti, festival, gösterim)', en:'Original solo event abroad', base:[null,null,null,30] },
+      { tr:'Özgün yurt içi bireysel etkinlik', en:'Original solo event domestically', base:[null,null,null,15] },
+      { tr:'Özgün yurt dışı grup/karma/toplu etkinlik', en:'Original group/joint event abroad', base:[null,null,null,15] },
+      { tr:'Özgün yurt içi grup/karma/toplu etkinlik', en:'Original group/joint event domestically', base:[null,null,null,8] },
+    ]
+  },
+  { id:'patent', maxPuan:30, tr:'Patent', en:'Patent', needs:['k'],
+    items:[
+      { tr:'Uluslararası patent', en:'International patent', base:[100,100,100,100] },
+      { tr:'Ulusal patent', en:'National patent', base:[60,60,60,60] },
+    ]
+  },
+  { id:'atif', maxPuan:30, tr:'Atıf', en:'Citation', needs:[],
+    items:[
+      { tr:'SCI/SCI-Exp/SSCI/AHCI dergide yayımlanmış makalede atıf', en:'Citation in an SCI/SCI-Exp/SSCI/AHCI article', base:[4,6,4,6] },
+      { tr:'Alan endeksleri kapsamındaki dergide atıf', en:'Citation in a field index journal', base:[1.5,3,1.5,3] },
+      { tr:'Diğer uluslararası hakemli dergide atıf', en:'Citation in another international refereed journal', base:[1,2,1,2] },
+      { tr:'ULAKBİM TR Dizin dergide atıf', en:'Citation in a ULAKBİM TR Index journal', base:[1,2,1,2] },
+      { tr:'Tanınmış uluslararası yayınevi bilimsel kitabına atıf', en:'Citation to a book by a recognized international publisher', base:[4,8,4,8] },
+      { tr:'Ulusal yayınevi bilimsel kitabına atıf', en:'Citation to a book by a national publisher', base:[2,4,2,4] },
+      { tr:'Güzel sanatlarda eserin uluslararası kaynak/yayın organında yer alması (yalnız A4)', en:'Work featured in an international art source/publication (A4 only)', base:[null,null,null,8] },
+      { tr:'Güzel sanatlarda eserin ulusal kaynak/yayın organında yer alması (yalnız A4)', en:'Work featured in a national art source/publication (A4 only)', base:[null,null,null,4] },
+    ]
+  },
+  { id:'teblig', maxPuan:20, tr:'Tebliğ', en:'Conference Paper', needs:['k'],
+    items:[
+      { tr:'Hakemli uluslararası bilimsel konferans/sempozyum/kongrede sözlü sunulan ve tam metni yayımlanan bildiri', en:'Full paper presented at a refereed international conference', base:[15,15,15,15] },
+    ]
+  },
+  { id:'odul', maxPuan:20, tr:'Ödül', en:'Award', needs:[],
+    items:[
+      { tr:'YÖK Yılın Doktora Tezi Ödülü', en:'YÖK Doctoral Thesis of the Year Award', base:[100,100,100,100] },
+      { tr:'TÜBİTAK Bilim Ödülü', en:'TÜBİTAK Science Award', base:[100,100,100,100] },
+      { tr:'TÜBA Akademi Ödülü', en:'TÜBA Academy Award', base:[100,100,100,100] },
+      { tr:'Yurt dışı kurum/kuruluştan alınan bilim ödülü (≥5 kez verilmiş, süreklilik arz eden)', en:'Science award from a foreign institution (given ≥5 times)', base:[40,40,40,40] },
+      { tr:'Yurt içi kurum/kuruluştan alınan bilim ödülü (≥5 kez verilmiş, süreklilik arz eden)', en:'Science award from a domestic institution (given ≥5 times)', base:[20,20,20,20] },
+      { tr:'Uluslararası jürili süreklilik arz eden güzel sanat etkinliği/yarışması derece ödülü (yalnız A4)', en:'International-jury fine arts competition prize (A4 only)', base:[null,null,null,40] },
+      { tr:'Ulusal jürili süreklilik arz eden güzel sanat etkinliği/yarışması derece ödülü (yalnız A4)', en:'National-jury fine arts competition prize (A4 only)', base:[null,null,null,20] },
+      { tr:'Mevzuat çerçevesinde ilgili kuruluşlarca düzenlenen planlama/mimarlık/kentsel tasarım vb. yarışma derece ödülü (yalnız A3)', en:'Planning/architecture/urban design competition prize under relevant legislation (A3 only)', base:[null,null,20,null] },
+    ]
+  },
+];
+
+function tesvikT(tr, en) { return currentLang === 'en' ? en : tr; }
+
+let tesvikEntries = {}; // { catId: [ {itemIdx, k, p, r, ay, adet, oran, puan}, ... ] }
+TESVIK_CATEGORIES.forEach(c => tesvikEntries[c.id] = []);
+
+const TESVIK_K_TABLE = {1:1, 2:0.8, 3:0.6, 4:0.45, 5:0.2, 6:1/6};
+function tesvikKValue(n) { return n>=7 ? 1/n : (TESVIK_K_TABLE[n] || 1); }
+
+function tesvikBuildUI() {
+  const wrap = document.getElementById('calcCategories');
+  wrap.innerHTML = '';
+  TESVIK_CATEGORIES.forEach(cat => {
+    const card = document.createElement('div');
+    card.className = 'calc-cat';
+    card.innerHTML = `
+      <div class="calc-cat-head">
+        <h3>${tesvikT(cat.tr, cat.en)}</h3>
+        <span class="calc-cat-badge">${tesvikT('Maks. '+cat.maxPuan+' puan','Max '+cat.maxPuan+' pts')}</span>
+      </div>
+      <div class="calc-add-row" id="addrow-${cat.id}"></div>
+      <div class="calc-entries" id="entries-${cat.id}"></div>
+      <div class="calc-cat-total" id="total-${cat.id}"></div>
+    `;
+    wrap.appendChild(card);
+    tesvikBuildAddRow(cat);
+  });
+  tesvikRenderAll();
+}
+
+function tesvikBuildAddRow(cat) {
+  const row = document.getElementById('addrow-' + cat.id);
+  const area = parseInt(document.getElementById('calcArea').value);
+  const availableIdxs = cat.items.map((it, idx) => idx).filter(idx => cat.items[idx].base[area] !== null);
+
+  if (availableIdxs.length === 0) {
+    row.innerHTML = `<div class="calc-empty">${tesvikT('Bu kategori seçili bilim alanında uygulanmaz.','This category does not apply to the selected science area.')}</div>`;
+    return;
+  }
+
+  let opts = cat.items.map((it, idx) => {
+    const base = it.base[area];
+    const disabled = base === null ? 'disabled' : '';
+    return `<option value="${idx}" ${disabled}>${tesvikT(it.tr, it.en)}${base===null ? ' — '+tesvikT('bu alanda yok','not applicable') : ''}</option>`;
+  }).join('');
+
+  const showK = cat.needs.includes('k') || cat.items.some(it => it.needs && it.needs.includes('k'));
+  const showP = cat.needs.includes('p') || cat.items.some(it => it.needs && it.needs.includes('p'));
+  const showR = cat.needs.includes('r');
+  const showAy = cat.needs.includes('ay');
+
+  row.innerHTML = `
+    <div class="calc-field">
+      <label data-lang-inline>${tesvikT('Faaliyet','Activity')}</label>
+      <select id="sel-${cat.id}" onchange="tesvikToggleFields('${cat.id}')">${opts}</select>
+    </div>
+    ${showK ? `<div class="calc-field" id="fld-k-${cat.id}"><label>${tesvikT('Yazar sayısı','Authors')}</label><input type="number" id="k-${cat.id}" min="1" value="1"></div>` : ''}
+    ${showP ? `<div class="calc-field" id="fld-p-${cat.id}"><label>${tesvikT('Çeyreklik','Quartile')}</label><select id="p-${cat.id}"><option value="1">Q1</option><option value="0.8">Q2</option><option value="0.5">Q3</option><option value="0.25">Q4</option></select></div>` : ''}
+    ${showR ? `<div class="calc-field" id="fld-r-${cat.id}"><label>${tesvikT('Rol','Role')}</label><select id="r-${cat.id}"><option value="1">${tesvikT('Yürütücü','PI')}</option><option value="0.5">${tesvikT('Araştırmacı/Bursiyer','Researcher')}</option></select></div>` : ''}
+    ${showAy ? `<div class="calc-field" id="fld-ay-${cat.id}"><label>${tesvikT('Ay sayısı','Months')}</label><input type="number" id="ay-${cat.id}" min="0" step="0.5" value="1"></div>` : ''}
+    <div class="calc-field"><label>${tesvikT('Adet','Qty')}</label><input type="number" id="adet-${cat.id}" min="1" value="1"></div>
+    <button class="calc-add-btn" onclick="tesvikAddEntry('${cat.id}')">${tesvikT('+ Ekle','+ Add')}</button>
+  `;
+  document.getElementById('sel-' + cat.id).value = availableIdxs[0];
+  tesvikToggleFields(cat.id);
+}
+
+function tesvikToggleFields(catId) {
+  const cat = TESVIK_CATEGORIES.find(c => c.id === catId);
+  const selEl = document.getElementById('sel-' + catId);
+  if (!selEl) return;
+  const item = cat.items[parseInt(selEl.value)];
+  if (!item) return;
+  const itemNeeds = item.needs || cat.needs;
+  ['k','p','r','ay'].forEach(key => {
+    const fld = document.getElementById(`fld-${key}-${catId}`);
+    if (fld) fld.style.display = itemNeeds.includes(key) ? '' : 'none';
+  });
+}
+
+function tesvikAddEntry(catId) {
+  const cat = TESVIK_CATEGORIES.find(c => c.id === catId);
+  const area = parseInt(document.getElementById('calcArea').value);
+  const selEl = document.getElementById('sel-' + catId);
+  if (!selEl) return;
+  const itemIdx = parseInt(selEl.value);
+  const item = cat.items[itemIdx];
+  if (!item) return;
+  const base = item.base[area];
+  if (base === null || base === undefined) return;
+
+  // Only apply a coefficient if THIS item actually uses it per the regulation,
+  // even if the input field is present in the DOM for other items in the same category.
+  const itemNeeds = item.needs || cat.needs;
+  const k = itemNeeds.includes('k') && document.getElementById('k-' + catId) ? tesvikKValue(parseInt(document.getElementById('k-' + catId).value) || 1) : 1;
+  const p = itemNeeds.includes('p') && document.getElementById('p-' + catId) ? parseFloat(document.getElementById('p-' + catId).value) : 1;
+  const r = itemNeeds.includes('r') && document.getElementById('r-' + catId) ? parseFloat(document.getElementById('r-' + catId).value) : 1;
+  const ay = itemNeeds.includes('ay') && document.getElementById('ay-' + catId) ? (parseFloat(document.getElementById('ay-' + catId).value) || 0) : 1;
+  const adet = parseFloat(document.getElementById('adet-' + catId).value) || 1;
+
+  const oran = base * k * p * r * ay * adet;
+  const puan = (oran / 100) * cat.maxPuan;
+
+  tesvikEntries[catId].push({ itemIdx, area, k, p, r, ay, adet, oran, puan });
+  tesvikRenderAll();
+}
+
+function tesvikRemoveEntry(catId, idx) {
+  tesvikEntries[catId].splice(idx, 1);
+  tesvikRenderAll();
+}
+
+function tesvikRenderAll() {
+  let grandTotal = 0;
+  TESVIK_CATEGORIES.forEach(cat => {
+    const list = tesvikEntries[cat.id];
+    const entriesEl = document.getElementById('entries-' + cat.id);
+    const totalEl = document.getElementById('total-' + cat.id);
+    if (!entriesEl) return;
+    if (list.length === 0) {
+      entriesEl.innerHTML = `<div class="calc-empty">${tesvikT('Henüz faaliyet eklenmedi.','No activities added yet.')}</div>`;
+    } else {
+      entriesEl.innerHTML = list.map((e, i) => {
+        const label = tesvikT(cat.items[e.itemIdx].tr, cat.items[e.itemIdx].en);
+        return `
+        <div class="calc-entry">
+          <span class="desc">${label} ${e.adet > 1 ? '× '+e.adet : ''}</span>
+          <span class="pts">${e.puan.toFixed(2)} ${tesvikT('puan','pts')} <button class="remove" onclick="tesvikRemoveEntry('${cat.id}', ${i})">✕</button></span>
+        </div>
+      `;
+      }).join('');
+    }
+    const rawSum = list.reduce((s, e) => s + e.puan, 0);
+    const capped = Math.min(rawSum, cat.maxPuan);
+    grandTotal += capped;
+    totalEl.innerHTML = `${tesvikT('Kategori Toplamı','Category Total')}: <b>${capped.toFixed(2)}</b> <span class="max">/ ${cat.maxPuan}</span>`;
+  });
+
+  const finalPuan = Math.min(grandTotal, 100);
+  document.getElementById('calcTotalPuan').textContent = finalPuan.toFixed(2);
+
+  const unvanOran = parseFloat(document.getElementById('calcUnvan').value);
+  const brutAylik = parseFloat(document.getElementById('calcBrutAylik').value) || 0;
+  const tutar = brutAylik * (unvanOran/100) * (finalPuan/100);
+  document.getElementById('calcTutar').textContent = tutar.toLocaleString('tr-TR', {maximumFractionDigits:0}) + ' ₺';
+
+  const esikEl = document.getElementById('calcEsik');
+  if (finalPuan >= 30) {
+    esikEl.textContent = tesvikT('✓ Karşılandı', '✓ Met');
+  } else {
+    esikEl.textContent = tesvikT('✗ Karşılanmadı', '✗ Not met');
+  }
+}
+
+const TESVIK_UNVANLAR = [
+  { value: 100, tr: 'Profesör (%100)', en: 'Professor (100%)' },
+  { value: 90,  tr: 'Doçent (%90)', en: 'Associate Professor (90%)' },
+  { value: 80,  tr: 'Dr. Öğretim Üyesi (%80)', en: 'Assistant Professor (80%)' },
+  { value: 70,  tr: 'Araş. Gör. / Öğr. Gör. (%70)', en: 'Research/Teaching Assistant (70%)' },
+];
+const TESVIK_ALANLAR = [
+  { value: 0, tr: 'A1 — Eğitim, Fen/Matematik, Mühendislik, Sağlık, Ziraat/Orman/Su Ürünleri', en: 'A1 — Education, Science/Math, Engineering, Health, Agriculture/Forestry' },
+  { value: 1, tr: 'A2 — Filoloji, Hukuk, İlahiyat, Sosyal/Beşeri/İdari Bilimler, Spor', en: 'A2 — Philology, Law, Theology, Social/Humanities/Admin Sciences, Sports' },
+  { value: 2, tr: 'A3 — Mimarlık, Planlama ve Tasarım', en: 'A3 — Architecture, Planning and Design' },
+  { value: 3, tr: 'A4 — Güzel Sanatlar', en: 'A4 — Fine Arts' },
+];
+
+function tesvikPopulateSelects() {
+  const unvanEl = document.getElementById('calcUnvan');
+  const areaEl = document.getElementById('calcArea');
+  if (!unvanEl || !areaEl) return;
+  const prevUnvan = unvanEl.value, prevArea = areaEl.value;
+  unvanEl.innerHTML = TESVIK_UNVANLAR.map(u => `<option value="${u.value}">${tesvikT(u.tr, u.en)}</option>`).join('');
+  areaEl.innerHTML = TESVIK_ALANLAR.map(a => `<option value="${a.value}">${tesvikT(a.tr, a.en)}</option>`).join('');
+  if (prevUnvan) unvanEl.value = prevUnvan;
+  if (prevArea) areaEl.value = prevArea;
+}
+
+function tesvikRefreshLang() {
+  if (!document.getElementById('calcCategories')) return;
+  tesvikPopulateSelects();
+  tesvikBuildUI();
+}
+
+function tesvikInit() {
+  if (!document.getElementById('calcCategories')) return;
+  tesvikPopulateSelects();
+  tesvikBuildUI();
+  document.getElementById('calcArea').addEventListener('change', () => {
+    tesvikEntries = {}; TESVIK_CATEGORIES.forEach(c => tesvikEntries[c.id] = []);
+    tesvikBuildUI();
+  });
+  document.getElementById('calcUnvan').addEventListener('change', tesvikRenderAll);
+  document.getElementById('calcBrutAylik').addEventListener('input', tesvikRenderAll);
+}
+tesvikInit();
 
 // init
 setLang(currentLang);

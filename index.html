@@ -596,9 +596,10 @@ nav {
   padding: 1.25rem 1.5rem;
   margin-bottom: 1.5rem;
 }
-.calc-field { display: flex; flex-direction: column; gap: 0.35rem; }
+.calc-field { display: flex; flex-direction: column; gap: 0.35rem; min-width: 0; }
 .calc-field label { font-size: 0.78rem; font-weight: 700; color: var(--text-muted); }
 .calc-field select, .calc-field input[type=number] {
+  width: 100%;
   font-family: inherit;
   font-size: 0.88rem;
   padding: 8px 10px;
@@ -1473,9 +1474,9 @@ html[lang="en"] [data-lang="en"] { display: revert; }
         <div class="calc-field">
           <label data-lang="tr">En Yüksek Devlet Memuru Brüt Aylığı (₺)</label>
           <label data-lang="en">Highest Civil Servant Gross Salary (₺)</label>
-          <input type="number" id="calcBrutAylik" value="30000" min="0" step="100">
-          <span class="calc-hint" data-lang="tr">Dönemsel olarak güncellenir — güncel tutarı buraya girin.</span>
-          <span class="calc-hint" data-lang="en">Updated periodically — enter the current figure here.</span>
+          <input type="number" id="calcBrutAylik" value="14967.36" min="0" step="0.01">
+          <span class="calc-hint" data-lang="tr">2026 Temmuz–Aralık dönemi tutarı (9.500 gösterge × 1,575512 memur aylık katsayısı). Her dönem güncellendiğinde buradan değiştirin.</span>
+          <span class="calc-hint" data-lang="en">July–December 2026 figure (9,500 indicator × 1.575512 civil servant coefficient). Update here whenever the period changes.</span>
         </div>
       </div>
 

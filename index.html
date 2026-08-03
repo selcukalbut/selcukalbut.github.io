@@ -1562,7 +1562,7 @@ html[lang="en"] [data-lang="en"] { display: revert; }
             <select id="koordInFormat"></select>
           </div>
         </div>
-        <div class="koord-grid" id="koordInFields"></div>
+        <div id="koordInFields"></div>
         <div class="koord-actions">
           <button class="calc-add-btn" onclick="koordConvert()" id="koordConvertBtn"></button>
         </div>
@@ -2163,39 +2163,53 @@ function koordBuildInputFields() {
   const wrap = document.getElementById('koordInFields');
   if (fmt === 'DD') {
     wrap.innerHTML = `
-      <div class="calc-field"><label>${tesvikT('Enlem (Lat)','Latitude')}</label><input type="number" id="koordDDLat" step="any" placeholder="40.983"></div>
-      <div class="calc-field"><label>${tesvikT('Boylam (Lon)','Longitude')}</label><input type="number" id="koordDDLon" step="any" placeholder="27.512"></div>
+      <div class="koord-grid">
+        <div class="calc-field"><label>${tesvikT('Enlem (Lat)','Latitude')}</label><input type="number" id="koordDDLat" step="any" placeholder="40.983"></div>
+        <div class="calc-field"><label>${tesvikT('Boylam (Lon)','Longitude')}</label><input type="number" id="koordDDLon" step="any" placeholder="27.512"></div>
+      </div>
     `;
   } else if (fmt === 'DMS') {
     wrap.innerHTML = `
-      <div class="calc-field"><label>${tesvikT('Enlem Derece','Lat Degree')}</label><input type="number" id="koordDMSLatD" step="1" placeholder="40"></div>
-      <div class="calc-field"><label>${tesvikT('Enlem Dakika','Lat Minute')}</label><input type="number" id="koordDMSLatM" step="1" placeholder="58"></div>
-      <div class="calc-field"><label>${tesvikT('Enlem Saniye','Lat Second')}</label><input type="number" id="koordDMSLatS" step="any" placeholder="59.0"></div>
-      <div class="calc-field"><label>${tesvikT('Enlem Yarımküre','Lat Hemisphere')}</label><select id="koordDMSLatH"><option value="N">N</option><option value="S">S</option></select></div>
-      <div class="calc-field"><label>${tesvikT('Boylam Derece','Lon Degree')}</label><input type="number" id="koordDMSLonD" step="1" placeholder="27"></div>
-      <div class="calc-field"><label>${tesvikT('Boylam Dakika','Lon Minute')}</label><input type="number" id="koordDMSLonM" step="1" placeholder="30"></div>
-      <div class="calc-field"><label>${tesvikT('Boylam Saniye','Lon Second')}</label><input type="number" id="koordDMSLonS" step="any" placeholder="43.2"></div>
-      <div class="calc-field"><label>${tesvikT('Boylam Yarımküre','Lon Hemisphere')}</label><select id="koordDMSLonH"><option value="E">E</option><option value="W">W</option></select></div>
+      <div class="koord-grid">
+        <div class="calc-field"><label>${tesvikT('Enlem Derece','Lat Degree')}</label><input type="number" id="koordDMSLatD" step="1" placeholder="40"></div>
+        <div class="calc-field"><label>${tesvikT('Enlem Dakika','Lat Minute')}</label><input type="number" id="koordDMSLatM" step="1" placeholder="58"></div>
+        <div class="calc-field"><label>${tesvikT('Enlem Saniye','Lat Second')}</label><input type="number" id="koordDMSLatS" step="any" placeholder="59.0"></div>
+        <div class="calc-field"><label>${tesvikT('Enlem Yarımküre','Lat Hemisphere')}</label><select id="koordDMSLatH"><option value="N">N</option><option value="S">S</option></select></div>
+      </div>
+      <div class="koord-grid">
+        <div class="calc-field"><label>${tesvikT('Boylam Derece','Lon Degree')}</label><input type="number" id="koordDMSLonD" step="1" placeholder="27"></div>
+        <div class="calc-field"><label>${tesvikT('Boylam Dakika','Lon Minute')}</label><input type="number" id="koordDMSLonM" step="1" placeholder="30"></div>
+        <div class="calc-field"><label>${tesvikT('Boylam Saniye','Lon Second')}</label><input type="number" id="koordDMSLonS" step="any" placeholder="43.2"></div>
+        <div class="calc-field"><label>${tesvikT('Boylam Yarımküre','Lon Hemisphere')}</label><select id="koordDMSLonH"><option value="E">E</option><option value="W">W</option></select></div>
+      </div>
     `;
   } else if (fmt === 'DDM') {
     wrap.innerHTML = `
-      <div class="calc-field"><label>${tesvikT('Enlem Derece','Lat Degree')}</label><input type="number" id="koordDDMLatD" step="1" placeholder="40"></div>
-      <div class="calc-field"><label>${tesvikT('Enlem Dakika','Lat Minute')}</label><input type="number" id="koordDDMLatM" step="any" placeholder="58.984"></div>
-      <div class="calc-field"><label>${tesvikT('Enlem Yarımküre','Lat Hemisphere')}</label><select id="koordDDMLatH"><option value="N">N</option><option value="S">S</option></select></div>
-      <div class="calc-field"><label>${tesvikT('Boylam Derece','Lon Degree')}</label><input type="number" id="koordDDMLonD" step="1" placeholder="27"></div>
-      <div class="calc-field"><label>${tesvikT('Boylam Dakika','Lon Minute')}</label><input type="number" id="koordDDMLonM" step="any" placeholder="30.720"></div>
-      <div class="calc-field"><label>${tesvikT('Boylam Yarımküre','Lon Hemisphere')}</label><select id="koordDDMLonH"><option value="E">E</option><option value="W">W</option></select></div>
+      <div class="koord-grid">
+        <div class="calc-field"><label>${tesvikT('Enlem Derece','Lat Degree')}</label><input type="number" id="koordDDMLatD" step="1" placeholder="40"></div>
+        <div class="calc-field"><label>${tesvikT('Enlem Dakika','Lat Minute')}</label><input type="number" id="koordDDMLatM" step="any" placeholder="58.984"></div>
+        <div class="calc-field"><label>${tesvikT('Enlem Yarımküre','Lat Hemisphere')}</label><select id="koordDDMLatH"><option value="N">N</option><option value="S">S</option></select></div>
+      </div>
+      <div class="koord-grid">
+        <div class="calc-field"><label>${tesvikT('Boylam Derece','Lon Degree')}</label><input type="number" id="koordDDMLonD" step="1" placeholder="27"></div>
+        <div class="calc-field"><label>${tesvikT('Boylam Dakika','Lon Minute')}</label><input type="number" id="koordDDMLonM" step="any" placeholder="30.720"></div>
+        <div class="calc-field"><label>${tesvikT('Boylam Yarımküre','Lon Hemisphere')}</label><select id="koordDDMLonH"><option value="E">E</option><option value="W">W</option></select></div>
+      </div>
     `;
   } else if (fmt === 'UTM') {
     wrap.innerHTML = `
-      <div class="calc-field"><label>${tesvikT('Dilim (Zone)','Zone')}</label><input type="number" id="koordUTMZone" min="1" max="60" step="1" placeholder="35"></div>
-      <div class="calc-field"><label>${tesvikT('Yarımküre','Hemisphere')}</label><select id="koordUTMHemi"><option value="N">N</option><option value="S">S</option></select></div>
-      <div class="calc-field"><label>${tesvikT('Sağa (Easting)','Easting')}</label><input type="number" id="koordUTMEast" step="any" placeholder="500000"></div>
-      <div class="calc-field"><label>${tesvikT('Yukarı (Northing)','Northing')}</label><input type="number" id="koordUTMNorth" step="any" placeholder="4540000"></div>
+      <div class="koord-grid">
+        <div class="calc-field"><label>${tesvikT('Dilim (Zone)','Zone')}</label><input type="number" id="koordUTMZone" min="1" max="60" step="1" placeholder="35"></div>
+        <div class="calc-field"><label>${tesvikT('Yarımküre','Hemisphere')}</label><select id="koordUTMHemi"><option value="N">N</option><option value="S">S</option></select></div>
+        <div class="calc-field"><label>${tesvikT('Sağa (Easting)','Easting')}</label><input type="number" id="koordUTMEast" step="any" placeholder="500000"></div>
+        <div class="calc-field"><label>${tesvikT('Yukarı (Northing)','Northing')}</label><input type="number" id="koordUTMNorth" step="any" placeholder="4540000"></div>
+      </div>
     `;
   } else if (fmt === 'MGRS') {
     wrap.innerHTML = `
-      <div class="calc-field"><label>${tesvikT('MGRS Kodu','MGRS Code')}</label><input type="text" id="koordMGRS" placeholder="35TPF1234567890"></div>
+      <div class="koord-grid">
+        <div class="calc-field"><label>${tesvikT('MGRS Kodu','MGRS Code')}</label><input type="text" id="koordMGRS" placeholder="35TPF1234567890"></div>
+      </div>
       <div class="calc-note" data-lang="tr">MGRS her zaman WGS84 tabanlıdır.</div>
       <div class="calc-note" data-lang="en">MGRS is always WGS84-based.</div>
     `;

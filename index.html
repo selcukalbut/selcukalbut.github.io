@@ -840,12 +840,12 @@ html[lang="en"] [data-lang="en"] { display: revert; }
         </div>
         <div class="home-stats">
           <div class="stat teal">
-            <b>6</b>
-            <span data-lang="tr">AB Projesi</span>
-            <span data-lang="en">EU Projects</span>
+            <b>21</b>
+            <span data-lang="tr">Proje</span>
+            <span data-lang="en">Projects</span>
           </div>
           <div class="stat orange">
-            <b>28+</b>
+            <b>100+</b>
             <span data-lang="tr">Bilimsel Yayın</span>
             <span data-lang="en">Publications</span>
           </div>
@@ -1780,6 +1780,12 @@ function showPage(id) {
 function toggleMenu() {
   document.getElementById('mobileMenu').classList.toggle('open');
 }
+
+// Keep the page in sync with the URL hash so the browser's back/forward
+// buttons work (Safari doesn't re-render on a hash change by itself).
+window.addEventListener('hashchange', () => {
+  showPage(location.hash.replace('#','') || 'home');
+});
 
 /* ══ TESVIK CALC ENGINE ══ */
 // Table 4 (Faaliyet Hesaplama Tablosu) — base values ordered [A1, A2, A3, A4]. null = not applicable for that area.

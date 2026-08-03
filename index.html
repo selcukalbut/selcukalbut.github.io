@@ -8,6 +8,8 @@
 <link rel="canonical" href="https://selcukalbut.com"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/proj4@2.9.0/dist/proj4.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mgrs@2.0.0/dist/mgrs.js"></script>
 <style>
 :root {
   --primary: #0d6e6e;
@@ -655,6 +657,30 @@ nav {
   .calc-add-row { grid-template-columns: 1fr 1fr; }
 }
 
+/* ══ KOORDINAT CALC ══ */
+.koord-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; }
+.koord-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 1rem; }
+.koord-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.9rem; margin-bottom: 1rem; }
+.koord-grid .calc-field { min-width: 0; }
+.koord-actions { display: flex; justify-content: flex-end; }
+.koord-result-table { display: flex; flex-direction: column; gap: 8px; }
+.koord-result-row {
+  display: flex; justify-content: space-between; align-items: center; gap: 10px;
+  background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px;
+}
+.koord-result-row .label { font-size: 0.78rem; font-weight: 700; color: var(--text-muted); }
+.koord-result-row .value { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--text); word-break: break-all; text-align: right; }
+.koord-result-row .copy-btn {
+  background: var(--primary-light); color: var(--primary); border: none; border-radius: 6px;
+  font-size: 0.7rem; font-weight: 700; padding: 4px 8px; cursor: pointer; white-space: nowrap; margin-left: 8px;
+}
+.koord-result-row .copy-btn:hover { background: var(--primary); color: #fff; }
+.koord-error { color: #cc4444; font-size: 0.82rem; font-weight: 600; padding: 8px 0; }
+@media (max-width: 640px) {
+  .koord-result-row { flex-direction: column; align-items: flex-start; }
+  .koord-result-row .value { text-align: left; }
+}
+
 /* ══ CONTACT ══ */
 .contact-grid {
   display: grid;
@@ -742,6 +768,7 @@ html[lang="en"] [data-lang="en"] { display: revert; }
     <li><button onclick="showPage('academic')" id="nav-academic"></button></li>
     <li><button onclick="showPage('projects')" id="nav-projects"></button></li>
     <li><button onclick="showPage('tesvik')"   id="nav-tesvik"></button></li>
+    <li><button onclick="showPage('koordinat')" id="nav-koordinat"></button></li>
     <li><button onclick="showPage('apps')"     id="nav-apps"></button></li>
     <li><button onclick="showPage('contact')"  id="nav-contact"></button></li>
   </ul>
@@ -760,6 +787,7 @@ html[lang="en"] [data-lang="en"] { display: revert; }
   <button onclick="showPage('academic');toggleMenu()" id="mob-academic"></button>
   <button onclick="showPage('projects');toggleMenu()" id="mob-projects"></button>
   <button onclick="showPage('tesvik');toggleMenu()"   id="mob-tesvik"></button>
+  <button onclick="showPage('koordinat');toggleMenu()" id="mob-koordinat"></button>
   <button onclick="showPage('apps');toggleMenu()"     id="mob-apps"></button>
   <button onclick="showPage('contact');toggleMenu()"  id="mob-contact"></button>
 </div>
@@ -1507,6 +1535,59 @@ html[lang="en"] [data-lang="en"] { display: revert; }
     </div>
   </div>
 
+  <!-- ══ KOORDINAT DONUSTURME ══ -->
+  <div class="page" id="page-koordinat">
+    <div class="page-inner">
+      <div class="page-header">
+        <div class="eyebrow" data-lang="tr">Araç</div>
+        <div class="eyebrow" data-lang="en">Tool</div>
+        <h1 data-lang="tr">Koordinat ve Datum Dönüştürme</h1>
+        <h1 data-lang="en">Coordinate &amp; Datum Converter</h1>
+        <p data-lang="tr">Ondalık Derece, Derece-Dakika-Saniye, Derece-Dakika, UTM ve MGRS formatları arasında; ED50, WGS84 ve ITRF96/TUREF datumları arasında dönüştürün.</p>
+        <p data-lang="en">Convert between Decimal Degree, DMS, DDM, UTM and MGRS formats, and between the ED50, WGS84 and ITRF96/TUREF datums.</p>
+      </div>
+
+      <div class="koord-card">
+        <h3 data-lang="tr">1. Girdi</h3>
+        <h3 data-lang="en">1. Input</h3>
+        <div class="koord-grid">
+          <div class="calc-field">
+            <label data-lang="tr">Datum</label>
+            <label data-lang="en">Datum</label>
+            <select id="koordInDatum"></select>
+          </div>
+          <div class="calc-field">
+            <label data-lang="tr">Format</label>
+            <label data-lang="en">Format</label>
+            <select id="koordInFormat"></select>
+          </div>
+        </div>
+        <div class="koord-grid" id="koordInFields"></div>
+        <div class="koord-actions">
+          <button class="calc-add-btn" onclick="koordConvert()" id="koordConvertBtn"></button>
+        </div>
+      </div>
+
+      <div class="koord-card">
+        <h3 data-lang="tr">2. Çıktı Datumu</h3>
+        <h3 data-lang="en">2. Output Datum</h3>
+        <div class="koord-grid">
+          <div class="calc-field">
+            <label data-lang="tr">Sonucu şu datumda göster</label>
+            <label data-lang="en">Show result in this datum</label>
+            <select id="koordOutDatum"></select>
+          </div>
+        </div>
+        <div id="koordResults"></div>
+      </div>
+
+      <div class="apps-note">
+        <span data-lang="tr">ℹ️ ITRF96/TUREF, bu araçta WGS84 ile aynı kabul edilir (aradaki fark santimetre seviyesindedir). ED50 ↔ WGS84 dönüşümü, Türkiye için resmi EPSG:1784 parametreleriyle (~2 m doğruluk, orta/düşük hassasiyetli kullanım için) yapılır. Jeodezik/RTK hassasiyeti gereken resmi işler için Harita Genel Müdürlüğü'nün kendi dönüşüm uygulamasını kullanın.</span>
+        <span data-lang="en">ℹ️ ITRF96/TUREF is treated as identical to WGS84 in this tool (the difference is centimeter-level). The ED50 ↔ WGS84 shift uses the official EPSG:1784 parameters for Turkey (~2 m accuracy, for medium/low-precision use). For survey-grade/RTK work, use the General Directorate of Mapping's own transformation service.</span>
+      </div>
+    </div>
+  </div>
+
   <!-- ══ CONTACT ══ -->
   <div class="page" id="page-contact">
     <div class="page-inner">
@@ -1586,11 +1667,11 @@ html[lang="en"] [data-lang="en"] { display: revert; }
 </footer>
 
 <script>
-const PAGES = ['home','about','academic','projects','tesvik','apps','contact'];
+const PAGES = ['home','about','academic','projects','tesvik','koordinat','apps','contact'];
 
 const NAV_LABELS = {
-  tr: { home:'Ana Sayfa', about:'Hakkımda', academic:'Akademik Yayınlar',      projects:'Projeler', tesvik:'Akademik Teşvik Hesaplama',    apps:'Uygulamalar', contact:'İletişim' },
-  en: { home:'Home',      about:'About',    academic:'Academic Publications',  projects:'Projects', tesvik:'Academic Incentive Calculator', apps:'Apps',        contact:'Contact' }
+  tr: { home:'Ana Sayfa', about:'Hakkımda', academic:'Akademik Yayınlar',      projects:'Projeler', tesvik:'Akademik Teşvik Hesaplama',    koordinat:'Koordinat Dönüştürme', apps:'Uygulamalar', contact:'İletişim' },
+  en: { home:'Home',      about:'About',    academic:'Academic Publications',  projects:'Projects', tesvik:'Academic Incentive Calculator', koordinat:'Coordinate Converter', apps:'Apps',        contact:'Contact' }
 };
 
 let currentLang = localStorage.getItem('lang') || 'tr';
@@ -1604,6 +1685,7 @@ function setLang(lang) {
   updateNavLabels();
   localStorage.setItem('lang', lang);
   if (typeof tesvikRefreshLang === 'function') tesvikRefreshLang();
+  if (typeof koordRefreshLang === 'function') koordRefreshLang();
 }
 
 function updateNavLabels() {
@@ -1935,6 +2017,292 @@ function tesvikInit() {
   document.getElementById('calcBrutAylik').addEventListener('input', tesvikRenderAll);
 }
 tesvikInit();
+
+/* ══ KOORDINAT CALC ENGINE ══ */
+const KOORD_ELLIPS = {
+  WGS84: { a: 6378137.0, f: 1/298.257223563 },
+  ED50:  { a: 6378388.0, f: 1/297.0 }, // International 1924
+};
+// EPSG:1784 — ED50 to WGS 84 (30), Position Vector transformation, Türkiye onshore/offshore, ~2m accuracy
+const KOORD_ED50_TO_WGS84 = { tx:-84.1, ty:-101.8, tz:-129.7, rx:0, ry:0, rz:0.468, s:1.05 };
+
+const KOORD_DATUMS = [
+  { id:'WGS84', tr:'WGS84', en:'WGS84' },
+  { id:'ED50',  tr:'ED50 (European Datum 1950)', en:'ED50 (European Datum 1950)' },
+  { id:'TUREF', tr:'ITRF96 / TUREF', en:'ITRF96 / TUREF' },
+];
+const KOORD_FORMATS = [
+  { id:'DD',   tr:'Ondalık Derece (DD)', en:'Decimal Degree (DD)' },
+  { id:'DMS',  tr:'Derece, Dakika, Saniye (DMS)', en:'Degree, Minute, Second (DMS)' },
+  { id:'DDM',  tr:'Derece, Dakika (DDM)', en:'Degree, Decimal Minute (DDM)' },
+  { id:'UTM',  tr:'UTM', en:'UTM' },
+  { id:'MGRS', tr:'MGRS / Askeri Grid Referans Sistemi', en:'MGRS / Military Grid Reference System' },
+];
+
+function koordEllpsCode(datumId) { return datumId === 'ED50' ? 'intl' : 'WGS84'; }
+function koordNormDatum(d) { return d === 'TUREF' ? 'WGS84' : d; }
+
+function koordGeodeticToGeocentric(lat, lon, h, ell) {
+  const e2 = 2*ell.f - ell.f*ell.f;
+  const latR = lat*Math.PI/180, lonR = lon*Math.PI/180;
+  const N = ell.a / Math.sqrt(1 - e2*Math.sin(latR)*Math.sin(latR));
+  return [
+    (N+h)*Math.cos(latR)*Math.cos(lonR),
+    (N+h)*Math.cos(latR)*Math.sin(lonR),
+    (N*(1-e2)+h)*Math.sin(latR)
+  ];
+}
+function koordGeocentricToGeodetic(X, Y, Z, ell) {
+  const e2 = 2*ell.f - ell.f*ell.f;
+  const lon = Math.atan2(Y, X);
+  const p = Math.sqrt(X*X + Y*Y);
+  let lat = Math.atan2(Z, p*(1-e2));
+  let h = 0;
+  for (let i=0; i<6; i++) {
+    const sinLat = Math.sin(lat);
+    const N = ell.a / Math.sqrt(1 - e2*sinLat*sinLat);
+    h = p/Math.cos(lat) - N;
+    lat = Math.atan2(Z, p*(1 - e2*N/(N+h)));
+  }
+  return [lat*180/Math.PI, lon*180/Math.PI, h];
+}
+function koordHelmert(X, Y, Z, p) {
+  const asRad = v => v * Math.PI / 648000; // arcsec -> rad
+  const rx = asRad(p.rx), ry = asRad(p.ry), rz = asRad(p.rz);
+  const d = 1 + p.s * 1e-6;
+  return [
+    p.tx + d*(X - rz*Y + ry*Z),
+    p.ty + d*(rz*X + Y - rx*Z),
+    p.tz + d*(-ry*X + rx*Y + Z)
+  ];
+}
+function koordHelmertInverse(X, Y, Z, p) {
+  return koordHelmert(X, Y, Z, { tx:-p.tx, ty:-p.ty, tz:-p.tz, rx:-p.rx, ry:-p.ry, rz:-p.rz, s:-p.s });
+}
+
+// Converts [lat,lon,h] between datums. TUREF is treated as numerically identical to WGS84.
+function koordConvertDatum(lat, lon, h, fromDatum, toDatum) {
+  const from = koordNormDatum(fromDatum), to = koordNormDatum(toDatum);
+  if (from === to) return [lat, lon, h];
+  if (from === 'ED50' && to === 'WGS84') {
+    const [X,Y,Z] = koordGeodeticToGeocentric(lat, lon, h, KOORD_ELLIPS.ED50);
+    const [X2,Y2,Z2] = koordHelmert(X, Y, Z, KOORD_ED50_TO_WGS84);
+    return koordGeocentricToGeodetic(X2, Y2, Z2, KOORD_ELLIPS.WGS84);
+  }
+  if (from === 'WGS84' && to === 'ED50') {
+    const [X,Y,Z] = koordGeodeticToGeocentric(lat, lon, h, KOORD_ELLIPS.WGS84);
+    const [X2,Y2,Z2] = koordHelmertInverse(X, Y, Z, KOORD_ED50_TO_WGS84);
+    return koordGeocentricToGeodetic(X2, Y2, Z2, KOORD_ELLIPS.ED50);
+  }
+  return [lat, lon, h];
+}
+
+function koordUtmZone(lon) { return Math.min(60, Math.max(1, Math.floor((lon + 180) / 6) + 1)); }
+function koordUtmProj(zone, south, ellpsCode) {
+  return `+proj=utm +zone=${zone}${south ? ' +south' : ''} +ellps=${ellpsCode} +units=m +no_defs`;
+}
+function koordGeoToUtm(lat, lon, datumId, zoneOverride, hemiOverride) {
+  const ellps = koordEllpsCode(datumId);
+  const zone = zoneOverride || koordUtmZone(lon);
+  const south = hemiOverride ? hemiOverride === 'S' : lat < 0;
+  const proj = koordUtmProj(zone, south, ellps);
+  const geo = `+proj=longlat +ellps=${ellps} +no_defs`;
+  const [x, y] = proj4(geo, proj, [lon, lat]);
+  return { zone, hemisphere: south ? 'S' : 'N', easting: x, northing: y };
+}
+function koordUtmToGeo(zone, hemisphere, easting, northing, datumId) {
+  const ellps = koordEllpsCode(datumId);
+  const south = hemisphere === 'S';
+  const proj = koordUtmProj(zone, south, ellps);
+  const geo = `+proj=longlat +ellps=${ellps} +no_defs`;
+  const [lon, lat] = proj4(proj, geo, [easting, northing]);
+  return [lat, lon];
+}
+
+function koordDdToParts(dd) {
+  const sign = dd < 0 ? -1 : 1;
+  dd = Math.abs(dd);
+  const d = Math.floor(dd);
+  const mFull = (dd - d) * 60;
+  const m = Math.floor(mFull);
+  const s = (mFull - m) * 60;
+  return { sign, d, m, s, mFull };
+}
+function koordFmtDMS(dd, isLat) {
+  const { sign, d, m, s } = koordDdToParts(dd);
+  const hemi = isLat ? (sign >= 0 ? 'N' : 'S') : (sign >= 0 ? 'E' : 'W');
+  return `${d}°${String(m).padStart(2,'0')}'${s.toFixed(3).padStart(6,'0')}" ${hemi}`;
+}
+function koordFmtDDM(dd, isLat) {
+  const { sign, d, mFull } = koordDdToParts(dd);
+  const hemi = isLat ? (sign >= 0 ? 'N' : 'S') : (sign >= 0 ? 'E' : 'W');
+  return `${d}° ${mFull.toFixed(5)}' ${hemi}`;
+}
+function koordFmtDD(dd) { return dd.toFixed(7) + '°'; }
+
+let koordLastLatLon = null; // [lat, lon] always in WGS84-equivalent, set after each conversion
+
+function koordPopulateSelects() {
+  const inD = document.getElementById('koordInDatum');
+  const outD = document.getElementById('koordOutDatum');
+  const inF = document.getElementById('koordInFormat');
+  if (!inD || !outD || !inF) return;
+  const prevInD = inD.value, prevOutD = outD.value, prevInF = inF.value;
+  inD.innerHTML = KOORD_DATUMS.map(d => `<option value="${d.id}">${tesvikT(d.tr, d.en)}</option>`).join('');
+  outD.innerHTML = KOORD_DATUMS.map(d => `<option value="${d.id}">${tesvikT(d.tr, d.en)}</option>`).join('');
+  inF.innerHTML = KOORD_FORMATS.map(f => `<option value="${f.id}">${tesvikT(f.tr, f.en)}</option>`).join('');
+  if (prevInD) inD.value = prevInD;
+  if (prevOutD) outD.value = prevOutD; else outD.value = 'WGS84';
+  if (prevInF) inF.value = prevInF;
+  const btn = document.getElementById('koordConvertBtn');
+  if (btn) btn.textContent = tesvikT('Dönüştür', 'Convert');
+}
+
+function koordBuildInputFields() {
+  const fmt = document.getElementById('koordInFormat').value;
+  const wrap = document.getElementById('koordInFields');
+  if (fmt === 'DD') {
+    wrap.innerHTML = `
+      <div class="calc-field"><label>${tesvikT('Enlem (Lat)','Latitude')}</label><input type="number" id="koordDDLat" step="any" placeholder="40.983"></div>
+      <div class="calc-field"><label>${tesvikT('Boylam (Lon)','Longitude')}</label><input type="number" id="koordDDLon" step="any" placeholder="27.512"></div>
+    `;
+  } else if (fmt === 'DMS') {
+    wrap.innerHTML = `
+      <div class="calc-field"><label>${tesvikT('Enlem Derece','Lat Degree')}</label><input type="number" id="koordDMSLatD" step="1" placeholder="40"></div>
+      <div class="calc-field"><label>${tesvikT('Enlem Dakika','Lat Minute')}</label><input type="number" id="koordDMSLatM" step="1" placeholder="58"></div>
+      <div class="calc-field"><label>${tesvikT('Enlem Saniye','Lat Second')}</label><input type="number" id="koordDMSLatS" step="any" placeholder="59.0"></div>
+      <div class="calc-field"><label>${tesvikT('Enlem Yarımküre','Lat Hemisphere')}</label><select id="koordDMSLatH"><option value="N">N</option><option value="S">S</option></select></div>
+      <div class="calc-field"><label>${tesvikT('Boylam Derece','Lon Degree')}</label><input type="number" id="koordDMSLonD" step="1" placeholder="27"></div>
+      <div class="calc-field"><label>${tesvikT('Boylam Dakika','Lon Minute')}</label><input type="number" id="koordDMSLonM" step="1" placeholder="30"></div>
+      <div class="calc-field"><label>${tesvikT('Boylam Saniye','Lon Second')}</label><input type="number" id="koordDMSLonS" step="any" placeholder="43.2"></div>
+      <div class="calc-field"><label>${tesvikT('Boylam Yarımküre','Lon Hemisphere')}</label><select id="koordDMSLonH"><option value="E">E</option><option value="W">W</option></select></div>
+    `;
+  } else if (fmt === 'DDM') {
+    wrap.innerHTML = `
+      <div class="calc-field"><label>${tesvikT('Enlem Derece','Lat Degree')}</label><input type="number" id="koordDDMLatD" step="1" placeholder="40"></div>
+      <div class="calc-field"><label>${tesvikT('Enlem Dakika','Lat Minute')}</label><input type="number" id="koordDDMLatM" step="any" placeholder="58.984"></div>
+      <div class="calc-field"><label>${tesvikT('Enlem Yarımküre','Lat Hemisphere')}</label><select id="koordDDMLatH"><option value="N">N</option><option value="S">S</option></select></div>
+      <div class="calc-field"><label>${tesvikT('Boylam Derece','Lon Degree')}</label><input type="number" id="koordDDMLonD" step="1" placeholder="27"></div>
+      <div class="calc-field"><label>${tesvikT('Boylam Dakika','Lon Minute')}</label><input type="number" id="koordDDMLonM" step="any" placeholder="30.720"></div>
+      <div class="calc-field"><label>${tesvikT('Boylam Yarımküre','Lon Hemisphere')}</label><select id="koordDDMLonH"><option value="E">E</option><option value="W">W</option></select></div>
+    `;
+  } else if (fmt === 'UTM') {
+    wrap.innerHTML = `
+      <div class="calc-field"><label>${tesvikT('Dilim (Zone)','Zone')}</label><input type="number" id="koordUTMZone" min="1" max="60" step="1" placeholder="35"></div>
+      <div class="calc-field"><label>${tesvikT('Yarımküre','Hemisphere')}</label><select id="koordUTMHemi"><option value="N">N</option><option value="S">S</option></select></div>
+      <div class="calc-field"><label>${tesvikT('Sağa (Easting)','Easting')}</label><input type="number" id="koordUTMEast" step="any" placeholder="500000"></div>
+      <div class="calc-field"><label>${tesvikT('Yukarı (Northing)','Northing')}</label><input type="number" id="koordUTMNorth" step="any" placeholder="4540000"></div>
+    `;
+  } else if (fmt === 'MGRS') {
+    wrap.innerHTML = `
+      <div class="calc-field"><label>${tesvikT('MGRS Kodu','MGRS Code')}</label><input type="text" id="koordMGRS" placeholder="35TPF1234567890"></div>
+      <div class="calc-note" data-lang="tr">MGRS her zaman WGS84 tabanlıdır.</div>
+      <div class="calc-note" data-lang="en">MGRS is always WGS84-based.</div>
+    `;
+  }
+}
+
+function koordShowError(msg) {
+  document.getElementById('koordResults').innerHTML = `<div class="koord-error">${msg}</div>`;
+}
+
+function koordConvert() {
+  const inDatum = document.getElementById('koordInDatum').value;
+  const fmt = document.getElementById('koordInFormat').value;
+  let lat, lon;
+  try {
+    if (fmt === 'DD') {
+      lat = parseFloat(document.getElementById('koordDDLat').value);
+      lon = parseFloat(document.getElementById('koordDDLon').value);
+    } else if (fmt === 'DMS') {
+      const latSign = document.getElementById('koordDMSLatH').value === 'S' ? -1 : 1;
+      const lonSign = document.getElementById('koordDMSLonH').value === 'W' ? -1 : 1;
+      lat = latSign * (parseFloat(document.getElementById('koordDMSLatD').value||0) + parseFloat(document.getElementById('koordDMSLatM').value||0)/60 + parseFloat(document.getElementById('koordDMSLatS').value||0)/3600);
+      lon = lonSign * (parseFloat(document.getElementById('koordDMSLonD').value||0) + parseFloat(document.getElementById('koordDMSLonM').value||0)/60 + parseFloat(document.getElementById('koordDMSLonS').value||0)/3600);
+    } else if (fmt === 'DDM') {
+      const latSign = document.getElementById('koordDDMLatH').value === 'S' ? -1 : 1;
+      const lonSign = document.getElementById('koordDDMLonH').value === 'W' ? -1 : 1;
+      lat = latSign * (parseFloat(document.getElementById('koordDDMLatD').value||0) + parseFloat(document.getElementById('koordDDMLatM').value||0)/60);
+      lon = lonSign * (parseFloat(document.getElementById('koordDDMLonD').value||0) + parseFloat(document.getElementById('koordDDMLonM').value||0)/60);
+    } else if (fmt === 'UTM') {
+      const zone = parseInt(document.getElementById('koordUTMZone').value);
+      const hemi = document.getElementById('koordUTMHemi').value;
+      const east = parseFloat(document.getElementById('koordUTMEast').value);
+      const north = parseFloat(document.getElementById('koordUTMNorth').value);
+      [lat, lon] = koordUtmToGeo(zone, hemi, east, north, inDatum);
+    } else if (fmt === 'MGRS') {
+      const code = document.getElementById('koordMGRS').value.trim();
+      const [lonV, latV] = mgrs.toPoint(code);
+      lat = latV; lon = lonV;
+      // MGRS is WGS84-based regardless of the selected input datum
+      koordLastLatLon = koordConvertDatum(lat, lon, 0, 'WGS84', 'WGS84');
+      koordRenderResults();
+      return;
+    }
+    if (isNaN(lat) || isNaN(lon)) { koordShowError(tesvikT('Lütfen geçerli değerler girin.','Please enter valid values.')); return; }
+    // normalize everything to WGS84-equivalent for internal storage
+    const [latW, lonW] = koordConvertDatum(lat, lon, 0, inDatum, 'WGS84');
+    koordLastLatLon = [latW, lonW];
+    koordRenderResults();
+  } catch (e) {
+    koordShowError(tesvikT('Dönüştürme hatası: ','Conversion error: ') + e.message);
+  }
+}
+
+function koordRenderResults() {
+  if (!koordLastLatLon) return;
+  const outDatum = document.getElementById('koordOutDatum').value;
+  const [latW, lonW] = koordLastLatLon;
+  const [lat, lon] = koordConvertDatum(latW, lonW, 0, 'WGS84', outDatum);
+
+  const utm = koordGeoToUtm(lat, lon, outDatum);
+  let mgrsStr = '—';
+  try { mgrsStr = mgrs.forward([lonW, latW]); } catch(e) {}
+
+  const rows = [
+    { label: tesvikT('Ondalık Derece (DD)','Decimal Degree (DD)'), value: `${koordFmtDD(lat)}, ${koordFmtDD(lon)}` },
+    { label: tesvikT('Derece, Dakika, Saniye (DMS)','Degree, Minute, Second (DMS)'), value: `${koordFmtDMS(lat,true)}  ${koordFmtDMS(lon,false)}` },
+    { label: tesvikT('Derece, Dakika (DDM)','Degree, Decimal Minute (DDM)'), value: `${koordFmtDDM(lat,true)}  ${koordFmtDDM(lon,false)}` },
+    { label: 'UTM', value: `${utm.zone}${utm.hemisphere}  E:${utm.easting.toFixed(2)}  N:${utm.northing.toFixed(2)}` },
+    { label: 'MGRS', value: mgrsStr },
+  ];
+
+  document.getElementById('koordResults').innerHTML = `
+    <div class="koord-result-table">
+      ${rows.map(r => `
+        <div class="koord-result-row">
+          <span class="label">${r.label}</span>
+          <span class="value">${r.value}</span>
+          <button class="copy-btn" onclick="koordCopy(this, '${String(r.value).replace(/'/g, "\\'")}')">${tesvikT('Kopyala','Copy')}</button>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function koordCopy(btn, text) {
+  navigator.clipboard.writeText(text).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = tesvikT('Kopyalandı ✓','Copied ✓');
+    setTimeout(() => { btn.textContent = orig; }, 1500);
+  }).catch(() => {});
+}
+
+function koordRefreshLang() {
+  if (!document.getElementById('koordInDatum')) return;
+  koordPopulateSelects();
+  koordBuildInputFields();
+  if (koordLastLatLon) koordRenderResults();
+}
+
+function koordInit() {
+  if (!document.getElementById('koordInDatum')) return;
+  koordPopulateSelects();
+  koordBuildInputFields();
+  document.getElementById('koordInFormat').addEventListener('change', koordBuildInputFields);
+  document.getElementById('koordOutDatum').addEventListener('change', koordRenderResults);
+}
+koordInit();
 
 // init
 setLang(currentLang);

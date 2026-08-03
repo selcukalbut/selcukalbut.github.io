@@ -554,6 +554,21 @@ nav {
   color: var(--text-muted);
   margin-top: 0.5rem;
 }
+.app-open-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 7px 14px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+}
+.app-open-btn:hover { background: var(--primary-dark); }
 .pub-empty-note {
   background: var(--card);
   border: 1px dashed var(--border);
@@ -767,8 +782,6 @@ html[lang="en"] [data-lang="en"] { display: revert; }
     <li><button onclick="showPage('about')"    id="nav-about"></button></li>
     <li><button onclick="showPage('academic')" id="nav-academic"></button></li>
     <li><button onclick="showPage('projects')" id="nav-projects"></button></li>
-    <li><button onclick="showPage('tesvik')"   id="nav-tesvik"></button></li>
-    <li><button onclick="showPage('koordinat')" id="nav-koordinat"></button></li>
     <li><button onclick="showPage('apps')"     id="nav-apps"></button></li>
     <li><button onclick="showPage('contact')"  id="nav-contact"></button></li>
   </ul>
@@ -786,8 +799,6 @@ html[lang="en"] [data-lang="en"] { display: revert; }
   <button onclick="showPage('about');toggleMenu()"    id="mob-about"></button>
   <button onclick="showPage('academic');toggleMenu()" id="mob-academic"></button>
   <button onclick="showPage('projects');toggleMenu()" id="mob-projects"></button>
-  <button onclick="showPage('tesvik');toggleMenu()"   id="mob-tesvik"></button>
-  <button onclick="showPage('koordinat');toggleMenu()" id="mob-koordinat"></button>
   <button onclick="showPage('apps');toggleMenu()"     id="mob-apps"></button>
   <button onclick="showPage('contact');toggleMenu()"  id="mob-contact"></button>
 </div>
@@ -1414,11 +1425,48 @@ html[lang="en"] [data-lang="en"] { display: revert; }
       <div class="page-header">
         <div class="eyebrow" data-lang="tr">Uygulamalar</div>
         <div class="eyebrow" data-lang="en">Apps</div>
-        <h1 data-lang="tr">iOS & Apple Uygulamaları</h1>
-        <h1 data-lang="en">iOS & Apple Apps</h1>
-        <p data-lang="tr">Swift ve Xcode ile geliştirdiğim, App Store'a hazırlanan uygulamalarım.</p>
-        <p data-lang="en">Apps I've built with Swift and Xcode, on their way to the App Store.</p>
+        <h1 data-lang="tr">Web & Mobil Uygulamalarım</h1>
+        <h1 data-lang="en">My Web & Mobile Apps</h1>
+        <p data-lang="tr">Tarayıcıda doğrudan çalışan web araçlarım ve Swift/Xcode ile geliştirdiğim iOS uygulamalarım.</p>
+        <p data-lang="en">Web tools that run directly in your browser, and iOS apps I've built with Swift and Xcode.</p>
       </div>
+
+      <div class="section-subtitle" data-lang="tr">Web Uygulamaları</div>
+      <div class="section-subtitle" data-lang="en">Web Apps</div>
+
+      <div class="apps-list">
+        <div class="app-card">
+          <div class="app-icon teal">🧮</div>
+          <div class="app-info">
+            <h3 data-lang="tr">Akademik Teşvik Hesaplama</h3>
+            <h3 data-lang="en">Academic Incentive Calculator</h3>
+            <p data-lang="tr">Akademik Teşvik Ödeneği Yönetmeliği'ne göre puanınızı ve tahmini aylık ödeneğinizi hesaplayın — Proje, Yayın, Atıf, Tebliğ ve diğer faaliyet türlerini ekleyerek.</p>
+            <p data-lang="en">Calculate your academic incentive score and estimated monthly payment under Turkey's Academic Incentive Regulation — add your projects, publications, citations and more.</p>
+            <button class="app-open-btn" onclick="showPage('tesvik')">
+              <span data-lang="tr">Aç →</span>
+              <span data-lang="en">Open →</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="app-card">
+          <div class="app-icon blue">🧭</div>
+          <div class="app-info">
+            <h3 data-lang="tr">Koordinat ve Datum Dönüştürme</h3>
+            <h3 data-lang="en">Coordinate &amp; Datum Converter</h3>
+            <p data-lang="tr">Ondalık Derece, DMS, DDM, UTM ve MGRS formatları; ED50, WGS84 ve ITRF96/TUREF datumları arasında dönüştürün. Sonucu tek tıkla kopyalayıp CBS yazılımınıza aktarın.</p>
+            <p data-lang="en">Convert between Decimal Degree, DMS, DDM, UTM and MGRS formats, and between ED50, WGS84 and ITRF96/TUREF datums. Copy the result straight into your GIS software.</p>
+            <button class="app-open-btn" onclick="showPage('koordinat')">
+              <span data-lang="tr">Aç →</span>
+              <span data-lang="en">Open →</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-divider"></div>
+      <div class="section-subtitle" data-lang="tr">Mobil Uygulamalar</div>
+      <div class="section-subtitle" data-lang="en">Mobile Apps</div>
 
       <div class="apps-list">
         <div class="app-card">

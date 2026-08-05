@@ -545,6 +545,33 @@ nav {
 .ptag.coming { background: #fff4e0; color: #b97a00; }
 .ptag.review { background: #e6f0ff; color: #2a5bd7; }
 .ptag.ready { background: #e6f9f0; color: #0f9d58; }
+.ptag.live { background: #e6f9f0; color: #0f9d58; }
+.app-shots { display: flex; gap: 10px; margin: 0.9rem 0; flex-wrap: wrap; }
+.app-shots img {
+  width: 120px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  cursor: zoom-in;
+}
+.app-store-row { display: flex; align-items: center; gap: 14px; margin-top: 0.9rem; flex-wrap: wrap; }
+.app-store-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 9px 16px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+.app-store-btn:hover { background: var(--primary-dark); text-decoration: none; }
+.app-qr-wrap { display: flex; align-items: center; gap: 8px; }
+.app-qr-wrap img { width: 60px; height: 60px; border-radius: 8px; border: 1px solid var(--border); }
+.app-qr-wrap span { font-size: 0.7rem; color: var(--text-muted); max-width: 90px; line-height: 1.3; }
 .apps-note {
   background: var(--card);
   border: 1px solid var(--border);
@@ -1472,14 +1499,29 @@ html[lang="en"] [data-lang="en"] { display: revert; }
         <div class="app-card">
           <div class="app-icon teal"><img src="assets/app-icons/sayac-ve-takvim.png" alt="Sayaç ve Takvim"></div>
           <div class="app-info">
-            <h3 data-lang="tr">Sayaç ve Takvim <span style="color:#999;font-weight:400;font-size:0.8rem">— İncelemede</span></h3>
-            <h3 data-lang="en">Sayaç ve Takvim <span style="color:#999;font-weight:400;font-size:0.8rem">— Waiting for Review</span></h3>
-            <p data-lang="tr">Hayatındaki önemli günleri geri sayımla takip et: seyahatler, sınavlar, doğum günleri ve daha fazlası. Kategorilere ayır, ilerlemeni tek bakışta gör.</p>
-            <p data-lang="en">Count down to what matters — trips, exams, birthdays and more. Organize your goals into categories and track your progress at a glance.</p>
+            <h3 data-lang="tr">Sayaç ve Takvim <span style="color:#999;font-weight:400;font-size:0.8rem">— App Store'da</span></h3>
+            <h3 data-lang="en">Sayaç ve Takvim <span style="color:#999;font-weight:400;font-size:0.8rem">— On the App Store</span></h3>
+            <p data-lang="tr">Hayatındaki önemli anları geri sayımla takip et: seyahatler, sınavlar, doğum günleri ve daha fazlası. Hedeflerini kategorilere ayır, her birine gün/saat/dakika olarak ne kadar kaldığını gör ve ilerlemeni tek bakışta takip et.</p>
+            <p data-lang="en">Count down to what matters — trips, exams, birthdays and more. Organize your goals into categories, see exactly how much time is left for each in days, hours and minutes, and track your progress at a glance.</p>
+            <div class="app-shots">
+              <a href="assets/screenshots/sayac-ve-takvim/01-home.png" target="_blank" rel="noopener"><img src="assets/screenshots/sayac-ve-takvim/01-home.png" alt="Sayaç ve Takvim - Ana Sayfa" loading="lazy"></a>
+              <a href="assets/screenshots/sayac-ve-takvim/02-detail.png" target="_blank" rel="noopener"><img src="assets/screenshots/sayac-ve-takvim/02-detail.png" alt="Sayaç ve Takvim - Detay" loading="lazy"></a>
+            </div>
             <div class="platform-tags">
               <span class="ptag">iPhone</span>
-              <span class="ptag review" data-lang="tr">İncelemede</span>
-              <span class="ptag review" data-lang="en">Waiting for Review</span>
+              <span class="ptag live" data-lang="tr">App Store'da Yayında</span>
+              <span class="ptag live" data-lang="en">Live on the App Store</span>
+            </div>
+            <div class="app-store-row">
+              <a class="app-store-btn" href="https://apps.apple.com/app/id6796331393" target="_blank" rel="noopener">
+                <span data-lang="tr">🍎 App Store'da Görüntüle</span>
+                <span data-lang="en">🍎 View on the App Store</span>
+              </a>
+              <div class="app-qr-wrap">
+                <img src="assets/qrcodes/sayac-ve-takvim.png" alt="QR code">
+                <span data-lang="tr">Telefonunuzla okutun</span>
+                <span data-lang="en">Scan with your phone</span>
+              </div>
             </div>
           </div>
         </div>

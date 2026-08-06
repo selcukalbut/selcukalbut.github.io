@@ -12,6 +12,11 @@
 <script src="https://cdn.jsdelivr.net/npm/mgrs@2.0.0/dist/mgrs.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+<!-- Private analytics (dashboard only visible to the site owner, no cookies) — per-page/per-tool
+     pageviews are fired manually from showPage() below, since this is a single-page app. -->
+<script data-goatcounter="https://selcukalbut.goatcounter.com/count"
+        data-goatcounter-settings='{"no_onload": true}'
+        async src="//gc.zgo.at/count.js"></script>
 <style>
 :root {
   --primary: #0d6e6e;
@@ -1973,8 +1978,8 @@ html[lang="en"] [data-lang="en"] { display: revert; }
 const PAGES = ['home','about','academic','projects','tesvik','koordinat','sulama','apps','contact'];
 
 const NAV_LABELS = {
-  tr: { home:'Ana Sayfa', about:'Hakkımda', academic:'Akademik Yayınlar',      projects:'Projeler', tesvik:'Akademik Teşvik Hesaplama',    koordinat:'Koordinat Dönüştürme', apps:'Uygulamalar', contact:'İletişim' },
-  en: { home:'Home',      about:'About',    academic:'Academic Publications',  projects:'Projects', tesvik:'Academic Incentive Calculator', koordinat:'Coordinate Converter', apps:'Apps',        contact:'Contact' }
+  tr: { home:'Ana Sayfa', about:'Hakkımda', academic:'Akademik Yayınlar',      projects:'Projeler', tesvik:'Akademik Teşvik Hesaplama',    koordinat:'Koordinat Dönüştürme', sulama:'Sulama Programlama / ETo', apps:'Uygulamalar', contact:'İletişim' },
+  en: { home:'Home',      about:'About',    academic:'Academic Publications',  projects:'Projects', tesvik:'Academic Incentive Calculator', koordinat:'Coordinate Converter', sulama:'Irrigation Scheduling / ETo', apps:'Apps',        contact:'Contact' }
 };
 
 let currentLang = localStorage.getItem('lang') || 'tr';
@@ -2000,6 +2005,19 @@ function updateNavLabels() {
     if (btn) btn.textContent = labels[p];
     if (mob) mob.textContent = labels[p];
   });
+}
+
+// Manual GoatCounter pageview per SPA "page" (incl. each web tool), since count.js's automatic
+// on-load hit is disabled above. Retries briefly in case count.js (async, or blocked by an
+// adblocker) hasn't attached window.goatcounter yet; gives up silently after ~2.5s either way.
+function sitePageview(id, attempt) {
+  attempt = attempt || 0;
+  if (window.goatcounter && window.goatcounter.count) {
+    const label = (NAV_LABELS[currentLang] && NAV_LABELS[currentLang][id]) || id;
+    window.goatcounter.count({ path: '/' + id, title: `Selçuk Albut — ${label}`, event: false });
+  } else if (attempt < 10) {
+    setTimeout(() => sitePageview(id, attempt + 1), 250);
+  }
 }
 
 function showPage(id) {
@@ -2033,6 +2051,7 @@ function showPage(id) {
   currentPage = id;
   location.hash = id === 'home' ? '' : id;
   window.scrollTo({ top: 0, behavior: 'smooth' });
+  sitePageview(id);
 }
 
 function toggleMenu() {

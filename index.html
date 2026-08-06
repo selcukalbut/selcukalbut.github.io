@@ -10,6 +10,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/proj4@2.9.0/dist/proj4.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/mgrs@2.0.0/dist/mgrs.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
 :root {
   --primary: #0d6e6e;
@@ -642,7 +644,7 @@ nav {
 }
 .calc-field { display: flex; flex-direction: column; gap: 0.35rem; min-width: 0; }
 .calc-field label { font-size: 0.78rem; font-weight: 700; color: var(--text-muted); }
-.calc-field select, .calc-field input[type=number] {
+.calc-field select, .calc-field input[type=number], .calc-field input[type=date] {
   width: 100%;
   font-family: inherit;
   font-size: 0.88rem;
@@ -722,6 +724,44 @@ nav {
   .koord-result-row { flex-direction: column; align-items: flex-start; }
   .koord-result-row .value { text-align: left; }
 }
+
+/* ══ SULAMA / ETo CALC ══ */
+.sulama-note-line { font-size: 0.8rem; color: var(--text-muted); margin: -0.5rem 0 1.25rem; }
+.sulama-table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 10px; }
+.sulama-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; white-space: nowrap; }
+.sulama-table th, .sulama-table td { padding: 7px 10px; text-align: right; border-bottom: 1px solid var(--border); }
+.sulama-table th:first-child, .sulama-table td:first-child { text-align: left; }
+.sulama-table th { background: var(--primary-light); color: var(--primary-dark); font-weight: 700; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.02em; }
+.sulama-table tr:last-child td { border-bottom: none; }
+.sulama-table tbody tr:hover { background: var(--bg); }
+
+.sulama-guide-head { display: flex; align-items: center; justify-content: space-between; cursor: pointer; gap: 10px; }
+.sulama-guide-toggle {
+  background: var(--primary-light); color: var(--primary); border-radius: 8px;
+  padding: 6px 12px; font-weight: 700; font-size: 0.78rem; white-space: nowrap; flex-shrink: 0;
+}
+.sulama-guide-body { margin-top: 1rem; font-size: 0.85rem; color: var(--text); }
+.sulama-guide-body p { margin-bottom: 0.6rem; line-height: 1.55; }
+.sulama-guide-list { margin: 0 0 0.6rem 1.2rem; display: flex; flex-direction: column; gap: 6px; }
+.sulama-guide-list li { line-height: 1.5; }
+.sulama-example {
+  background: var(--primary-light); border-radius: 10px; padding: 0.9rem 1.1rem;
+  font-size: 0.83rem; line-height: 1.6; margin-top: 0.75rem;
+}
+.sulama-guide.collapsed .sulama-guide-body { display: none; }
+
+.sulama-map { height: 340px; border-radius: 10px; margin-top: 1rem; border: 1px solid var(--border); }
+.sulama-map-hint { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem; }
+.sulama-basemap-switch { display: flex; flex-direction: column; gap: 3px; background: var(--card); border-radius: 8px; padding: 4px; box-shadow: 0 1px 6px rgba(0,0,0,0.3); }
+.sulama-basemap-btn { border: none; background: transparent; color: var(--text); font-family: inherit; font-size: 0.72rem; font-weight: 700; padding: 6px 10px; border-radius: 6px; cursor: pointer; text-align: left; white-space: nowrap; }
+.sulama-basemap-btn:hover { background: var(--primary-light); }
+.sulama-basemap-btn.active { background: var(--primary); color: #fff; }
+
+.sulama-stage-info { margin-bottom: 1rem; }
+.sulama-stage-info h4 { font-size: 0.82rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-muted); }
+.sulama-stage-table th, .sulama-stage-table td { text-align: center; }
+.sulama-stage-table th:first-child, .sulama-stage-table td:first-child { text-align: left; }
+.sulama-stage-table td.total { font-weight: 700; color: var(--primary-dark); }
 
 /* ══ CONTACT ══ */
 .contact-grid {
@@ -1463,13 +1503,13 @@ html[lang="en"] [data-lang="en"] { display: revert; }
 
       <div class="apps-list">
         <div class="app-card">
-          <div class="app-icon teal">🧮</div>
+          <div class="app-icon orange">💧</div>
           <div class="app-info">
-            <h3 data-lang="tr">Akademik Teşvik Hesaplama</h3>
-            <h3 data-lang="en">Academic Incentive Calculator</h3>
-            <p data-lang="tr">Akademik Teşvik Ödeneği Yönetmeliği'ne göre puanınızı ve tahmini aylık ödeneğinizi hesaplayın — Proje, Yayın, Atıf, Tebliğ ve diğer faaliyet türlerini ekleyerek.</p>
-            <p data-lang="en">Calculate your academic incentive score and estimated monthly payment under Turkey's Academic Incentive Regulation — add your projects, publications, citations and more.</p>
-            <button class="app-open-btn" onclick="showPage('tesvik')">
+            <h3 data-lang="tr">Sulama Programlama / ETo Hesaplayıcı</h3>
+            <h3 data-lang="en">Irrigation Scheduling / ETo Calculator</h3>
+            <p data-lang="tr">NASA POWER uydu/reanaliz iklim verisiyle FAO-56 Penman-Monteith yöntemine göre referans buharlaşma-terleme (ETo) ve bitki su tüketimini (ETc) hesaplayın; net sulama suyu ihtiyacını görün.</p>
+            <p data-lang="en">Calculate reference evapotranspiration (ETo) and crop water use (ETc) with the FAO-56 Penman-Monteith method, fed automatically by NASA POWER satellite/reanalysis climate data — get the net irrigation water requirement.</p>
+            <button class="app-open-btn" onclick="showPage('sulama')">
               <span data-lang="tr">Aç →</span>
               <span data-lang="en">Open →</span>
             </button>
@@ -1484,6 +1524,20 @@ html[lang="en"] [data-lang="en"] { display: revert; }
             <p data-lang="tr">Ondalık Derece, DMS, DDM, UTM ve MGRS formatları; ED50, WGS84 ve ITRF96/TUREF datumları arasında dönüştürün. Sonucu tek tıkla kopyalayıp CBS yazılımınıza aktarın.</p>
             <p data-lang="en">Convert between Decimal Degree, DMS, DDM, UTM and MGRS formats, and between ED50, WGS84 and ITRF96/TUREF datums. Copy the result straight into your GIS software.</p>
             <button class="app-open-btn" onclick="showPage('koordinat')">
+              <span data-lang="tr">Aç →</span>
+              <span data-lang="en">Open →</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="app-card">
+          <div class="app-icon teal">🧮</div>
+          <div class="app-info">
+            <h3 data-lang="tr">Akademik Teşvik Hesaplama</h3>
+            <h3 data-lang="en">Academic Incentive Calculator</h3>
+            <p data-lang="tr">Akademik Teşvik Ödeneği Yönetmeliği'ne göre puanınızı ve tahmini aylık ödeneğinizi hesaplayın — Proje, Yayın, Atıf, Tebliğ ve diğer faaliyet türlerini ekleyerek.</p>
+            <p data-lang="en">Calculate your academic incentive score and estimated monthly payment under Turkey's Academic Incentive Regulation — add your projects, publications, citations and more.</p>
+            <button class="app-open-btn" onclick="showPage('tesvik')">
               <span data-lang="tr">Aç →</span>
               <span data-lang="en">Open →</span>
             </button>
@@ -1693,6 +1747,150 @@ html[lang="en"] [data-lang="en"] { display: revert; }
     </div>
   </div>
 
+  <!-- ══ SULAMA / ETo ══ -->
+  <div class="page" id="page-sulama">
+    <div class="page-inner">
+      <div class="page-header">
+        <div class="eyebrow" data-lang="tr">Araç</div>
+        <div class="eyebrow" data-lang="en">Tool</div>
+        <h1 data-lang="tr">Sulama Programlama Hesaplayıcı</h1>
+        <h1 data-lang="en">Irrigation Scheduling Calculator</h1>
+        <p data-lang="tr">NASA POWER uydu/reanaliz iklim verisiyle FAO-56 Penman-Monteith yöntemine göre referans buharlaşma-terleme (ETo) ve seçtiğiniz bitkinin su tüketimini (ETc) hesaplayın. İklim verisi konumunuza göre otomatik çekilir; elle veri girmenize gerek yoktur.</p>
+        <p data-lang="en">Calculate reference evapotranspiration (ETo) and your crop's water use (ETc) with the FAO-56 Penman-Monteith method, fed by NASA POWER satellite/reanalysis climate data for your location — no manual weather entry needed.</p>
+      </div>
+
+      <div class="koord-card sulama-guide" id="sulamaGuideCard">
+        <div class="sulama-guide-head" onclick="sulamaToggleGuide()">
+          <h3 style="margin-bottom:0;">
+            <span data-lang="tr">📖 Kullanım Kılavuzu</span>
+            <span data-lang="en">📖 User Guide</span>
+          </h3>
+          <span class="sulama-guide-toggle" id="sulamaGuideToggleBtn"></span>
+        </div>
+        <div class="sulama-guide-body" id="sulamaGuideBody">
+          <p data-lang="tr">Bu araç, konu hakkında uzman olmasanız bile kullanılabilecek şekilde tasarlandı. Sulama planlaması yaparken bitkinin ne kadar su tükettiğini (ETc) ve mevcut yağışın bunu ne kadar karşıladığını görürsünüz; kalan fark <b>net sulama suyu ihtiyacınızdır</b>.</p>
+          <p data-lang="en">This tool is designed to be usable even if you're not an expert in the field. It shows how much water your crop consumes (ETc) and how much of that the recent rainfall already covers; the remaining gap is your <b>net irrigation water requirement</b>.</p>
+
+          <h4 data-lang="tr" style="margin:1rem 0 0.5rem; font-size:0.9rem;">Adım Adım Kullanım</h4>
+          <h4 data-lang="en" style="margin:1rem 0 0.5rem; font-size:0.9rem;">Step by Step</h4>
+          <ol class="sulama-guide-list" data-lang="tr">
+            <li><b>Konum:</b> Aşağıdaki haritada tarlanızın olduğu yere tıklayın (ya da işaretçiyi sürükleyin), veya "📍 Konumumu Kullan" butonuna basın. Enlem/boylamı GPS'ten biliyorsanız kutulara elle de yazabilirsiniz.</li>
+            <li><b>Bitki:</b> Yetiştirdiğiniz bitkiyi listeden seçin.</li>
+            <li><b>Ekim/Dikim/Vejetasyon Başlangıcı:</b> Tek yıllık bitkilerde ekim/dikim tarihini, çok yıllık bitkilerde (meyve ağacı, bağ, zeytin vb.) o yılki yaprak açımı/vejetasyon başlangıç tarihini girin — araç bu tarihten itibaren geçen güne göre bitkinin su ihtiyaç katsayısını (Kc) otomatik hesaplar.</li>
+            <li><b>Hesaplama Aralığı:</b> Hangi dönem için sulama suyu ihtiyacını görmek istediğinizi seçin (örn. son 10 gün). Varsayılan aralık zaten makul bir seçimdir.</li>
+            <li><b>Hesapla</b> butonuna basın ve aşağıdaki sonuç kartlarını ve günlük tabloyu inceleyin.</li>
+          </ol>
+          <ol class="sulama-guide-list" data-lang="en">
+            <li><b>Location:</b> Click your field's location on the map below (or drag the marker), or press "📍 Use My Location". If you know the exact GPS coordinates, you can also type them into the boxes.</li>
+            <li><b>Crop:</b> Pick the crop you're growing from the list.</li>
+            <li><b>Planting / Season-Start Date:</b> For annual crops enter the planting date; for perennial crops (fruit trees, vineyard, olive, etc.) enter that year's leaf-out/growing-season start date — the tool uses the days elapsed since then to automatically compute the crop's water-use coefficient (Kc).</li>
+            <li><b>Period:</b> Choose the period you want the irrigation requirement for (e.g. the last 10 days). The default range is already a reasonable choice.</li>
+            <li>Press <b>Calculate</b> and read the result cards and the daily table below.</li>
+          </ol>
+
+          <h4 data-lang="tr" style="margin:1rem 0 0.5rem; font-size:0.9rem;">Terimler</h4>
+          <h4 data-lang="en" style="margin:1rem 0 0.5rem; font-size:0.9rem;">Glossary</h4>
+          <ul class="sulama-guide-list" data-lang="tr">
+            <li><b>ETo (Referans Buharlaşma-Terleme):</b> İklim koşullarına göre, referans bir çim yüzeyinin bir günde ne kadar su buharlaştırıp terlediği (mm/gün). Sadece havaya bağlıdır, bitkiden bağımsızdır.</li>
+            <li><b>Kc (Bitki Katsayısı):</b> Seçtiğiniz bitkinin, gelişim evresine göre ETo'ya kıyasla ne kadar su tükettiğini gösteren çarpan (genelde 0.3 – 1.2 arası).</li>
+            <li><b>ETc (Bitki Su Tüketimi):</b> ETo × Kc — bitkinizin gerçek su tüketimi (mm).</li>
+            <li><b>mm (milimetre su):</b> 1 mm yağış/sulama = her metrekareye 1 litre su demektir.</li>
+            <li><b>m³/da (metreküp / dekar):</b> Çiftçilerin alışık olduğu birim. 1 mm = 1 m³/da (yani 1000 m²'lik bir tarlaya 1 mm su vermek 1 ton/m³ su gerektirir).</li>
+            <li><b>Etkin Yağış:</b> Yağan yağmurun toprakta tutulup bitki tarafından kullanılabilen kısmı (tamamı değil — bir kısmı yüzeyden akar veya derine sızar).</li>
+          </ul>
+          <ul class="sulama-guide-list" data-lang="en">
+            <li><b>ETo (Reference Evapotranspiration):</b> How much water a reference grass surface evaporates and transpires in a day, based purely on climate (mm/day). Independent of the crop.</li>
+            <li><b>Kc (Crop Coefficient):</b> A multiplier showing how much your selected crop uses relative to ETo at its current growth stage (typically 0.3–1.2).</li>
+            <li><b>ETc (Crop Water Use):</b> ETo × Kc — your crop's actual water consumption (mm).</li>
+            <li><b>mm (millimetres of water):</b> 1 mm of rain/irrigation = 1 litre of water per square metre.</li>
+            <li><b>m³/da (cubic metres per decare):</b> The unit farmers commonly use. 1 mm = 1 m³/da (applying 1 mm to a 1,000 m² field takes 1 m³ / 1 tonne of water).</li>
+            <li><b>Effective Rainfall:</b> The portion of rainfall actually retained in the soil and usable by the crop (not all of it — some runs off or drains too deep).</li>
+          </ul>
+
+          <div class="sulama-example">
+            <div data-lang="tr">
+              <b>Örnek:</b> Kırşehir yakınında (39.93°K, 34.88°D), 1 Mayıs'ta ekilen mısır için 24 Temmuz – 3 Ağustos aralığını hesaplarsanız: <b>Toplam ETo ≈ 45.8 mm</b>, bitki bu dönemde 1.15 Kc katsayısıyla (ortasezon) <b>ETc ≈ 52.7 mm</b> su tüketir. Dönemde ~13 mm yağış düşmüş ve bunun etkin kısmı (~13 mm) düşülünce <b>net sulama ihtiyacı ≈ 39.7 mm = dekar başına yaklaşık 40 m³ (40 ton) su</b> demektir — yani bu 10 günlük dönemde tarlanızın her dekarına ~40 ton su vermeniz gerekir.</div>
+            <div data-lang="en">
+              <b>Example:</b> Near Kırşehir (39.93°N, 34.88°E), for maize planted on May 1, calculating the July 24 – August 3 period gives: <b>Total ETo ≈ 45.8 mm</b>, and at its mid-season Kc of 1.15 the crop uses <b>ETc ≈ 52.7 mm</b>. About 13 mm of rain fell in that period, and once its effective portion (~13 mm) is subtracted, the <b>net irrigation requirement ≈ 39.7 mm = roughly 40 m³ (40 tonnes) of water per decare</b> — meaning you'd need to apply about 40 tonnes of water per decare of your field over this 10-day period.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="koord-card">
+        <h3 data-lang="tr">1. Konum</h3>
+        <h3 data-lang="en">1. Location</h3>
+        <div class="koord-grid">
+          <div class="calc-field">
+            <label data-lang="tr">Enlem (Lat)</label>
+            <label data-lang="en">Latitude</label>
+            <input type="number" id="sulamaLat" step="any" placeholder="39.930" value="39.930">
+          </div>
+          <div class="calc-field">
+            <label data-lang="tr">Boylam (Lon)</label>
+            <label data-lang="en">Longitude</label>
+            <input type="number" id="sulamaLon" step="any" placeholder="34.880" value="34.880">
+          </div>
+        </div>
+        <div class="koord-actions">
+          <button class="calc-add-btn" id="sulamaGeoBtn" onclick="sulamaUseGeolocation()">
+            <span data-lang="tr">📍 Konumumu Kullan</span>
+            <span data-lang="en">📍 Use My Location</span>
+          </button>
+        </div>
+        <div id="sulamaMap" class="sulama-map"></div>
+        <p class="sulama-map-hint" data-lang="tr">Haritaya tıklayarak veya işaretçiyi sürükleyerek konum seçebilirsiniz.</p>
+        <p class="sulama-map-hint" data-lang="en">Click the map or drag the marker to pick a location.</p>
+      </div>
+
+      <div class="koord-card">
+        <h3 data-lang="tr">2. Bitki ve Tarihler</h3>
+        <h3 data-lang="en">2. Crop &amp; Dates</h3>
+        <div class="koord-grid">
+          <div class="calc-field">
+            <label data-lang="tr">Bitki</label>
+            <label data-lang="en">Crop</label>
+            <select id="sulamaCrop"></select>
+          </div>
+          <div class="calc-field">
+            <label data-lang="tr">Ekim/Dikim/Vejetasyon Başlangıcı</label>
+            <label data-lang="en">Planting / Season-Start Date</label>
+            <input type="date" id="sulamaPlantDate">
+            <span class="calc-hint" data-lang="tr">Çok yıllık bitkilerde (meyve, bağ, zeytin vb.) yaprak açımı/vejetasyonun başladığı tarihi girin.</span>
+            <span class="calc-hint" data-lang="en">For perennial crops (fruit trees, vineyard, olive, etc.) enter the leaf-out/growing-season start date.</span>
+          </div>
+          <div class="calc-field">
+            <label data-lang="tr">Hesaplama Başlangıcı</label>
+            <label data-lang="en">Period Start</label>
+            <input type="date" id="sulamaStart">
+          </div>
+          <div class="calc-field">
+            <label data-lang="tr">Hesaplama Bitişi</label>
+            <label data-lang="en">Period End</label>
+            <input type="date" id="sulamaEnd">
+          </div>
+        </div>
+        <div id="sulamaStageInfo"></div>
+        <div class="calc-field" style="flex-direction:row; align-items:center; gap:0.5rem; margin-bottom:1rem;">
+          <input type="checkbox" id="sulamaEffRain" checked style="width:auto;">
+          <label for="sulamaEffRain" style="margin:0;" data-lang="tr">Etkin yağışı düş (net sulama suyu ihtiyacını göster)</label>
+          <label for="sulamaEffRain" style="margin:0;" data-lang="en">Subtract effective rainfall (show net irrigation requirement)</label>
+        </div>
+        <div class="koord-actions">
+          <button class="calc-add-btn" id="sulamaCalcBtn" onclick="sulamaCalculate()">
+            <span data-lang="tr">Hesapla</span>
+            <span data-lang="en">Calculate</span>
+          </button>
+        </div>
+        <div id="sulamaResults"></div>
+      </div>
+
+      <div class="apps-note">
+        <span data-lang="tr">ℹ️ İklim verisi NASA POWER uydu/reanaliz kaynağından alınır ve yerel istasyon ölçümlerinden sapabilir; son birkaç günün verisi henüz yayınlanmamış olabilir. Bitki gelişim evresi uzunlukları ve Kc değerleri FAO-56'nın genel tipik değerleridir (iklim/bölge/çeşide göre değişebilir); meyve/bahçe bitkileri ve FAO-56'da yer almayan bazı bitkiler (çay, fındık, Antep fıstığı, nar gibi) için bölgesel kaynaklara dayanan temsili değerler kullanılmıştır ve daha az kesindir. Yonca gibi sezon içinde birden fazla kez biçilen yem bitkileri bu modele uymadığından kapsam dışıdır. Etkin yağış, aylık ampirik SCS formülünün seçilen döneme uyarlanmış basitleştirilmiş halidir. Bu araç bilgilendirme amaçlıdır; sulama zamanlaması kararını saha gözlemi ve/veya toprak nem sensörü ile doğrulayın.</span>
+        <span data-lang="en">ℹ️ Climate data comes from NASA POWER satellite/reanalysis products and can diverge from local station measurements; the last few days may not be published yet. Crop growth-stage lengths and Kc values use FAO-56's generic typical values (they vary by climate/region/variety); orchard crops and a few crops not covered by FAO-56 itself (tea, hazelnut, pistachio, pomegranate) use representative figures from regional sources and are less precise. Multi-cut forage crops like alfalfa don't fit this single-cycle model and are out of scope. The effective-rainfall figure adapts the monthly empirical SCS formula to the selected period as a simplification. This tool is informational only — confirm irrigation timing with field observation and/or a soil-moisture sensor.</span>
+      </div>
+    </div>
+  </div>
+
   <!-- ══ CONTACT ══ -->
   <div class="page" id="page-contact">
     <div class="page-inner">
@@ -1772,7 +1970,7 @@ html[lang="en"] [data-lang="en"] { display: revert; }
 </footer>
 
 <script>
-const PAGES = ['home','about','academic','projects','tesvik','koordinat','apps','contact'];
+const PAGES = ['home','about','academic','projects','tesvik','koordinat','sulama','apps','contact'];
 
 const NAV_LABELS = {
   tr: { home:'Ana Sayfa', about:'Hakkımda', academic:'Akademik Yayınlar',      projects:'Projeler', tesvik:'Akademik Teşvik Hesaplama',    koordinat:'Koordinat Dönüştürme', apps:'Uygulamalar', contact:'İletişim' },
@@ -1791,6 +1989,7 @@ function setLang(lang) {
   localStorage.setItem('lang', lang);
   if (typeof tesvikRefreshLang === 'function') tesvikRefreshLang();
   if (typeof koordRefreshLang === 'function') koordRefreshLang();
+  if (typeof sulamaRefreshLang === 'function') sulamaRefreshLang();
 }
 
 function updateNavLabels() {
@@ -1828,6 +2027,8 @@ function showPage(id) {
       page.style.transform = 'translateY(0)';
       page.classList.add('active');
     });
+    // Leaflet needs a visible, sized container: (re)init/resize the map only once the page is actually shown.
+    if (id === 'sulama' && typeof sulamaOnShow === 'function') sulamaOnShow();
   }
   currentPage = id;
   location.hash = id === 'home' ? '' : id;
@@ -2428,6 +2629,490 @@ function koordInit() {
   document.getElementById('koordOutDatum').addEventListener('change', koordRenderResults);
 }
 koordInit();
+
+/* ══ SULAMA / ETo CALC ══ */
+// FAO-56 Table 11/12 typical values (and, where a crop isn't in FAO-56 itself — tea, hazelnut,
+// pistachio, pomegranate — widely-cited regional extension figures) covering the field crops,
+// vegetables and perennial/orchard crops grown across Turkey's main agricultural regions, so
+// users anywhere in the country can find something close to what they actually grow.
+// For perennial crops the "planting date" field is reused as the growing-season start date
+// (leaf-out/bud-break); Kc_end is kept close to Kc_mid for evergreens so the curve stays
+// realistic even once it runs past the modelled season length. Multi-cut forage crops (alfalfa,
+// pasture) don't fit this single-cycle curve and are intentionally left out — see the guide note.
+const SULAMA_CROPS = [
+  // Tahıllar / Cereals
+  { id:'wheatWinter', group:{tr:'Tahıllar',en:'Cereals'}, tr:'Kış Buğdayı',      en:'Winter Wheat',    kcIni:0.4,  kcMid:1.15, kcEnd:0.4,  Lini:20, Ldev:60, Lmid:70, Llate:30 },
+  { id:'wheatSpring', group:{tr:'Tahıllar',en:'Cereals'}, tr:'Yazlık Buğday',    en:'Spring Wheat',    kcIni:0.3,  kcMid:1.15, kcEnd:0.25, Lini:20, Ldev:25, Lmid:60, Llate:30 },
+  { id:'barley',      group:{tr:'Tahıllar',en:'Cereals'}, tr:'Arpa',             en:'Barley',          kcIni:0.3,  kcMid:1.15, kcEnd:0.25, Lini:20, Ldev:60, Lmid:60, Llate:20 },
+  { id:'oat',         group:{tr:'Tahıllar',en:'Cereals'}, tr:'Yulaf',            en:'Oat',             kcIni:0.3,  kcMid:1.15, kcEnd:0.25, Lini:20, Ldev:30, Lmid:60, Llate:40 },
+  { id:'rye',         group:{tr:'Tahıllar',en:'Cereals'}, tr:'Çavdar',           en:'Rye',             kcIni:0.3,  kcMid:1.15, kcEnd:0.3,  Lini:20, Ldev:30, Lmid:60, Llate:30 },
+  { id:'maize',       group:{tr:'Tahıllar',en:'Cereals'}, tr:'Mısır (Dane)',     en:'Maize (Grain)',   kcIni:0.3,  kcMid:1.20, kcEnd:0.60, Lini:20, Ldev:35, Lmid:40, Llate:30 },
+  { id:'maizeSilage', group:{tr:'Tahıllar',en:'Cereals'}, tr:'Mısır (Silajlık)', en:'Maize (Silage)',  kcIni:0.3,  kcMid:1.20, kcEnd:1.05, Lini:20, Ldev:30, Lmid:25, Llate:10 },
+  { id:'rice',        group:{tr:'Tahıllar',en:'Cereals'}, tr:'Çeltik (Pirinç)',  en:'Rice (Paddy)',    kcIni:1.05, kcMid:1.20, kcEnd:0.90, Lini:30, Ldev:30, Lmid:60, Llate:30 },
+  { id:'sorghum',     group:{tr:'Tahıllar',en:'Cereals'}, tr:'Sorgum',           en:'Sorghum',         kcIni:0.3,  kcMid:1.10, kcEnd:0.55, Lini:20, Ldev:35, Lmid:40, Llate:30 },
+
+  // Baklagiller / Legumes
+  { id:'chickpea',    group:{tr:'Baklagiller',en:'Legumes'}, tr:'Nohut',            en:'Chickpea',        kcIni:0.4, kcMid:1.0,  kcEnd:0.35, Lini:20, Ldev:30, Lmid:40, Llate:15 },
+  { id:'lentil',      group:{tr:'Baklagiller',en:'Legumes'}, tr:'Mercimek',         en:'Lentil',          kcIni:0.4, kcMid:1.10, kcEnd:0.3,  Lini:20, Ldev:25, Lmid:35, Llate:15 },
+  { id:'beandry',     group:{tr:'Baklagiller',en:'Legumes'}, tr:'Kuru Fasulye',     en:'Dry Bean',        kcIni:0.4, kcMid:1.15, kcEnd:0.35, Lini:15, Ldev:25, Lmid:35, Llate:20 },
+  { id:'soybean',     group:{tr:'Baklagiller',en:'Legumes'}, tr:'Soya Fasulyesi',   en:'Soybean',         kcIni:0.4, kcMid:1.15, kcEnd:0.5,  Lini:20, Ldev:25, Lmid:75, Llate:30 },
+  { id:'peanut',      group:{tr:'Baklagiller',en:'Legumes'}, tr:'Yerfıstığı',       en:'Peanut',          kcIni:0.4, kcMid:1.15, kcEnd:0.60, Lini:25, Ldev:35, Lmid:45, Llate:25 },
+  { id:'peaFresh',    group:{tr:'Baklagiller',en:'Legumes'}, tr:'Bezelye (Taze)',   en:'Pea (Fresh)',     kcIni:0.5, kcMid:1.15, kcEnd:1.05, Lini:15, Ldev:25, Lmid:35, Llate:15 },
+
+  // Endüstri ve Yağlı Tohum Bitkileri / Industrial & Oil Crops
+  { id:'sunflower',   group:{tr:'Endüstri ve Yağlı Tohum Bitkileri',en:'Industrial & Oil Crops'}, tr:'Ayçiçeği',      en:'Sunflower',    kcIni:0.35, kcMid:1.15, kcEnd:0.35, Lini:25, Ldev:35, Lmid:45, Llate:25 },
+  { id:'cotton',      group:{tr:'Endüstri ve Yağlı Tohum Bitkileri',en:'Industrial & Oil Crops'}, tr:'Pamuk',         en:'Cotton',       kcIni:0.35, kcMid:1.18, kcEnd:0.60, Lini:30, Ldev:50, Lmid:55, Llate:45 },
+  { id:'sugarbeet',   group:{tr:'Endüstri ve Yağlı Tohum Bitkileri',en:'Industrial & Oil Crops'}, tr:'Şeker Pancarı', en:'Sugar Beet',   kcIni:0.35, kcMid:1.20, kcEnd:0.70, Lini:25, Ldev:35, Lmid:50, Llate:50 },
+  { id:'canola',      group:{tr:'Endüstri ve Yağlı Tohum Bitkileri',en:'Industrial & Oil Crops'}, tr:'Kanola (Kolza)',en:'Canola',       kcIni:0.35, kcMid:1.15, kcEnd:0.35, Lini:25, Ldev:35, Lmid:50, Llate:25 },
+  { id:'sesame',      group:{tr:'Endüstri ve Yağlı Tohum Bitkileri',en:'Industrial & Oil Crops'}, tr:'Susam',         en:'Sesame',       kcIni:0.35, kcMid:1.05, kcEnd:0.25, Lini:20, Ldev:30, Lmid:40, Llate:20 },
+  { id:'safflower',   group:{tr:'Endüstri ve Yağlı Tohum Bitkileri',en:'Industrial & Oil Crops'}, tr:'Aspir',         en:'Safflower',    kcIni:0.35, kcMid:1.15, kcEnd:0.25, Lini:20, Ldev:35, Lmid:45, Llate:25 },
+  { id:'tobacco',     group:{tr:'Endüstri ve Yağlı Tohum Bitkileri',en:'Industrial & Oil Crops'}, tr:'Tütün',         en:'Tobacco',      kcIni:0.35, kcMid:1.15, kcEnd:0.8,  Lini:20, Ldev:30, Lmid:60, Llate:10 },
+
+  // Sebzeler / Vegetables
+  { id:'tomato',      group:{tr:'Sebzeler',en:'Vegetables'}, tr:'Domates',          en:'Tomato',        kcIni:0.6, kcMid:1.15, kcEnd:0.80, Lini:30, Ldev:40, Lmid:40, Llate:25 },
+  { id:'potato',      group:{tr:'Sebzeler',en:'Vegetables'}, tr:'Patates',          en:'Potato',        kcIni:0.5, kcMid:1.15, kcEnd:0.75, Lini:25, Ldev:30, Lmid:45, Llate:30 },
+  { id:'onion',       group:{tr:'Sebzeler',en:'Vegetables'}, tr:'Soğan (Kuru)',     en:'Onion (Dry)',   kcIni:0.7, kcMid:1.05, kcEnd:0.75, Lini:15, Ldev:25, Lmid:70, Llate:40 },
+  { id:'garlic',      group:{tr:'Sebzeler',en:'Vegetables'}, tr:'Sarımsak',         en:'Garlic',        kcIni:0.7, kcMid:1.0,  kcEnd:0.70, Lini:15, Ldev:25, Lmid:70, Llate:40 },
+  { id:'pepper',      group:{tr:'Sebzeler',en:'Vegetables'}, tr:'Biber',            en:'Pepper',        kcIni:0.6, kcMid:1.05, kcEnd:0.90, Lini:25, Ldev:35, Lmid:40, Llate:20 },
+  { id:'eggplant',    group:{tr:'Sebzeler',en:'Vegetables'}, tr:'Patlıcan',         en:'Eggplant',      kcIni:0.6, kcMid:1.05, kcEnd:0.90, Lini:30, Ldev:40, Lmid:40, Llate:25 },
+  { id:'cucumber',    group:{tr:'Sebzeler',en:'Vegetables'}, tr:'Salatalık (Hıyar)',en:'Cucumber',      kcIni:0.6, kcMid:1.0,  kcEnd:0.75, Lini:20, Ldev:30, Lmid:40, Llate:15 },
+  { id:'watermelon',  group:{tr:'Sebzeler',en:'Vegetables'}, tr:'Karpuz',           en:'Watermelon',    kcIni:0.4, kcMid:1.0,  kcEnd:0.75, Lini:20, Ldev:30, Lmid:30, Llate:30 },
+  { id:'melon',       group:{tr:'Sebzeler',en:'Vegetables'}, tr:'Kavun',            en:'Melon',         kcIni:0.5, kcMid:1.05, kcEnd:0.75, Lini:25, Ldev:35, Lmid:40, Llate:20 },
+  { id:'squash',      group:{tr:'Sebzeler',en:'Vegetables'}, tr:'Kabak',            en:'Squash / Zucchini', kcIni:0.5, kcMid:0.95, kcEnd:0.75, Lini:20, Ldev:30, Lmid:25, Llate:15 },
+  { id:'cabbage',     group:{tr:'Sebzeler',en:'Vegetables'}, tr:'Lahana',           en:'Cabbage',       kcIni:0.7, kcMid:1.05, kcEnd:0.95, Lini:20, Ldev:25, Lmid:60, Llate:15 },
+  { id:'lettuce',     group:{tr:'Sebzeler',en:'Vegetables'}, tr:'Marul',            en:'Lettuce',       kcIni:0.7, kcMid:1.0,  kcEnd:0.95, Lini:20, Ldev:30, Lmid:15, Llate:10 },
+  { id:'carrot',      group:{tr:'Sebzeler',en:'Vegetables'}, tr:'Havuç',            en:'Carrot',        kcIni:0.7, kcMid:1.05, kcEnd:0.95, Lini:20, Ldev:30, Lmid:50, Llate:20 },
+  { id:'spinach',     group:{tr:'Sebzeler',en:'Vegetables'}, tr:'Ispanak',          en:'Spinach',       kcIni:0.7, kcMid:1.0,  kcEnd:0.95, Lini:20, Ldev:20, Lmid:15, Llate:5  },
+  { id:'okra',        group:{tr:'Sebzeler',en:'Vegetables'}, tr:'Bamya',            en:'Okra',          kcIni:0.5, kcMid:1.05, kcEnd:0.60, Lini:20, Ldev:30, Lmid:30, Llate:10 },
+
+  // Meyve / Bahçe Bitkileri / Orchard & Tree Crops (start date = leaf-out / growing-season start)
+  { id:'olive',       group:{tr:'Meyve / Bahçe Bitkileri',en:'Orchard & Tree Crops'}, tr:'Zeytin',            en:'Olive',            kcIni:0.65, kcMid:0.70, kcEnd:0.65, Lini:30, Ldev:60,  Lmid:150, Llate:60 },
+  { id:'citrus',      group:{tr:'Meyve / Bahçe Bitkileri',en:'Orchard & Tree Crops'}, tr:'Turunçgil (Portakal/Mandalina)', en:'Citrus (Orange/Mandarin)', kcIni:0.70, kcMid:0.68, kcEnd:0.70, Lini:30, Ldev:60, Lmid:180, Llate:60 },
+  { id:'apple',       group:{tr:'Meyve / Bahçe Bitkileri',en:'Orchard & Tree Crops'}, tr:'Elma',              en:'Apple',            kcIni:0.45, kcMid:1.0,  kcEnd:0.75, Lini:20, Ldev:70,  Lmid:90,  Llate:20 },
+  { id:'pear',        group:{tr:'Meyve / Bahçe Bitkileri',en:'Orchard & Tree Crops'}, tr:'Armut',             en:'Pear',             kcIni:0.45, kcMid:0.95, kcEnd:0.75, Lini:20, Ldev:70,  Lmid:90,  Llate:20 },
+  { id:'apricot',     group:{tr:'Meyve / Bahçe Bitkileri',en:'Orchard & Tree Crops'}, tr:'Kayısı',            en:'Apricot',          kcIni:0.45, kcMid:0.85, kcEnd:0.65, Lini:20, Ldev:60,  Lmid:75,  Llate:30 },
+  { id:'peach',       group:{tr:'Meyve / Bahçe Bitkileri',en:'Orchard & Tree Crops'}, tr:'Şeftali',           en:'Peach',            kcIni:0.45, kcMid:0.90, kcEnd:0.65, Lini:20, Ldev:60,  Lmid:90,  Llate:40 },
+  { id:'cherry',      group:{tr:'Meyve / Bahçe Bitkileri',en:'Orchard & Tree Crops'}, tr:'Kiraz',             en:'Cherry',           kcIni:0.45, kcMid:0.90, kcEnd:0.65, Lini:20, Ldev:50,  Lmid:50,  Llate:25 },
+  { id:'plum',        group:{tr:'Meyve / Bahçe Bitkileri',en:'Orchard & Tree Crops'}, tr:'Erik',              en:'Plum',             kcIni:0.45, kcMid:0.85, kcEnd:0.65, Lini:20, Ldev:60,  Lmid:75,  Llate:30 },
+  { id:'walnut',      group:{tr:'Meyve / Bahçe Bitkileri',en:'Orchard & Tree Crops'}, tr:'Ceviz',             en:'Walnut',           kcIni:0.50, kcMid:1.10, kcEnd:0.65, Lini:20, Ldev:60,  Lmid:90,  Llate:30 },
+  { id:'almond',      group:{tr:'Meyve / Bahçe Bitkileri',en:'Orchard & Tree Crops'}, tr:'Badem',             en:'Almond',           kcIni:0.40, kcMid:0.90, kcEnd:0.65, Lini:20, Ldev:60,  Lmid:90,  Llate:30 },
+  { id:'pistachio',   group:{tr:'Meyve / Bahçe Bitkileri',en:'Orchard & Tree Crops'}, tr:'Antep Fıstığı',     en:'Pistachio',        kcIni:0.40, kcMid:1.10, kcEnd:0.40, Lini:30, Ldev:50,  Lmid:100, Llate:30 },
+  { id:'pomegranate', group:{tr:'Meyve / Bahçe Bitkileri',en:'Orchard & Tree Crops'}, tr:'Nar',               en:'Pomegranate',      kcIni:0.50, kcMid:1.0,  kcEnd:0.60, Lini:30, Ldev:50,  Lmid:90,  Llate:30 },
+  { id:'fig',         group:{tr:'Meyve / Bahçe Bitkileri',en:'Orchard & Tree Crops'}, tr:'İncir',             en:'Fig',              kcIni:0.50, kcMid:0.85, kcEnd:0.60, Lini:30, Ldev:40,  Lmid:90,  Llate:30 },
+  { id:'hazelnut',    group:{tr:'Meyve / Bahçe Bitkileri',en:'Orchard & Tree Crops'}, tr:'Fındık',            en:'Hazelnut',         kcIni:0.50, kcMid:0.95, kcEnd:0.70, Lini:30, Ldev:60,  Lmid:150, Llate:60 },
+  { id:'tea',         group:{tr:'Meyve / Bahçe Bitkileri',en:'Orchard & Tree Crops'}, tr:'Çay',               en:'Tea',              kcIni:0.90, kcMid:1.0,  kcEnd:0.95, Lini:30, Ldev:40,  Lmid:220, Llate:50 },
+  { id:'banana',      group:{tr:'Meyve / Bahçe Bitkileri',en:'Orchard & Tree Crops'}, tr:'Muz',               en:'Banana',           kcIni:0.50, kcMid:1.10, kcEnd:1.0,  Lini:60, Ldev:90,  Lmid:120, Llate:60 },
+
+  // Bağ / Vineyard
+  { id:'grape',       group:{tr:'Bağ',en:'Vineyard'}, tr:'Bağ (Üzüm)', en:'Grape (Vineyard)', kcIni:0.30, kcMid:0.70, kcEnd:0.45, Lini:20, Ldev:50, Lmid:75, Llate:60 },
+];
+
+// Piecewise-linear FAO-56 Kc curve: constant Kc_ini, ramp to Kc_mid, constant Kc_mid, ramp to Kc_end.
+function sulamaKc(daysSincePlanting, crop) {
+  const { kcIni, kcMid, kcEnd, Lini, Ldev, Lmid, Llate } = crop;
+  const d = daysSincePlanting;
+  if (d <= Lini) return kcIni;
+  if (d <= Lini + Ldev) return kcIni + (kcMid - kcIni) * (d - Lini) / Ldev;
+  if (d <= Lini + Ldev + Lmid) return kcMid;
+  if (d <= Lini + Ldev + Lmid + Llate) return kcMid + (kcEnd - kcMid) * (d - Lini - Ldev - Lmid) / Llate;
+  return kcEnd;
+}
+
+function sulamaFmtDate(d) {
+  return `${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}.${d.getFullYear()}`;
+}
+
+// Shows the selected crop's FAO-56 development-stage lengths (Table 11 style: Init./Dev./Mid/Late/Total),
+// and — once a start date is entered — the actual calendar range each stage falls in.
+function sulamaRenderStageInfo() {
+  const el = document.getElementById('sulamaStageInfo');
+  if (!el) return;
+  const crop = SULAMA_CROPS.find(c => c.id === document.getElementById('sulamaCrop').value);
+  if (!crop) { el.innerHTML = ''; return; }
+  const { Lini, Ldev, Lmid, Llate } = crop;
+  const total = Lini + Ldev + Lmid + Llate;
+  const plantDateStr = document.getElementById('sulamaPlantDate').value;
+  const plantDate = plantDateStr ? new Date(plantDateStr + 'T00:00:00') : null;
+
+  const stages = [
+    { label: tesvikT('Başlangıç', 'Initial'), days: Lini },
+    { label: tesvikT('Gelişme', 'Development'), days: Ldev },
+    { label: tesvikT('Ortasezon', 'Mid-season'), days: Lmid },
+    { label: tesvikT('Sonsezon', 'Late season'), days: Llate },
+  ];
+
+  let cursor = plantDate ? new Date(plantDate) : null;
+  const rangeCells = stages.map(s => {
+    if (!cursor) return '<td>—</td>';
+    const stageStart = new Date(cursor);
+    const stageEnd = new Date(cursor);
+    stageEnd.setDate(stageEnd.getDate() + s.days - 1);
+    cursor = new Date(stageEnd);
+    cursor.setDate(cursor.getDate() + 1);
+    return `<td>${sulamaFmtDate(stageStart)} – ${sulamaFmtDate(stageEnd)}</td>`;
+  });
+
+  el.innerHTML = `
+    <h4>${tesvikT('Seçilen Bitkinin Gelişim Evreleri (FAO-56)', "Selected Crop's Development Stages (FAO-56)")} — ${tesvikT(crop.tr, crop.en)}</h4>
+    <div class="sulama-table-wrap">
+      <table class="sulama-table sulama-stage-table">
+        <thead><tr>
+          <th></th>${stages.map(s => `<th>${s.label}</th>`).join('')}<th>${tesvikT('Toplam','Total')}</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td>${tesvikT('Süre (gün)','Length (days)')}</td>
+            ${stages.map(s => `<td>${s.days}</td>`).join('')}
+            <td class="total">${total}</td>
+          </tr>
+          <tr>
+            <td>${tesvikT('Tarih Aralığı','Date Range')}</td>
+            ${rangeCells.join('')}
+            <td>—</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    ${plantDate ? '' : `<div class="sulama-map-hint">${tesvikT('Tarih aralıklarını görmek için ekim/dikim/vejetasyon başlangıç tarihini girin.', 'Enter the planting/season-start date above to see the calendar date range for each stage.')}</div>`}
+  `;
+}
+
+function sulamaDOY(date) {
+  const start = new Date(date.getFullYear(), 0, 0);
+  return Math.floor((date - start) / 86400000);
+}
+
+// FAO-56 Chapter 3 daily reference evapotranspiration (ET0), full data set variant.
+function sulamaEto(tmax, tmin, rhMean, wind, rs, latDeg, elevation, doy) {
+  const tmean = (tmax + tmin) / 2;
+  const esTmax = 0.6108 * Math.exp(17.27 * tmax / (tmax + 237.3));
+  const esTmin = 0.6108 * Math.exp(17.27 * tmin / (tmin + 237.3));
+  const es = (esTmax + esTmin) / 2;
+  const ea = es * (rhMean / 100);
+  const delta = 4098 * (0.6108 * Math.exp(17.27 * tmean / (tmean + 237.3))) / Math.pow(tmean + 237.3, 2);
+  const pressure = 101.3 * Math.pow((293 - 0.0065 * elevation) / 293, 5.26);
+  const gamma = 0.000665 * pressure;
+
+  const latRad = latDeg * Math.PI / 180;
+  const dr = 1 + 0.033 * Math.cos(2 * Math.PI / 365 * doy);
+  const decl = 0.409 * Math.sin(2 * Math.PI / 365 * doy - 1.39);
+  const sunsetAngleArg = Math.max(-1, Math.min(1, -Math.tan(latRad) * Math.tan(decl)));
+  const ws = Math.acos(sunsetAngleArg);
+  const Gsc = 0.0820;
+  const Ra = (24 * 60 / Math.PI) * Gsc * dr * (ws * Math.sin(latRad) * Math.sin(decl) + Math.cos(latRad) * Math.cos(decl) * Math.sin(ws));
+  const Rso = (0.75 + 2e-5 * elevation) * Ra;
+  const RsRso = Rso > 0 ? Math.min(rs / Rso, 1) : 1;
+  const Rns = 0.77 * rs;
+  const sigma = 4.903e-9;
+  const Rnl = sigma * ((Math.pow(tmax + 273.16, 4) + Math.pow(tmin + 273.16, 4)) / 2) * (0.34 - 0.14 * Math.sqrt(Math.max(ea, 0))) * (1.35 * RsRso - 0.35);
+  const Rn = Rns - Rnl;
+
+  const eto = (0.408 * delta * Rn + gamma * (900 / (tmean + 273)) * wind * (es - ea)) / (delta + gamma * (1 + 0.34 * wind));
+  return Math.max(eto, 0);
+}
+
+async function sulamaFetchPower(lat, lon, startStr, endStr) {
+  const start = startStr.replace(/-/g, '');
+  const end = endStr.replace(/-/g, '');
+  const url = `https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX,T2M_MIN,RH2M,WS2M,ALLSKY_SFC_SW_DWN,PRECTOTCORR&community=AG&longitude=${lon}&latitude=${lat}&format=JSON&start=${start}&end=${end}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('request-failed');
+  const json = await res.json();
+  const params = json && json.properties && json.properties.parameter;
+  if (!params || !params.T2M_MAX || !Object.keys(params.T2M_MAX).length) throw new Error('no-data');
+  return json;
+}
+
+let sulamaLastResult = null;
+
+async function sulamaCalculate() {
+  const btn = document.getElementById('sulamaCalcBtn');
+  const resultsEl = document.getElementById('sulamaResults');
+  const lat = parseFloat(document.getElementById('sulamaLat').value);
+  const lon = parseFloat(document.getElementById('sulamaLon').value);
+  const cropId = document.getElementById('sulamaCrop').value;
+  const plantDateStr = document.getElementById('sulamaPlantDate').value;
+  const startStr = document.getElementById('sulamaStart').value;
+  const endStr = document.getElementById('sulamaEnd').value;
+  const subtractRain = document.getElementById('sulamaEffRain').checked;
+
+  if (isNaN(lat) || isNaN(lon) || lat < -90 || lat > 90 || lon < -180 || lon > 180) {
+    resultsEl.innerHTML = `<div class="koord-error">${tesvikT('Lütfen geçerli bir enlem/boylam girin.', 'Please enter a valid latitude/longitude.')}</div>`;
+    return;
+  }
+  if (!plantDateStr || !startStr || !endStr) {
+    resultsEl.innerHTML = `<div class="koord-error">${tesvikT('Lütfen tüm tarihleri seçin.', 'Please select all dates.')}</div>`;
+    return;
+  }
+  const plantDate = new Date(plantDateStr + 'T00:00:00');
+  const startDate = new Date(startStr + 'T00:00:00');
+  const endDate = new Date(endStr + 'T00:00:00');
+  if (endDate < startDate) {
+    resultsEl.innerHTML = `<div class="koord-error">${tesvikT('Bitiş tarihi başlangıçtan önce olamaz.', 'End date cannot be before start date.')}</div>`;
+    return;
+  }
+  const crop = SULAMA_CROPS.find(c => c.id === cropId);
+
+  btn.disabled = true;
+  const origLabel = btn.innerHTML;
+  resultsEl.innerHTML = `<div class="calc-empty">${tesvikT('İklim verisi çekiliyor…', 'Fetching climate data…')}</div>`;
+
+  try {
+    const data = await sulamaFetchPower(lat, lon, startStr, endStr);
+    const elevation = data.geometry.coordinates[2];
+    const p = data.properties.parameter;
+    const dates = Object.keys(p.T2M_MAX).sort();
+
+    const rows = [];
+    let sumEto = 0, sumEtc = 0, sumRain = 0;
+    for (const d of dates) {
+      const tmax = p.T2M_MAX[d], tmin = p.T2M_MIN[d], rh = p.RH2M[d], ws = p.WS2M[d], rs = p.ALLSKY_SFC_SW_DWN[d];
+      const rain = p.PRECTOTCORR && p.PRECTOTCORR[d] != null ? p.PRECTOTCORR[d] : 0;
+      if ([tmax, tmin, rh, ws, rs].some(v => v == null || v <= -900)) continue; // NASA POWER fill value -999
+      const dateObj = new Date(`${d.slice(0,4)}-${d.slice(4,6)}-${d.slice(6,8)}T00:00:00`);
+      const doy = sulamaDOY(dateObj);
+      const eto = sulamaEto(tmax, tmin, rh, ws, rs, lat, elevation, doy);
+      const daysSincePlant = Math.round((dateObj - plantDate) / 86400000);
+      const kc = daysSincePlant < 0 ? 0 : sulamaKc(daysSincePlant, crop);
+      const etc = eto * kc;
+      sumEto += eto; sumEtc += etc; sumRain += (rain > 0 ? rain : 0);
+      rows.push({ date: d, tmax, tmin, rh, ws, rs, eto, kc, etc, rain });
+    }
+    if (!rows.length) throw new Error('no-data');
+
+    // Effective rainfall via the USDA SCS empirical formula, applied to the period total as a simplification
+    // (the original formula is defined for monthly totals).
+    let effRain = 0;
+    if (subtractRain) {
+      effRain = Math.max(sumRain <= 250 ? sumRain * (125 - 0.2 * sumRain) / 125 : sumRain * 0.1 + 125, 0);
+    }
+    const netReq = Math.max(sumEtc - effRain, 0);
+
+    sulamaLastResult = { rows, sumEto, sumEtc, sumRain, effRain, netReq, subtractRain };
+    sulamaRenderResults(sulamaLastResult);
+  } catch (err) {
+    sulamaLastResult = null;
+    const msg = err && err.message === 'no-data'
+      ? tesvikT('Seçilen tarih aralığı için NASA POWER verisi bulunamadı (veri birkaç gün gecikmeli yayınlanır, daha eski bir bitiş tarihi deneyin).', "No NASA POWER data found for the selected period (data is published with a few days' delay — try an earlier end date).")
+      : tesvikT('İklim verisi alınamadı. İnternet bağlantınızı kontrol edip tekrar deneyin.', 'Could not fetch climate data. Check your connection and try again.');
+    resultsEl.innerHTML = `<div class="koord-error">${msg}</div>`;
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = origLabel;
+  }
+}
+
+function sulamaRenderResults(result) {
+  const { rows, sumEto, sumEtc, sumRain, effRain, netReq, subtractRain } = result;
+  const rainLabel = subtractRain
+    ? tesvikT(`Etkin Yağış: ${effRain.toFixed(1)} mm (toplam yağış: ${sumRain.toFixed(1)} mm)`, `Effective rainfall: ${effRain.toFixed(1)} mm (total rainfall: ${sumRain.toFixed(1)} mm)`)
+    : tesvikT(`Toplam Yağış: ${sumRain.toFixed(1)} mm (düşülmedi)`, `Total rainfall: ${sumRain.toFixed(1)} mm (not subtracted)`);
+
+  document.getElementById('sulamaResults').innerHTML = `
+    <div class="calc-summary">
+      <div class="item"><b>${sumEto.toFixed(1)} mm</b><span>${tesvikT('Toplam ETo','Total ETo')}</span></div>
+      <div class="item"><b>${sumEtc.toFixed(1)} mm</b><span>${tesvikT('Bitki Su Tüketimi (ETc)','Crop Water Use (ETc)')}</span></div>
+      <div class="item"><b>${netReq.toFixed(1)} mm · ${netReq.toFixed(1)} m³/da</b><span>${tesvikT('Net Sulama Suyu İhtiyacı','Net Irrigation Requirement')}</span></div>
+    </div>
+    <div class="sulama-note-line">${rainLabel}</div>
+    <div class="sulama-table-wrap">
+      <table class="sulama-table">
+        <thead><tr>
+          <th>${tesvikT('Tarih','Date')}</th><th>Tmax °C</th><th>Tmin °C</th><th>${tesvikT('Nem %','RH %')}</th><th>${tesvikT('Rüzgar m/s','Wind m/s')}</th><th>${tesvikT('Güneşlenme MJ/m²','Solar MJ/m²')}</th><th>ETo mm</th><th>Kc</th><th>ETc mm</th><th>${tesvikT('Yağış mm','Rain mm')}</th>
+        </tr></thead>
+        <tbody>
+          ${rows.map(r => `<tr>
+            <td>${r.date.slice(6,8)}.${r.date.slice(4,6)}.${r.date.slice(0,4)}</td>
+            <td>${r.tmax.toFixed(1)}</td><td>${r.tmin.toFixed(1)}</td><td>${r.rh.toFixed(0)}</td><td>${r.ws.toFixed(1)}</td><td>${r.rs.toFixed(1)}</td>
+            <td>${r.eto.toFixed(2)}</td><td>${r.kc.toFixed(2)}</td><td>${r.etc.toFixed(2)}</td><td>${r.rain.toFixed(1)}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function sulamaUseGeolocation() {
+  const resultsEl = document.getElementById('sulamaResults');
+  if (!navigator.geolocation) {
+    resultsEl.innerHTML = `<div class="koord-error">${tesvikT('Tarayıcınız konum servisini desteklemiyor.', 'Your browser does not support geolocation.')}</div>`;
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(
+    pos => sulamaSetLatLon(pos.coords.latitude, pos.coords.longitude, 13),
+    () => {
+      resultsEl.innerHTML = `<div class="koord-error">${tesvikT('Konum izni alınamadı. Enlem/boylamı elle girebilir ya da haritadan seçebilirsiniz.', 'Could not get location permission. You can enter latitude/longitude manually or pick it on the map.')}</div>`;
+    }
+  );
+}
+
+// ── Leaflet map: click/drag on the map to set the point, kept in sync with the lat/lon inputs ──
+// True TKGM cadastral parcel boundaries aren't available as a public, key-free tile/WMS layer
+// (parselsorgu.tkgm.gov.tr itself queries parcels on click via an internal, app-scoped API key,
+// not a browsable overlay) — so instead we offer a basemap switcher; the satellite view lets
+// users visually locate their field even without official parcel lines drawn on top.
+const SULAMA_BASEMAPS = [
+  { id:'osm', tr:'Sokak', en:'Street',
+    url:'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    options:{ maxZoom:19, attribution:'&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors' } },
+  { id:'satellite', tr:'Uydu', en:'Satellite',
+    url:'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+    options:{ maxZoom:19, attribution:'Tiles &copy; Esri — Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community' } },
+  { id:'topo', tr:'Arazi', en:'Terrain',
+    url:'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+    options:{ maxZoom:17, subdomains:'abc', attribution:'&copy; OpenStreetMap contributors, SRTM | &copy; <a href="https://opentopomap.org" target="_blank" rel="noopener">OpenTopoMap</a> (CC-BY-SA)' } },
+];
+
+let sulamaMap = null, sulamaMarker = null, sulamaTileLayer = null, sulamaBasemapId = 'osm';
+
+function sulamaSetLatLon(lat, lon, mapZoom) {
+  document.getElementById('sulamaLat').value = lat.toFixed(5);
+  document.getElementById('sulamaLon').value = lon.toFixed(5);
+  if (sulamaMap && sulamaMarker) {
+    sulamaMarker.setLatLng([lat, lon]);
+    sulamaMap.setView([lat, lon], mapZoom || Math.max(sulamaMap.getZoom(), 11));
+  }
+}
+
+function sulamaSyncMapFromInputs() {
+  const lat = parseFloat(document.getElementById('sulamaLat').value);
+  const lon = parseFloat(document.getElementById('sulamaLon').value);
+  if (isNaN(lat) || isNaN(lon) || !sulamaMap || !sulamaMarker) return;
+  sulamaMarker.setLatLng([lat, lon]);
+  sulamaMap.setView([lat, lon], sulamaMap.getZoom());
+}
+
+function sulamaCreateTileLayer(id) {
+  const b = SULAMA_BASEMAPS.find(x => x.id === id) || SULAMA_BASEMAPS[0];
+  return L.tileLayer(b.url, b.options);
+}
+
+function sulamaSetBasemap(id) {
+  if (!sulamaMap || id === sulamaBasemapId) return;
+  sulamaMap.removeLayer(sulamaTileLayer);
+  sulamaBasemapId = id;
+  sulamaTileLayer = sulamaCreateTileLayer(id).addTo(sulamaMap);
+  document.querySelectorAll('.sulama-basemap-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.basemap === id);
+  });
+}
+
+function sulamaBuildBasemapControl() {
+  const ctl = L.control({ position: 'topright' });
+  ctl.onAdd = function () {
+    const div = L.DomUtil.create('div', 'sulama-basemap-switch');
+    L.DomEvent.disableClickPropagation(div);
+    L.DomEvent.disableScrollPropagation(div);
+    SULAMA_BASEMAPS.forEach(b => {
+      const btn = L.DomUtil.create('button', 'sulama-basemap-btn' + (b.id === sulamaBasemapId ? ' active' : ''), div);
+      btn.type = 'button';
+      btn.dataset.basemap = b.id;
+      btn.textContent = tesvikT(b.tr, b.en);
+      btn.onclick = () => sulamaSetBasemap(b.id);
+    });
+    return div;
+  };
+  return ctl;
+}
+
+function sulamaEnsureMap() {
+  if (sulamaMap || typeof L === 'undefined') return;
+  const mapEl = document.getElementById('sulamaMap');
+  if (!mapEl) return;
+  const lat = parseFloat(document.getElementById('sulamaLat').value) || 39.0;
+  const lon = parseFloat(document.getElementById('sulamaLon').value) || 35.0;
+  sulamaMap = L.map(mapEl).setView([lat, lon], 6);
+  sulamaTileLayer = sulamaCreateTileLayer(sulamaBasemapId).addTo(sulamaMap);
+  sulamaBuildBasemapControl().addTo(sulamaMap);
+  sulamaMarker = L.marker([lat, lon], { draggable: true }).addTo(sulamaMap);
+  sulamaMarker.on('dragend', () => {
+    const ll = sulamaMarker.getLatLng();
+    document.getElementById('sulamaLat').value = ll.lat.toFixed(5);
+    document.getElementById('sulamaLon').value = ll.lng.toFixed(5);
+  });
+  sulamaMap.on('click', e => {
+    sulamaMarker.setLatLng(e.latlng);
+    document.getElementById('sulamaLat').value = e.latlng.lat.toFixed(5);
+    document.getElementById('sulamaLon').value = e.latlng.lng.toFixed(5);
+  });
+}
+
+function sulamaOnShow() {
+  sulamaEnsureMap();
+  if (sulamaMap) setTimeout(() => sulamaMap.invalidateSize(), 50);
+}
+
+// ── Collapsible guide ──
+let sulamaGuideOpen = localStorage.getItem('sulamaGuideOpen') !== '0';
+
+function sulamaApplyGuideState() {
+  const card = document.getElementById('sulamaGuideCard');
+  const btn = document.getElementById('sulamaGuideToggleBtn');
+  if (!card) return;
+  card.classList.toggle('collapsed', !sulamaGuideOpen);
+  if (btn) btn.textContent = sulamaGuideOpen ? tesvikT('Gizle ▲', 'Hide ▲') : tesvikT('Göster ▼', 'Show ▼');
+}
+
+function sulamaToggleGuide() {
+  sulamaGuideOpen = !sulamaGuideOpen;
+  localStorage.setItem('sulamaGuideOpen', sulamaGuideOpen ? '1' : '0');
+  sulamaApplyGuideState();
+}
+
+function sulamaPopulateCropSelect() {
+  const sel = document.getElementById('sulamaCrop');
+  if (!sel) return;
+  const prev = sel.value;
+  const groups = [];
+  SULAMA_CROPS.forEach(c => {
+    let g = groups.find(x => x.key === c.group.tr);
+    if (!g) { g = { key: c.group.tr, group: c.group, crops: [] }; groups.push(g); }
+    g.crops.push(c);
+  });
+  sel.innerHTML = groups.map(g => `
+    <optgroup label="${tesvikT(g.group.tr, g.group.en)}">
+      ${g.crops.map(c => `<option value="${c.id}">${tesvikT(c.tr, c.en)}</option>`).join('')}
+    </optgroup>
+  `).join('');
+  if (prev) sel.value = prev;
+}
+
+function sulamaSetDefaultDates() {
+  const startEl = document.getElementById('sulamaStart');
+  const endEl = document.getElementById('sulamaEnd');
+  if (!startEl || startEl.value) return;
+  const fmt = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  const today = new Date();
+  const end = new Date(today); end.setDate(end.getDate() - 3);
+  const start = new Date(today); start.setDate(start.getDate() - 13);
+  startEl.value = fmt(start);
+  endEl.value = fmt(end);
+}
+
+function sulamaInit() {
+  if (!document.getElementById('sulamaCrop')) return;
+  sulamaPopulateCropSelect();
+  sulamaSetDefaultDates();
+  sulamaApplyGuideState();
+  sulamaRenderStageInfo();
+  document.getElementById('sulamaLat').addEventListener('change', sulamaSyncMapFromInputs);
+  document.getElementById('sulamaLon').addEventListener('change', sulamaSyncMapFromInputs);
+  document.getElementById('sulamaCrop').addEventListener('change', sulamaRenderStageInfo);
+  document.getElementById('sulamaPlantDate').addEventListener('change', sulamaRenderStageInfo);
+}
+
+function sulamaRefreshLang() {
+  if (!document.getElementById('sulamaCrop')) return;
+  sulamaPopulateCropSelect();
+  sulamaApplyGuideState();
+  sulamaRenderStageInfo();
+  document.querySelectorAll('.sulama-basemap-btn').forEach(btn => {
+    const b = SULAMA_BASEMAPS.find(x => x.id === btn.dataset.basemap);
+    if (b) btn.textContent = tesvikT(b.tr, b.en);
+  });
+  if (sulamaLastResult) sulamaRenderResults(sulamaLastResult);
+}
+sulamaInit();
 
 // init
 setLang(currentLang);

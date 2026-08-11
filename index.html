@@ -12,6 +12,7 @@
 <script src="https://cdn.jsdelivr.net/npm/mgrs@2.0.0/dist/mgrs.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3-delaunay@6/dist/d3-delaunay.min.js"></script>
 <!-- Private analytics (dashboard only visible to the site owner, no cookies) — per-page/per-tool
      pageviews are fired manually from showPage() below, since this is a single-page app. -->
 <script data-goatcounter="https://selcukalbut.goatcounter.com/count"
@@ -776,6 +777,11 @@ nav {
 .sulama-source-btn:hover { border-color: var(--primary); }
 .sulama-source-btn.active { background: var(--primary); border-color: var(--primary); color: #fff; }
 .sulama-source-hint { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.5rem; }
+.sulama-station-pick-btn {
+  margin-top: 4px; background: var(--primary); color: #fff; border: none; border-radius: 6px;
+  padding: 4px 10px; font-family: inherit; font-size: 0.72rem; font-weight: 700; cursor: pointer;
+}
+.sulama-station-pick-btn:hover { background: var(--primary-dark); }
 
 /* ══ CONTACT ══ */
 .contact-grid {
@@ -1811,6 +1817,7 @@ html[lang="en"] [data-lang="en"] { display: revert; }
             <li><b>mm (milimetre su):</b> 1 mm yağış/sulama = her metrekareye 1 litre su demektir.</li>
             <li><b>m³/da (metreküp / dekar):</b> Çiftçilerin alışık olduğu birim. 1 mm = 1 m³/da (yani 1000 m²'lik bir tarlaya 1 mm su vermek 1 ton/m³ su gerektirir).</li>
             <li><b>Etkin Yağış:</b> Yağan yağmurun toprakta tutulup bitki tarafından kullanılabilen kısmı (tamamı değil — bir kısmı yüzeyden akar veya derine sızar).</li>
+            <li><b>Thiessen Poligonu (Voronoi Hücresi):</b> Hidrolojide istasyon verilerini alansal ağırlıklandırmak için kullanılan klasik yöntem — her istasyona, ona en yakın olan tüm noktaları içeren bir bölge (poligon) atanır. Konumunuz hangi istasyonun poligonuna düşerse, hesaplamada o istasyonun verisi kullanılır; haritadaki ince çizgiler bu poligonları gösterir.</li>
           </ul>
           <ul class="sulama-guide-list" data-lang="en">
             <li><b>ETo (Reference Evapotranspiration):</b> How much water a reference grass surface evaporates and transpires in a day, based purely on climate (mm/day). Independent of the crop.</li>
@@ -1819,6 +1826,7 @@ html[lang="en"] [data-lang="en"] { display: revert; }
             <li><b>mm (millimetres of water):</b> 1 mm of rain/irrigation = 1 litre of water per square metre.</li>
             <li><b>m³/da (cubic metres per decare):</b> The unit farmers commonly use. 1 mm = 1 m³/da (applying 1 mm to a 1,000 m² field takes 1 m³ / 1 tonne of water).</li>
             <li><b>Effective Rainfall:</b> The portion of rainfall actually retained in the soil and usable by the crop (not all of it — some runs off or drains too deep).</li>
+            <li><b>Thiessen Polygon (Voronoi Cell):</b> The classic hydrology method for areal-weighting station data — each station is assigned the region containing every point closer to it than to any other station. Whichever station's polygon your location falls in is the one used in the calculation; the thin lines on the map show these polygons.</li>
           </ul>
 
           <div class="sulama-example">
@@ -1852,8 +1860,8 @@ html[lang="en"] [data-lang="en"] { display: revert; }
           </button>
         </div>
         <div id="sulamaMap" class="sulama-map"></div>
-        <p class="sulama-map-hint" data-lang="tr">Haritaya tıklayarak veya işaretçiyi sürükleyerek konum seçebilirsiniz.</p>
-        <p class="sulama-map-hint" data-lang="en">Click the map or drag the marker to pick a location.</p>
+        <p class="sulama-map-hint" data-lang="tr">Haritaya tıklayarak veya işaretçiyi sürükleyerek konum seçebilirsiniz. Küçük noktalar 259 resmi meteoroloji istasyonunu gösterir — üzerine gelince adını, tıklayınca ayrıntılarını görebilirsiniz. İnce çizgiler istasyonların Thiessen poligonlarını (Voronoi hücrelerini), turuncu vurgulu alan ise konumunuzun düştüğü — dolayısıyla hesaplamada kullanılan — istasyonun etki alanını gösterir.</p>
+        <p class="sulama-map-hint" data-lang="en">Click the map or drag the marker to pick a location. The small dots mark all 259 official meteorology stations — hover for the name, click for details. The thin lines are each station's Thiessen polygon (Voronoi cell); the orange-highlighted area is the zone your location falls in — and therefore the station used in the calculation.</p>
         <div id="sulamaDataSourceBox"></div>
       </div>
 
@@ -2901,6 +2909,9 @@ async function sulamaEnsureTRData() {
   ]).then(([regions, stations, crops, climate]) => {
     sulamaTRData = { regions, stations, crops, climate };
     sulamaUpdateDataSourceBox();
+    sulamaAddStationMarkers();
+    sulamaAddVoronoiLayer();
+    sulamaUpdateActiveCell();
     return sulamaTRData;
   }).catch(() => { sulamaTRData = null; return null; });
   return sulamaTRLoading;
@@ -2928,6 +2939,8 @@ function sulamaUpdateDataSourceBox() {
   const prevStationNo = sulamaNearestStationInfo && sulamaNearestStationInfo.no;
   sulamaNearestStationInfo = (nearest && nearest.distanceKm <= SULAMA_TR_STATION_THRESHOLD_KM) ? nearest : null;
   const stationChanged = prevStationNo !== (sulamaNearestStationInfo && sulamaNearestStationInfo.no);
+
+  if (stationChanged) sulamaUpdateActiveCell();
 
   if (!sulamaNearestStationInfo) {
     sulamaSource = 'nasa';
@@ -3292,10 +3305,92 @@ function sulamaEnsureMap() {
     document.getElementById('sulamaLon').value = e.latlng.lng.toFixed(5);
     sulamaOnLocationChanged();
   });
+  sulamaAddStationMarkers();
+}
+
+// Pins all 259 official TAGEM/DSİ meteorology stations on the map as small dots — hover for the
+// name, click to jump the location marker straight to that station's own coordinates. Runs once
+// map + station data are both ready, whichever finishes loading second.
+let sulamaStationLayer = null;
+
+function sulamaAddStationMarkers() {
+  if (!sulamaMap || !sulamaTRData || sulamaStationLayer) return;
+  sulamaStationLayer = L.layerGroup();
+  for (const no in sulamaTRData.stations) {
+    const s = sulamaTRData.stations[no];
+    const regionName = sulamaTRData.regions[s.blg] || s.blg;
+    const dot = L.circleMarker([s.lat, s.lon], {
+      radius: 4, weight: 1.5, color: '#fff', fillColor: '#0d6e6e', fillOpacity: 0.85,
+    });
+    dot.bindTooltip(s.name, { direction: 'top', offset: [0, -3] });
+    dot.bindPopup(
+      `<b>${s.name}</b> (${s.il})<br>${tesvikT('İklim Bölgesi','Climate Zone')}: ${regionName}<br>${tesvikT('Rakım','Elevation')}: ${s.elev} m` +
+      `<br><button class="sulama-station-pick-btn" onclick="sulamaSetLatLon(${s.lat},${s.lon},11)">${tesvikT('Bu istasyonu kullan →','Use this station →')}</button>`
+    );
+    dot.addTo(sulamaStationLayer);
+  }
+  sulamaStationLayer.addTo(sulamaMap);
+}
+
+// Thiessen polygons (Voronoi cells) of the 259 stations: the cell containing a point is, by
+// definition, that point's nearest station — exactly what sulamaFindNearestStation() already
+// computes via Haversine distance. So this doesn't change any calculated value; it visualizes
+// the same assignment the guide-engine already makes, per the classic areal-weighting method
+// (Āµ = ΣAᵢPᵢ / A) used in hydrology for station representativeness. Built once on raw lon/lat
+// (a small planar approximation over Turkey's ~20° span) and clipped to a bounding box around
+// the stations, not to Turkey's actual coastline — a cosmetic simplification only: it doesn't
+// affect which station a point on land resolves to.
+let sulamaVoronoi = null;
+let sulamaVoronoiLayer = null;
+let sulamaActiveCellLayer = null;
+
+function sulamaBuildVoronoi() {
+  if (sulamaVoronoi || !sulamaTRData || typeof d3 === 'undefined') return;
+  const stationNos = Object.keys(sulamaTRData.stations);
+  const points = stationNos.map(no => [sulamaTRData.stations[no].lon, sulamaTRData.stations[no].lat]);
+  const lons = points.map(p => p[0]), lats = points.map(p => p[1]);
+  const margin = 2;
+  const bounds = [Math.min(...lons) - margin, Math.min(...lats) - margin, Math.max(...lons) + margin, Math.max(...lats) + margin];
+  const delaunay = d3.Delaunay.from(points);
+  const voronoi = delaunay.voronoi(bounds);
+  sulamaVoronoi = { voronoi, stationNos };
+}
+
+function sulamaAddVoronoiLayer() {
+  if (!sulamaMap || sulamaVoronoiLayer) return;
+  sulamaBuildVoronoi();
+  if (!sulamaVoronoi) return;
+  sulamaVoronoiLayer = L.layerGroup();
+  sulamaVoronoi.stationNos.forEach((no, i) => {
+    const cell = sulamaVoronoi.voronoi.cellPolygon(i);
+    if (!cell) return;
+    L.polygon(cell.map(([lon, lat]) => [lat, lon]), {
+      color: '#0d6e6e', weight: 1, opacity: 0.3, fill: false, interactive: false,
+    }).addTo(sulamaVoronoiLayer);
+  });
+  sulamaVoronoiLayer.addTo(sulamaMap);
+}
+
+function sulamaUpdateActiveCell() {
+  if (!sulamaMap) return;
+  if (sulamaActiveCellLayer) { sulamaMap.removeLayer(sulamaActiveCellLayer); sulamaActiveCellLayer = null; }
+  if (!sulamaNearestStationInfo) return;
+  sulamaBuildVoronoi();
+  if (!sulamaVoronoi) return;
+  const idx = sulamaVoronoi.stationNos.indexOf(sulamaNearestStationInfo.no);
+  if (idx < 0) return;
+  const cell = sulamaVoronoi.voronoi.cellPolygon(idx);
+  if (!cell) return;
+  sulamaActiveCellLayer = L.polygon(cell.map(([lon, lat]) => [lat, lon]), {
+    color: '#f0a500', weight: 2, fillColor: '#f0a500', fillOpacity: 0.12, interactive: false,
+  }).addTo(sulamaMap);
 }
 
 function sulamaOnShow() {
   sulamaEnsureMap();
+  sulamaAddStationMarkers();
+  sulamaAddVoronoiLayer();
+  sulamaUpdateActiveCell();
   if (sulamaMap) setTimeout(() => sulamaMap.invalidateSize(), 50);
 }
 

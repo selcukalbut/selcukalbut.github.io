@@ -768,6 +768,15 @@ nav {
 .sulama-stage-table th:first-child, .sulama-stage-table td:first-child { text-align: left; }
 .sulama-stage-table td.total { font-weight: 700; color: var(--primary-dark); }
 
+.sulama-source-box { margin-top: 1rem; padding: 0.9rem 1.1rem; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; }
+.sulama-source-station { font-size: 0.82rem; margin-bottom: 0.6rem; }
+.sulama-source-station b { color: var(--primary-dark); }
+.sulama-source-switch { display: flex; gap: 6px; flex-wrap: wrap; }
+.sulama-source-btn { flex: 1; min-width: 140px; border: 1px solid var(--border); background: var(--card); color: var(--text); font-family: inherit; font-size: 0.78rem; font-weight: 700; padding: 8px 12px; border-radius: 8px; cursor: pointer; text-align: center; }
+.sulama-source-btn:hover { border-color: var(--primary); }
+.sulama-source-btn.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+.sulama-source-hint { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.5rem; }
+
 /* ══ CONTACT ══ */
 .contact-grid {
   display: grid;
@@ -1845,6 +1854,7 @@ html[lang="en"] [data-lang="en"] { display: revert; }
         <div id="sulamaMap" class="sulama-map"></div>
         <p class="sulama-map-hint" data-lang="tr">Haritaya tıklayarak veya işaretçiyi sürükleyerek konum seçebilirsiniz.</p>
         <p class="sulama-map-hint" data-lang="en">Click the map or drag the marker to pick a location.</p>
+        <div id="sulamaDataSourceBox"></div>
       </div>
 
       <div class="koord-card">
@@ -1890,8 +1900,8 @@ html[lang="en"] [data-lang="en"] { display: revert; }
       </div>
 
       <div class="apps-note">
-        <span data-lang="tr">ℹ️ İklim verisi NASA POWER uydu/reanaliz kaynağından alınır ve yerel istasyon ölçümlerinden sapabilir; son birkaç günün verisi henüz yayınlanmamış olabilir. Bitki gelişim evresi uzunlukları ve Kc değerleri FAO-56'nın genel tipik değerleridir (iklim/bölge/çeşide göre değişebilir); meyve/bahçe bitkileri ve FAO-56'da yer almayan bazı bitkiler (çay, fındık, Antep fıstığı, nar gibi) için bölgesel kaynaklara dayanan temsili değerler kullanılmıştır ve daha az kesindir. Yonca gibi sezon içinde birden fazla kez biçilen yem bitkileri bu modele uymadığından kapsam dışıdır. Etkin yağış, aylık ampirik SCS formülünün seçilen döneme uyarlanmış basitleştirilmiş halidir. Bu araç bilgilendirme amaçlıdır; sulama zamanlaması kararını saha gözlemi ve/veya toprak nem sensörü ile doğrulayın.</span>
-        <span data-lang="en">ℹ️ Climate data comes from NASA POWER satellite/reanalysis products and can diverge from local station measurements; the last few days may not be published yet. Crop growth-stage lengths and Kc values use FAO-56's generic typical values (they vary by climate/region/variety); orchard crops and a few crops not covered by FAO-56 itself (tea, hazelnut, pistachio, pomegranate) use representative figures from regional sources and are less precise. Multi-cut forage crops like alfalfa don't fit this single-cycle model and are out of scope. The effective-rainfall figure adapts the monthly empirical SCS formula to the selected period as a simplification. This tool is informational only — confirm irrigation timing with field observation and/or a soil-moisture sensor.</span>
+        <span data-lang="tr">ℹ️ <b>Türkiye içinde</b> en yakın resmi istasyon 80 km içindeyse, hesaplama varsayılan olarak TAGEM/DSİ'nin 2017 tarihli "Türkiye'de Sulanan Bitkilerin Bitki Su Tüketimleri" rehberindeki resmi istasyon verilerini (259 istasyon, 29 iklim bölgesi, uzun yıllar 10 günlük normalleri) kullanır — istenirse NASA POWER'a manuel geçilebilir. <b>Türkiye dışında</b> veya yakında istasyon yoksa NASA POWER uydu/reanaliz verisi ve FAO-56 genel Kc değerleri kullanılır; bu veri son birkaç gün için henüz yayınlanmamış olabilir. Resmi kılavuzda bazı bitkiler için (özellikle küçük istasyon sayılı bölgelerde) Kc verisi eksik olabilir ve o durumda listede görünmez. Yonca gibi sezon içinde birden fazla kez biçilen yem bitkileri NASA POWER motorunda kapsam dışıdır (resmi kılavuz motorunda biçim dönemleri ayrı ayrı listelenir). Resmi kılavuzda etkin yağış, düşen yağışın %80'i olarak kabul edilir (rehberin kendi formülü); NASA POWER modunda ise ampirik SCS formülü kullanılır. Bu araç bilgilendirme amaçlıdır; sulama zamanlaması kararını saha gözlemi ve/veya toprak nem sensörü ile doğrulayın.</span>
+        <span data-lang="en">ℹ️ <b>Inside Turkey</b>, if the nearest official station is within 80 km, calculations default to station data from TAGEM/DSİ's 2017 "Water Consumption of Irrigated Crops in Turkey" guide (259 stations, 29 climate zones, long-term 10-day normals) — you can switch to NASA POWER manually if you prefer. <b>Outside Turkey</b>, or with no nearby station, NASA POWER satellite/reanalysis data and generic FAO-56 Kc values are used instead; that data may not be published yet for the last few days. A few crops (especially in small, single-station regions) are missing Kc data in the official guide and won't appear in that mode's crop list. Multi-cut forage crops like alfalfa are out of scope in the NASA POWER engine (the official-guide engine lists each cutting cycle separately). The official guide treats 80% of rainfall as effective (its own formula); the NASA POWER mode uses the empirical SCS formula instead. This tool is informational only — confirm irrigation timing with field observation and/or a soil-moisture sensor.</span>
       </div>
     </div>
   </div>
@@ -2743,10 +2753,21 @@ function sulamaFmtDate(d) {
 
 // Shows the selected crop's FAO-56 development-stage lengths (Table 11 style: Init./Dev./Mid/Late/Total),
 // and — once a start date is entered — the actual calendar range each stage falls in.
+function sulamaGetActiveCrop() {
+  const cropId = document.getElementById('sulamaCrop').value;
+  if (sulamaSource === 'guide' && sulamaNearestStationInfo && sulamaTRData) {
+    const stationCrops = sulamaTRData.crops[sulamaNearestStationInfo.station.blg] || {};
+    const c = stationCrops[cropId];
+    if (!c) return null;
+    return { tr: cropId, en: cropId, Lini: c.L1, Ldev: c.L2, Lmid: c.L3, Llate: c.L4, ekimDonem: c.ekimDonem };
+  }
+  return SULAMA_CROPS.find(c => c.id === cropId) || null;
+}
+
 function sulamaRenderStageInfo() {
   const el = document.getElementById('sulamaStageInfo');
   if (!el) return;
-  const crop = SULAMA_CROPS.find(c => c.id === document.getElementById('sulamaCrop').value);
+  const crop = sulamaGetActiveCrop();
   if (!crop) { el.innerHTML = ''; return; }
   const { Lini, Ldev, Lmid, Llate } = crop;
   const total = Lini + Ldev + Lmid + Llate;
@@ -2842,6 +2863,198 @@ async function sulamaFetchPower(lat, lon, startStr, endStr) {
   return json;
 }
 
+// ── Türkiye Resmi Sulama Rehberi (TAGEM/DSİ 2017) ──────────────────────────────────────────
+// 259 meteorology stations across 29 climate zones, with official 10-day-period (dönem) growth
+// stage lengths, Kc, long-term ET0 and rainfall normals — extracted from the guide's own tables.
+// Used automatically for locations inside Turkey (nearest station within ~80km); NASA POWER
+// stays the engine everywhere else, and can still be picked manually inside Turkey too.
+const SULAMA_TR_DATA_BASE = 'assets/data/';
+const SULAMA_TR_STATION_THRESHOLD_KM = 80;
+const SULAMA_AY_NAMES = [
+  { tr:'Ocak', en:'Jan' }, { tr:'Şubat', en:'Feb' }, { tr:'Mart', en:'Mar' }, { tr:'Nisan', en:'Apr' },
+  { tr:'Mayıs', en:'May' }, { tr:'Haziran', en:'Jun' }, { tr:'Temmuz', en:'Jul' }, { tr:'Ağustos', en:'Aug' },
+  { tr:'Eylül', en:'Sep' }, { tr:'Ekim', en:'Oct' }, { tr:'Kasım', en:'Nov' }, { tr:'Aralık', en:'Dec' },
+];
+const SULAMA_AY_INDEX = { 'Ocak':0,'Şubat':1,'Mart':2,'Nisan':3,'Mayıs':4,'Haziran':5,'Temmuz':6,'Ağustos':7,'Eylül':8,'Ekim':9,'Kasım':10,'Aralık':11 };
+const SULAMA_DEKAD_INDEX = { 'I':0, 'II':1, 'III':2 };
+
+let sulamaTRData = null;      // { regions, stations, crops, climate } once loaded
+let sulamaTRLoading = null;   // in-flight fetch promise
+let sulamaNearestStationInfo = null; // { no, station, distanceKm } for the current lat/lon
+let sulamaSource = 'guide';   // 'guide' | 'nasa' — which engine sulamaCalculate() uses
+
+function sulamaHaversineKm(lat1, lon1, lat2, lon2) {
+  const R = 6371, toRad = d => d * Math.PI / 180;
+  const dLat = toRad(lat2 - lat1), dLon = toRad(lon2 - lon1);
+  const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+async function sulamaEnsureTRData() {
+  if (sulamaTRData) return sulamaTRData;
+  if (sulamaTRLoading) return sulamaTRLoading;
+  sulamaTRLoading = Promise.all([
+    fetch(SULAMA_TR_DATA_BASE + 'tr-sulama-regions.json').then(r => r.json()),
+    fetch(SULAMA_TR_DATA_BASE + 'tr-sulama-stations.json').then(r => r.json()),
+    fetch(SULAMA_TR_DATA_BASE + 'tr-sulama-crops.json').then(r => r.json()),
+    fetch(SULAMA_TR_DATA_BASE + 'tr-sulama-climate.json').then(r => r.json()),
+  ]).then(([regions, stations, crops, climate]) => {
+    sulamaTRData = { regions, stations, crops, climate };
+    sulamaUpdateDataSourceBox();
+    return sulamaTRData;
+  }).catch(() => { sulamaTRData = null; return null; });
+  return sulamaTRLoading;
+}
+
+function sulamaFindNearestStation(lat, lon) {
+  if (!sulamaTRData) return null;
+  let best = null;
+  for (const no in sulamaTRData.stations) {
+    const s = sulamaTRData.stations[no];
+    const d = sulamaHaversineKm(lat, lon, s.lat, s.lon);
+    if (!best || d < best.distanceKm) best = { no, station: s, distanceKm: d };
+  }
+  return best;
+}
+
+function sulamaUpdateDataSourceBox() {
+  const box = document.getElementById('sulamaDataSourceBox');
+  if (!box) return;
+  const lat = parseFloat(document.getElementById('sulamaLat').value);
+  const lon = parseFloat(document.getElementById('sulamaLon').value);
+  if (isNaN(lat) || isNaN(lon) || !sulamaTRData) { box.innerHTML = ''; sulamaNearestStationInfo = null; return; }
+
+  const nearest = sulamaFindNearestStation(lat, lon);
+  const prevStationNo = sulamaNearestStationInfo && sulamaNearestStationInfo.no;
+  sulamaNearestStationInfo = (nearest && nearest.distanceKm <= SULAMA_TR_STATION_THRESHOLD_KM) ? nearest : null;
+  const stationChanged = prevStationNo !== (sulamaNearestStationInfo && sulamaNearestStationInfo.no);
+
+  if (!sulamaNearestStationInfo) {
+    sulamaSource = 'nasa';
+    box.innerHTML = `<div class="sulama-source-box"><div class="sulama-source-station">${tesvikT('ℹ️ Yakında resmi Türkiye istasyonu bulunamadı — hesaplama NASA POWER ile yapılacak.', 'ℹ️ No official Turkish station nearby — calculation will use NASA POWER.')}</div></div>`;
+    if (stationChanged) { sulamaPopulateCropSelect(); sulamaRenderStageInfo(); }
+    return;
+  }
+  const { station, distanceKm } = sulamaNearestStationInfo;
+  const regionName = sulamaTRData.regions[station.blg] || station.blg;
+  if (sulamaSource !== 'nasa') sulamaSource = 'guide';
+  box.innerHTML = `
+    <div class="sulama-source-box">
+      <div class="sulama-source-station">${tesvikT('📍 En yakın resmi istasyon:', '📍 Nearest official station:')} <b>${station.name}</b> (${station.il}, ${distanceKm.toFixed(0)} km) — ${tesvikT('İklim Bölgesi','Climate Zone')}: <b>${regionName}</b></div>
+      <div class="sulama-source-switch">
+        <button type="button" class="sulama-source-btn${sulamaSource==='guide'?' active':''}" onclick="sulamaSetSource('guide')">${tesvikT('Resmi Kılavuz (TAGEM/DSİ)','Official Guide (TAGEM/DSİ)')}</button>
+        <button type="button" class="sulama-source-btn${sulamaSource==='nasa'?' active':''}" onclick="sulamaSetSource('nasa')">${tesvikT('NASA POWER (güncel uydu)','NASA POWER (current satellite)')}</button>
+      </div>
+      <div class="sulama-source-hint">${tesvikT('Resmi Kılavuz, uzun yıllar 10 günlük normalleri kullanır (\'tipik bir yıl\'); NASA POWER seçilen tarihlerin gerçek uydu verisini kullanır.', "The Official Guide uses long-term 10-day normals ('a typical year'); NASA POWER uses actual satellite data for the exact dates you pick.")}</div>
+    </div>
+  `;
+  if (stationChanged) { sulamaPopulateCropSelect(); sulamaRenderStageInfo(); }
+}
+
+function sulamaSetSource(src) {
+  sulamaSource = src;
+  sulamaUpdateDataSourceBox();
+  sulamaPopulateCropSelect();
+  sulamaRenderStageInfo();
+}
+
+function sulamaOnLocationChanged() {
+  sulamaEnsureTRData().then(() => sulamaUpdateDataSourceBox());
+  if (sulamaTRData) sulamaUpdateDataSourceBox();
+}
+
+function sulamaDonemToDayIndex(donemStr) {
+  const [ay, dek] = donemStr.split(' -');
+  return { month: SULAMA_AY_INDEX[ay], dekad: SULAMA_DEKAD_INDEX[dek] };
+}
+
+// Suggest a concrete calendar date for a guide crop's recommended planting dönem — this year if
+// it's still >200 days away or upcoming, otherwise next year (keeps the suggestion forward-looking).
+function sulamaDonemToDate(donemStr) {
+  const { month, dekad } = sulamaDonemToDayIndex(donemStr);
+  const day = dekad === 0 ? 1 : dekad === 1 ? 11 : 21;
+  const today = new Date(); today.setHours(0,0,0,0);
+  let year = today.getFullYear();
+  let d = new Date(year, month, day);
+  if ((today - d) / 86400000 > 200) { year += 1; d = new Date(year, month, day); }
+  return d;
+}
+
+function sulamaPeriodIndex(date) {
+  const day = date.getDate();
+  const dekad = day <= 10 ? 0 : day <= 20 ? 1 : 2;
+  return date.getMonth() * 3 + dekad;
+}
+
+function sulamaPeriodLabel(pIdx) {
+  const month = SULAMA_AY_NAMES[Math.floor(pIdx / 3)];
+  const dekad = ['I', 'II', 'III'][pIdx % 3];
+  return tesvikT(`${month.tr} ${dekad}`, `${month.en} ${dekad}`);
+}
+
+async function sulamaCalculateGuide(cropObj, plantDate, startDate, endDate, subtractRain) {
+  const stationNo = sulamaNearestStationInfo.no;
+  const climate = sulamaTRData.climate[stationNo];
+  const kcCrop = { kcIni: cropObj.kc1, kcMid: cropObj.kc3, kcEnd: cropObj.kc4, Lini: cropObj.L1, Ldev: cropObj.L2, Lmid: cropObj.L3, Llate: cropObj.L4 };
+
+  const buckets = new Map(); // periodIndex -> {days, sumEto, sumEtc, sumRain, kcSum}
+  let sumEto = 0, sumEtc = 0, sumRain = 0;
+  const cursor = new Date(startDate);
+  while (cursor <= endDate) {
+    const pIdx = sulamaPeriodIndex(cursor);
+    const etoDay = (climate.eto[pIdx] || 0) / 10;
+    const rainDay = (climate.rain[pIdx] || 0) / 10;
+    const daysSincePlant = Math.round((cursor - plantDate) / 86400000);
+    const kc = daysSincePlant < 0 ? 0 : sulamaKc(daysSincePlant, kcCrop);
+    const etcDay = kc * etoDay;
+    sumEto += etoDay; sumEtc += etcDay; sumRain += rainDay;
+    const b = buckets.get(pIdx) || { days: 0, sumEto: 0, sumEtc: 0, sumRain: 0, kcSum: 0 };
+    b.days++; b.sumEto += etoDay; b.sumEtc += etcDay; b.sumRain += rainDay; b.kcSum += kc;
+    buckets.set(pIdx, b);
+    cursor.setDate(cursor.getDate() + 1);
+  }
+
+  const rows = [...buckets.keys()].sort((a,b) => a-b).map(pIdx => {
+    const b = buckets.get(pIdx);
+    return { pIdx, days: b.days, eto: b.sumEto, etc: b.sumEtc, rain: b.sumRain, kc: b.kcSum / b.days };
+  });
+
+  // Guide's own effective-rainfall rule (Bölüm 5, Eq.6 note): 80% of rainfall counted as effective.
+  const effRain = subtractRain ? sumRain * 0.8 : 0;
+  const netReq = Math.max(sumEtc - effRain, 0);
+  return { mode: 'guide', rows, sumEto, sumEtc, sumRain, effRain, netReq, subtractRain, stationName: sulamaTRData.stations[stationNo].name };
+}
+
+function sulamaRenderGuideResults(result) {
+  const { rows, sumEto, sumEtc, sumRain, effRain, netReq, subtractRain, stationName } = result;
+  const rainLabel = subtractRain
+    ? tesvikT(`Etkin Yağış (%80): ${effRain.toFixed(1)} mm (toplam yağış: ${sumRain.toFixed(1)} mm)`, `Effective rainfall (80%): ${effRain.toFixed(1)} mm (total rainfall: ${sumRain.toFixed(1)} mm)`)
+    : tesvikT(`Toplam Yağış: ${sumRain.toFixed(1)} mm (düşülmedi)`, `Total rainfall: ${sumRain.toFixed(1)} mm (not subtracted)`);
+
+  document.getElementById('sulamaResults').innerHTML = `
+    <div class="calc-summary">
+      <div class="item"><b>${sumEto.toFixed(1)} mm</b><span>${tesvikT('Toplam ETo','Total ETo')}</span></div>
+      <div class="item"><b>${sumEtc.toFixed(1)} mm</b><span>${tesvikT('Bitki Su Tüketimi (ETc)','Crop Water Use (ETc)')}</span></div>
+      <div class="item"><b>${netReq.toFixed(1)} mm · ${netReq.toFixed(1)} m³/da</b><span>${tesvikT('Net Sulama Suyu İhtiyacı','Net Irrigation Requirement')}</span></div>
+    </div>
+    <div class="sulama-note-line">${tesvikT(`📖 Resmi Kılavuz — istasyon: ${stationName} (uzun yıllar 10 günlük normalleri)`, `📖 Official Guide — station: ${stationName} (long-term 10-day normals)`)}</div>
+    <div class="sulama-note-line">${rainLabel}</div>
+    <div class="sulama-table-wrap">
+      <table class="sulama-table">
+        <thead><tr>
+          <th>${tesvikT('Dönem','Period')}</th><th>${tesvikT('Gün','Days')}</th><th>ETo mm</th><th>Kc</th><th>ETc mm</th><th>${tesvikT('Yağış mm','Rain mm')}</th>
+        </tr></thead>
+        <tbody>
+          ${rows.map(r => `<tr>
+            <td>${sulamaPeriodLabel(r.pIdx)}</td><td>${r.days}</td>
+            <td>${r.eto.toFixed(2)}</td><td>${r.kc.toFixed(2)}</td><td>${r.etc.toFixed(2)}</td><td>${r.rain.toFixed(1)}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
 let sulamaLastResult = null;
 
 async function sulamaCalculate() {
@@ -2870,6 +3083,27 @@ async function sulamaCalculate() {
     resultsEl.innerHTML = `<div class="koord-error">${tesvikT('Bitiş tarihi başlangıçtan önce olamaz.', 'End date cannot be before start date.')}</div>`;
     return;
   }
+
+  const useGuide = sulamaSource === 'guide' && sulamaNearestStationInfo && sulamaTRData;
+  if (useGuide) {
+    const stationCrops = sulamaTRData.crops[sulamaNearestStationInfo.station.blg] || {};
+    const cropObj = stationCrops[cropId];
+    if (!cropObj) {
+      resultsEl.innerHTML = `<div class="koord-error">${tesvikT('Seçilen bitki bu bölge için resmi kılavuzda tanımlı değil.', 'The selected crop is not defined for this region in the official guide.')}</div>`;
+      return;
+    }
+    btn.disabled = true;
+    const origLabel0 = btn.innerHTML;
+    try {
+      sulamaLastResult = await sulamaCalculateGuide(cropObj, plantDate, startDate, endDate, subtractRain);
+      sulamaRenderGuideResults(sulamaLastResult);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = origLabel0;
+    }
+    return;
+  }
+
   const crop = SULAMA_CROPS.find(c => c.id === cropId);
 
   btn.disabled = true;
@@ -2907,7 +3141,7 @@ async function sulamaCalculate() {
     }
     const netReq = Math.max(sumEtc - effRain, 0);
 
-    sulamaLastResult = { rows, sumEto, sumEtc, sumRain, effRain, netReq, subtractRain };
+    sulamaLastResult = { mode: 'nasa', rows, sumEto, sumEtc, sumRain, effRain, netReq, subtractRain };
     sulamaRenderResults(sulamaLastResult);
   } catch (err) {
     sulamaLastResult = null;
@@ -2991,6 +3225,7 @@ function sulamaSetLatLon(lat, lon, mapZoom) {
     sulamaMarker.setLatLng([lat, lon]);
     sulamaMap.setView([lat, lon], mapZoom || Math.max(sulamaMap.getZoom(), 11));
   }
+  sulamaOnLocationChanged();
 }
 
 function sulamaSyncMapFromInputs() {
@@ -2999,6 +3234,7 @@ function sulamaSyncMapFromInputs() {
   if (isNaN(lat) || isNaN(lon) || !sulamaMap || !sulamaMarker) return;
   sulamaMarker.setLatLng([lat, lon]);
   sulamaMap.setView([lat, lon], sulamaMap.getZoom());
+  sulamaOnLocationChanged();
 }
 
 function sulamaCreateTileLayer(id) {
@@ -3048,11 +3284,13 @@ function sulamaEnsureMap() {
     const ll = sulamaMarker.getLatLng();
     document.getElementById('sulamaLat').value = ll.lat.toFixed(5);
     document.getElementById('sulamaLon').value = ll.lng.toFixed(5);
+    sulamaOnLocationChanged();
   });
   sulamaMap.on('click', e => {
     sulamaMarker.setLatLng(e.latlng);
     document.getElementById('sulamaLat').value = e.latlng.lat.toFixed(5);
     document.getElementById('sulamaLon').value = e.latlng.lng.toFixed(5);
+    sulamaOnLocationChanged();
   });
 }
 
@@ -3082,18 +3320,42 @@ function sulamaPopulateCropSelect() {
   const sel = document.getElementById('sulamaCrop');
   if (!sel) return;
   const prev = sel.value;
-  const groups = [];
-  SULAMA_CROPS.forEach(c => {
-    let g = groups.find(x => x.key === c.group.tr);
-    if (!g) { g = { key: c.group.tr, group: c.group, crops: [] }; groups.push(g); }
-    g.crops.push(c);
-  });
-  sel.innerHTML = groups.map(g => `
-    <optgroup label="${tesvikT(g.group.tr, g.group.en)}">
-      ${g.crops.map(c => `<option value="${c.id}">${tesvikT(c.tr, c.en)}</option>`).join('')}
-    </optgroup>
-  `).join('');
-  if (prev) sel.value = prev;
+  const useGuide = sulamaSource === 'guide' && sulamaNearestStationInfo && sulamaTRData;
+
+  if (useGuide) {
+    const stationCrops = sulamaTRData.crops[sulamaNearestStationInfo.station.blg] || {};
+    const names = Object.keys(stationCrops).sort((a, b) => a.localeCompare(b, 'tr'));
+    sel.innerHTML = names.map(n => `<option value="${n}">${n}</option>`).join('');
+  } else {
+    const groups = [];
+    SULAMA_CROPS.forEach(c => {
+      let g = groups.find(x => x.key === c.group.tr);
+      if (!g) { g = { key: c.group.tr, group: c.group, crops: [] }; groups.push(g); }
+      g.crops.push(c);
+    });
+    sel.innerHTML = groups.map(g => `
+      <optgroup label="${tesvikT(g.group.tr, g.group.en)}">
+        ${g.crops.map(c => `<option value="${c.id}">${tesvikT(c.tr, c.en)}</option>`).join('')}
+      </optgroup>
+    `).join('');
+  }
+  if (prev && [...sel.options].some(o => o.value === prev)) sel.value = prev;
+  else sulamaSuggestPlantDate();
+}
+
+// In guide mode, prefill the planting date from the crop's official regional ekim/dikim dönemi.
+// Only while the user hasn't typed their own date (setting .value via JS doesn't fire 'input',
+// so sulamaPlantDateManuallySet only flips once they actually edit the field themselves).
+let sulamaPlantDateManuallySet = false;
+
+function sulamaSuggestPlantDate() {
+  const plantEl = document.getElementById('sulamaPlantDate');
+  if (!plantEl || sulamaPlantDateManuallySet) return;
+  const crop = sulamaGetActiveCrop();
+  if (crop && crop.ekimDonem) {
+    const d = sulamaDonemToDate(crop.ekimDonem);
+    plantEl.value = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  }
 }
 
 function sulamaSetDefaultDates() {
@@ -3114,9 +3376,11 @@ function sulamaInit() {
   sulamaSetDefaultDates();
   sulamaApplyGuideState();
   sulamaRenderStageInfo();
+  sulamaEnsureTRData();
   document.getElementById('sulamaLat').addEventListener('change', sulamaSyncMapFromInputs);
   document.getElementById('sulamaLon').addEventListener('change', sulamaSyncMapFromInputs);
-  document.getElementById('sulamaCrop').addEventListener('change', sulamaRenderStageInfo);
+  document.getElementById('sulamaCrop').addEventListener('change', () => { sulamaSuggestPlantDate(); sulamaRenderStageInfo(); });
+  document.getElementById('sulamaPlantDate').addEventListener('input', () => { sulamaPlantDateManuallySet = true; });
   document.getElementById('sulamaPlantDate').addEventListener('change', sulamaRenderStageInfo);
 }
 
@@ -3125,11 +3389,15 @@ function sulamaRefreshLang() {
   sulamaPopulateCropSelect();
   sulamaApplyGuideState();
   sulamaRenderStageInfo();
+  sulamaUpdateDataSourceBox();
   document.querySelectorAll('.sulama-basemap-btn').forEach(btn => {
     const b = SULAMA_BASEMAPS.find(x => x.id === btn.dataset.basemap);
     if (b) btn.textContent = tesvikT(b.tr, b.en);
   });
-  if (sulamaLastResult) sulamaRenderResults(sulamaLastResult);
+  if (sulamaLastResult) {
+    if (sulamaLastResult.mode === 'guide') sulamaRenderGuideResults(sulamaLastResult);
+    else sulamaRenderResults(sulamaLastResult);
+  }
 }
 sulamaInit();
 

@@ -221,10 +221,26 @@ nav {
 }
 
 /* ══ HOME PAGE ══ */
-.home-page {
+.home-hero {
   min-height: calc(100vh - var(--nav-h));
   display: flex;
   align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+.home-bg-deco {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.home-bg-deco span {
+  position: absolute;
+  opacity: 0.08;
+  filter: grayscale(1) contrast(0.8);
+  line-height: 1;
+  user-select: none;
 }
 .home-inner {
   max-width: 960px;
@@ -234,6 +250,8 @@ nav {
   grid-template-columns: 1fr 220px;
   gap: 4rem;
   align-items: center;
+  position: relative;
+  z-index: 1;
 }
 .home-eyebrow {
   display: inline-flex;
@@ -340,6 +358,49 @@ nav {
   font-weight: 800;
   font-size: 3.4rem;
   letter-spacing: 1px;
+}
+
+/* ══ HOME FEATURED ══ */
+.home-featured {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 2rem 4rem;
+}
+.home-featured .section-subtitle { margin-bottom: 1.25rem; }
+.featured-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+}
+.featured-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+  box-shadow: var(--shadow);
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.featured-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+.featured-card .icon {
+  width: 48px; height: 48px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.5rem;
+}
+.featured-card.teal .icon { background: var(--primary-light); }
+.featured-card.orange .icon { background: #fff4e0; }
+.featured-card.blue .icon { background: #e6f0ff; }
+.featured-card h3 { font-size: 0.95rem; font-weight: 700; color: var(--text); }
+.featured-card p { font-size: 0.82rem; color: var(--text-muted); line-height: 1.55; }
+.featured-card .go { font-size: 0.78rem; font-weight: 700; color: var(--primary); margin-top: auto; }
+@media (max-width: 768px) {
+  .featured-grid { grid-template-columns: 1fr; }
 }
 
 /* ══ ABOUT ══ */
@@ -894,7 +955,18 @@ html[lang="en"] [data-lang="en"] { display: revert; }
 
   <!-- ══ HOME ══ -->
   <div class="page home-page active" id="page-home">
-    <div class="home-inner">
+    <div class="home-hero">
+      <div class="home-bg-deco" aria-hidden="true">
+        <span style="top:8%; left:6%; font-size:4rem; transform:rotate(-12deg);">🗺️</span>
+        <span style="top:65%; left:3%; font-size:3.5rem; transform:rotate(8deg);">🛰️</span>
+        <span style="top:14%; left:38%; font-size:2.8rem; transform:rotate(6deg);">💧</span>
+        <span style="top:78%; left:32%; font-size:3.2rem; transform:rotate(-8deg);">⚡</span>
+        <span style="top:5%; left:68%; font-size:3rem; transform:rotate(10deg);">⚽</span>
+        <span style="top:82%; left:62%; font-size:3.6rem; transform:rotate(-6deg);">🚴</span>
+        <span style="top:45%; left:20%; font-size:2.6rem; transform:rotate(-15deg);">📊</span>
+        <span style="top:38%; left:82%; font-size:3.2rem; transform:rotate(14deg);">🧭</span>
+      </div>
+      <div class="home-inner">
       <div>
         <div class="home-eyebrow">
           <span>📍</span>
@@ -949,6 +1021,41 @@ html[lang="en"] [data-lang="en"] { display: revert; }
         </div>
       </div>
       <div class="home-avatar"><img src="assets/profile-photo.png" alt="Selçuk Albut"></div>
+      </div>
+    </div>
+
+    <div class="home-featured">
+      <div class="section-subtitle" data-lang="tr">Öne Çıkan Çalışmalar</div>
+      <div class="section-subtitle" data-lang="en">Featured Work</div>
+      <div class="featured-grid">
+        <button class="featured-card teal" onclick="showPage('academic')">
+          <div class="icon">🎓</div>
+          <h3 data-lang="tr">Bilimsel Yayınlarım</h3>
+          <h3 data-lang="en">My Publications</h3>
+          <p data-lang="tr">100'den fazla bilimsel yayın, 9 kitap bölümü ve 5 kitap. Seçilmiş çalışmalarımı ve PDF'lerini inceleyin.</p>
+          <p data-lang="en">100+ scientific publications, 9 book chapters and 5 books. Browse selected works and their PDFs.</p>
+          <span class="go" data-lang="tr">Yayınları Gör →</span>
+          <span class="go" data-lang="en">View Publications →</span>
+        </button>
+        <button class="featured-card orange" onclick="showPage('projects')">
+          <div class="icon">🇪🇺</div>
+          <h3 data-lang="tr">GwB: Küresel Su Dengesi Projesi</h3>
+          <h3 data-lang="en">GwB: Global Water Balance Project</h3>
+          <p data-lang="tr">Proje koordinatörü olduğum, AB destekli güncel araştırma projem — sulama verimliliği için yapay zeka destekli karar destek sistemi.</p>
+          <p data-lang="en">My current EU-funded project as coordinator — an AI-supported decision support system for irrigation efficiency.</p>
+          <span class="go" data-lang="tr">Projeleri Gör →</span>
+          <span class="go" data-lang="en">View Projects →</span>
+        </button>
+        <button class="featured-card blue" onclick="showPage('apps')">
+          <div class="icon">📱</div>
+          <h3 data-lang="tr">App Store'da Yayında</h3>
+          <h3 data-lang="en">Live on the App Store</h3>
+          <p data-lang="tr">Sayaç ve Takvim ile Global Sports Tracker şu anda App Store'da. GST Cycling incelemede.</p>
+          <p data-lang="en">Sayaç ve Takvim and Global Sports Tracker are live on the App Store. GST Cycling is in review.</p>
+          <span class="go" data-lang="tr">Uygulamaları Gör →</span>
+          <span class="go" data-lang="en">View Apps →</span>
+        </button>
+      </div>
     </div>
   </div>
 

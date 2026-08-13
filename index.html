@@ -276,7 +276,14 @@ nav {
 .home-role {
   font-size: 1.05rem;
   color: var(--text-muted);
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
+}
+.home-bio {
+  font-size: 0.92rem;
+  color: var(--text-muted);
+  line-height: 1.75;
+  max-width: 560px;
+  margin-bottom: 1.75rem;
 }
 .home-tags {
   display: flex;
@@ -432,6 +439,7 @@ nav {
   line-height: 1.8;
   color: var(--text);
 }
+.about-bio p + p { margin-top: 1.1rem; }
 
 /* ══ ACADEMIC ══ */
 .profile-links {
@@ -981,8 +989,12 @@ html[lang="en"] [data-lang="en"] { display: revert; }
           Prof. Dr.<br/>Selçuk <span>ALBUT</span>
         </h1>
         <p class="home-role">
-          <span data-lang="tr">Akademisyen · CBS & Uzaktan Algılama Uzmanı · iOS Geliştirici</span>
-          <span data-lang="en">Academic · GIS & Remote Sensing Expert · iOS Developer</span>
+          <span data-lang="tr">Akademisyen · CBS & Uzaktan Algılama Uzmanı · iOS Geliştirici · Spor Tutkunu</span>
+          <span data-lang="en">Academic · GIS & Remote Sensing Expert · iOS Developer · Sports Enthusiast</span>
+        </p>
+        <p class="home-bio">
+          <span data-lang="tr">Tekirdağ Namık Kemal Üniversitesi Ziraat Fakültesi Biyosistem Mühendisliği Bölümü'nde öğretim üyesiyim. Akademik kariyerim boyunca CBS, Uzaktan Algılama ve Sulama Sistemleri alanlarında araştırma ve öğretim yürüttüm; toplam bütçesi 4,5 milyon Euro'yu aşan 6 Avrupa Birliği projesinde görev aldım. Şu sıralar Swift ve Xcode kullanarak Apple ekosistemi için uygulamalar geliştiriyorum. Amacım; uzmanlık alanlarımı ve spor tutkumu küresel ölçekte faydalı uygulamalara dönüştürmek.</span>
+          <span data-lang="en">I am a faculty member at the Department of Biosystems Engineering, Faculty of Agriculture, Tekirdağ Namık Kemal University. Throughout my academic career I have conducted research and teaching in GIS, Remote Sensing and Irrigation Systems, and participated in 6 EU-funded projects with a total budget exceeding €4.5 million. I am currently developing apps for the Apple ecosystem using Swift and Xcode. My goal is to turn my areas of expertise and my passion for sports into globally useful applications.</span>
         </p>
         <div class="home-tags">
           <span class="tag teal">🗺️ GIS / CBS</span>
@@ -1076,20 +1088,28 @@ html[lang="en"] [data-lang="en"] { display: revert; }
       </div>
 
       <div class="about-bio">
-        <span data-lang="tr">
+        <p data-lang="tr">
+          Ankara'da doğdum; ilkokul, ortaokul, lise ve lisans eğitimimi de Ankara'da tamamladım.
+          Eşim Serpil ve oğlum Sercan ile birlikte Tekirdağ'da yaşıyorum — ailem, bu uzun akademik ve teknoloji yolculuğumun en büyük destekçisi.
+        </p>
+        <p data-lang="en">
+          I was born in Ankara, where I also completed my primary, middle and high school education, as well as my bachelor's degree.
+          I live in Tekirdağ with my wife Serpil and son Sercan — my family has been the biggest support throughout this long academic and technology journey.
+        </p>
+        <p data-lang="tr">
           Tekirdağ Namık Kemal Üniversitesi Ziraat Fakültesi Biyosistem Mühendisliği Bölümü'nde öğretim üyesiyim.
           Akademik kariyerim boyunca CBS, Uzaktan Algılama ve Sulama Sistemleri alanlarında araştırma ve öğretim yürüttüm;
           toplam bütçesi 4,5 milyon Euro'yu aşan 6 Avrupa Birliği projesinde görev aldım.
           Şu sıralar Swift ve Xcode kullanarak Apple ekosistemi için uygulamalar geliştiriyorum.
           Amacım; uzmanlık alanlarımı ve spor tutkumu küresel ölçekte faydalı uygulamalara dönüştürmek.
-        </span>
-        <span data-lang="en">
+        </p>
+        <p data-lang="en">
           I am a faculty member at the Department of Biosystems Engineering, Faculty of Agriculture,
           Tekirdağ Namık Kemal University. Throughout my academic career I have conducted research and teaching
           in GIS, Remote Sensing and Irrigation Systems, and participated in 6 EU-funded projects with a total budget
           exceeding €4.5 million. I am currently developing apps for the Apple ecosystem using Swift and Xcode,
           with the goal of turning my expertise and passion for sports into globally useful tools.
-        </span>
+        </p>
       </div>
 
       <div class="about-grid">

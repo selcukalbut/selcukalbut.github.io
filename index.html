@@ -7,7 +7,7 @@
 <meta name="description" content="Prof. Dr. Selçuk ALBUT — GIS, Remote Sensing, Irrigation & iOS Developer"/>
 <link rel="canonical" href="https://selcukalbut.com"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Karla:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/proj4@2.9.0/dist/proj4.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/mgrs@2.0.0/dist/mgrs.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
@@ -20,30 +20,32 @@
         async src="//gc.zgo.at/count.js"></script>
 <style>
 :root {
-  --primary: #0d6e6e;
-  --primary-light: #e6f4f4;
-  --primary-dark: #094f4f;
-  --accent: #f0a500;
-  --text: #1a1a2e;
-  --text-muted: #6b7280;
-  --bg: #f8fbfb;
-  --card: #ffffff;
-  --border: #d1e8e8;
+  --primary: #3d2b1f;
+  --primary-light: #f6e3d1;
+  --primary-dark: #241811;
+  --accent: #8a6416;
+  --text: #3d2b1f;
+  --text-muted: #6b5643;
+  --bg: #fbf3e9;
+  --card: #fffcf7;
+  --border: #ecd9c0;
   --nav-h: 64px;
-  --radius: 14px;
-  --shadow: 0 2px 20px rgba(13,110,110,0.08);
-  --shadow-lg: 0 8px 40px rgba(13,110,110,0.13);
+  --radius: 20px;
+  --shadow: 0 4px 20px rgba(120,72,40,0.10);
+  --shadow-lg: 0 10px 40px rgba(120,72,40,0.18);
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Karla', sans-serif;
   background: var(--bg);
   color: var(--text);
   line-height: 1.6;
   min-height: 100vh;
 }
+
+h1, h2, h3, .nav-brand { font-family: 'Bricolage Grotesque', sans-serif; }
 
 a { color: var(--primary); text-decoration: none; }
 a:hover { text-decoration: underline; }
@@ -54,7 +56,7 @@ nav {
   top: 0; left: 0; right: 0;
   z-index: 200;
   height: var(--nav-h);
-  background: rgba(248,251,251,0.96);
+  background: rgba(251,243,233,0.96);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
   display: flex;
@@ -75,6 +77,7 @@ nav {
 
 .nav-links {
   display: flex;
+  justify-content: flex-end;
   gap: 4px;
   list-style: none;
   flex: 1;
@@ -88,7 +91,7 @@ nav {
   font-weight: 500;
   color: var(--text-muted);
   padding: 6px 12px;
-  border-radius: 8px;
+  border-radius: 100px;
   cursor: pointer;
   transition: all 0.18s;
   white-space: nowrap;
@@ -100,14 +103,14 @@ nav {
   display: flex;
   gap: 3px;
   background: var(--primary-light);
-  border-radius: 8px;
+  border-radius: 100px;
   padding: 4px;
   flex-shrink: 0;
 }
 .lang-btn {
   padding: 4px 10px;
   border: none;
-  border-radius: 6px;
+  border-radius: 100px;
   font-size: 0.75rem;
   font-weight: 700;
   cursor: pointer;
@@ -143,7 +146,7 @@ nav {
   position: fixed;
   top: var(--nav-h);
   left: 0; right: 0;
-  background: white;
+  background: var(--card);
   border-bottom: 1px solid var(--border);
   padding: 1rem;
   z-index: 199;
@@ -242,17 +245,42 @@ nav {
   display: flex;
   align-items: center;
   position: relative;
+  overflow: hidden;
+}
+.home-hero-blob {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+}
+.home-hero-blob.one {
+  top: -220px; right: -160px;
+  width: 620px; height: 620px;
+  background: radial-gradient(circle at 35% 35%, #f3d9b8, #eab98a 70%);
+  opacity: 0.45;
+}
+.home-hero-blob.two {
+  bottom: -240px; left: -180px;
+  width: 520px; height: 520px;
+  background: radial-gradient(circle at 60% 40%, #d9e2c2, #b7c894 70%);
+  opacity: 0.32;
 }
 .home-inner {
-  max-width: 960px;
+  max-width: 1060px;
   margin: 0 auto;
   padding: 4rem 2rem;
   display: grid;
-  grid-template-columns: 1fr 220px;
-  gap: 4rem;
+  grid-template-columns: 1fr 300px;
+  gap: 3rem;
   align-items: center;
   position: relative;
   z-index: 1;
+}
+.home-side {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.75rem;
 }
 .home-eyebrow {
   display: inline-flex;
@@ -293,18 +321,15 @@ nav {
   margin-bottom: 2rem;
 }
 .tag {
-  border: 1px solid transparent;
-  color: var(--text-muted);
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
   font-size: 0.8rem;
   padding: 5px 12px;
   border-radius: 20px;
   font-weight: 600;
 }
-.tag.teal { background: var(--primary-light); color: var(--primary-dark); }
-.tag.blue { background: #e6f0ff; color: #2a5bd7; }
-.tag.green { background: #e6f9f0; color: #0f9d58; }
-.tag.purple { background: #f0e6ff; color: #7038c4; }
-.tag.accent { background: var(--accent); color: white; }
+.tag.teal, .tag.blue, .tag.green, .tag.purple, .tag.accent { background: var(--card); color: var(--text); border-color: var(--border); }
 .home-cta {
   display: flex;
   gap: 10px;
@@ -312,28 +337,31 @@ nav {
 }
 .home-stats {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 0.9rem;
-  margin-top: 2rem;
+  width: 100%;
 }
 .home-stats .stat {
   display: flex;
   flex-direction: column;
   padding: 0.9rem 1rem;
   border-radius: var(--radius);
+  background: var(--card);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
 }
-.home-stats .stat.teal { background: var(--primary-light); }
-.home-stats .stat.orange { background: #fff4e0; }
-.home-stats .stat.blue { background: #e6f0ff; }
-.home-stats .stat.green { background: #e6f9f0; }
+.home-stats .stat.teal, .home-stats .stat.orange, .home-stats .stat.blue { background: var(--card); }
+.home-stats .stat.green { background: var(--primary); border-color: var(--primary); }
 .home-stats .stat b { font-size: 1.4rem; font-weight: 800; color: var(--text); letter-spacing: -0.5px; }
 .home-stats .stat span { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; font-weight: 600; }
+.home-stats .stat.green b { color: #fff; }
+.home-stats .stat.green span { color: var(--primary-light); }
 .btn {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   padding: 11px 22px;
-  border-radius: 10px;
+  border-radius: 100px;
   font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
@@ -403,7 +431,7 @@ nav {
 }
 .featured-card.teal .icon { background: var(--primary-light); }
 .featured-card.orange .icon { background: #fff4e0; }
-.featured-card.blue .icon { background: #e6f0ff; }
+.featured-card.blue .icon { background: #dde8e2; }
 .featured-card h3 { font-size: 0.95rem; font-weight: 700; color: var(--text); }
 .featured-card p { font-size: 0.82rem; color: var(--text-muted); line-height: 1.55; }
 .featured-card .go { font-size: 0.78rem; font-weight: 700; color: var(--primary); margin-top: auto; }
@@ -548,6 +576,14 @@ nav {
 .project-card:hover { transform: translateX(4px); }
 .project-badge { display: flex; flex-direction: column; align-items: center; gap: 4px; }
 .eu-flag { font-size: 2rem; }
+.project-poster {
+  width: 56px;
+  height: 72px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
 .project-years { font-size: 0.65rem; font-weight: 700; color: var(--text-muted); text-align: center; }
 .project-body h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.25rem; line-height: 1.4; }
 .project-code { font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; color: var(--text-muted); margin-bottom: 0.35rem; }
@@ -573,8 +609,8 @@ nav {
   border-radius: 4px;
   margin-top: 4px;
 }
-.status-ongoing { background: #e6f9f0; color: #1a7a4a; }
-.status-done { background: #f0f0f0; color: #666; }
+.status-ongoing { background: #edf0d9; color: #556b2f; }
+.status-done { background: #ece3d6; color: var(--text-muted); }
 .projects-total {
   background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
   border-radius: var(--radius);
@@ -611,19 +647,19 @@ nav {
   overflow: hidden;
 }
 .app-icon img { width: 100%; height: 100%; object-fit: cover; border-radius: 16px; }
-.app-icon.green { background: #e6f9f0; }
-.app-icon.blue { background: #e6f0ff; }
+.app-icon.green { background: #edf0d9; }
+.app-icon.blue { background: #dde8e2; }
 .app-icon.orange { background: #fff4e0; }
 .app-icon.teal { background: var(--primary-light); }
 .app-info h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.3rem; }
 .app-info p { font-size: 0.83rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 0.6rem; }
 .platform-tags { display: flex; gap: 6px; flex-wrap: wrap; }
 .ptag { font-size: 0.68rem; font-weight: 600; padding: 3px 9px; border-radius: 5px; background: var(--primary-light); color: var(--primary); }
-.ptag.watch { background: #f0f0ff; color: #5555cc; }
+.ptag.watch { background: #f0dfe0; color: #8a3f4a; }
 .ptag.coming { background: #fff4e0; color: #b97a00; }
-.ptag.review { background: #e6f0ff; color: #2a5bd7; }
-.ptag.ready { background: #e6f9f0; color: #0f9d58; }
-.ptag.live { background: #e6f9f0; color: #0f9d58; }
+.ptag.review { background: #dde8e2; color: #2f6b5c; }
+.ptag.ready { background: #edf0d9; color: #556b2f; }
+.ptag.live { background: #edf0d9; color: #556b2f; }
 .app-shots { display: flex; gap: 10px; margin: 0.9rem 0; flex-wrap: wrap; }
 .app-shots img {
   width: 120px;
@@ -881,7 +917,7 @@ footer {
   position: fixed;
   bottom: 0; left: 0; right: 0;
   border-top: 1px solid var(--border);
-  background: rgba(248,251,251,0.95);
+  background: rgba(251,243,233,0.95);
   text-align: center;
   padding: 0.6rem 2rem;
   font-size: 0.75rem;
@@ -982,8 +1018,10 @@ html[lang="en"] [data-lang="en"] { display: revert; }
   <!-- ══ HOME ══ -->
   <div class="page home-page active" id="page-home">
     <div class="home-hero">
+      <div class="home-hero-blob one" aria-hidden="true"></div>
+      <div class="home-hero-blob two" aria-hidden="true"></div>
       <div class="home-inner">
-      <div>
+      <div class="home-main">
         <div class="home-eyebrow">
           <span>📍</span>
           <span data-lang="tr">Tekirdağ, Türkiye</span>
@@ -1017,6 +1055,9 @@ html[lang="en"] [data-lang="en"] { display: revert; }
             <span data-lang="en">About Me →</span>
           </button>
         </div>
+      </div>
+      <div class="home-side">
+        <div class="home-avatar"><img src="assets/profile-photo.png" alt="Selçuk Albut"></div>
         <div class="home-stats">
           <div class="stat teal">
             <b>21</b>
@@ -1040,7 +1081,6 @@ html[lang="en"] [data-lang="en"] { display: revert; }
           </div>
         </div>
       </div>
-      <div class="home-avatar"><img src="assets/profile-photo.png" alt="Selçuk Albut"></div>
       </div>
     </div>
 
@@ -1070,8 +1110,8 @@ html[lang="en"] [data-lang="en"] { display: revert; }
           <div class="icon">📱</div>
           <h3 data-lang="tr">App Store'da Yayında</h3>
           <h3 data-lang="en">Live on the App Store</h3>
-          <p data-lang="tr">Sayaç ve Takvim, Global Sports Tracker ve Kalorimatik AI şu anda App Store'da. GST Cycling incelemede.</p>
-          <p data-lang="en">Sayaç ve Takvim, Global Sports Tracker and Kalorimatik AI are live on the App Store. GST Cycling is in review.</p>
+          <p data-lang="tr">Sayaç ve Takvim, Global Sports Tracker, Kalorimatik AI ve GST Cycling şu anda App Store'da.</p>
+          <p data-lang="en">Sayaç ve Takvim, Global Sports Tracker, Kalorimatik AI and GST Cycling are all live on the App Store.</p>
           <span class="go" data-lang="tr">Uygulamaları Gör →</span>
           <span class="go" data-lang="en">View Apps →</span>
         </button>
@@ -1092,12 +1132,6 @@ html[lang="en"] [data-lang="en"] { display: revert; }
       </div>
 
       <div class="about-bio">
-        <p data-lang="tr">
-          Evli ve bir çocuk babasıyım.
-        </p>
-        <p data-lang="en">
-          I am married with one child.
-        </p>
         <p data-lang="tr">
           Lisans eğitimimi 1984'te Ankara Üniversitesi Ziraat Fakültesi Tarımsal Yapılar ve Sulama Bölümü'nde tamamladım.
           Yüksek lisansımı Trakya Üniversitesi'nde Kültürteknik alanında (1987), doktoramı ise yeniden Ankara Üniversitesi'nde
@@ -1134,6 +1168,12 @@ html[lang="en"] [data-lang="en"] { display: revert; }
         <p data-lang="en">
           I develop apps for the Apple ecosystem using Swift and Xcode.
           My goal is to turn my areas of expertise and my passion for sports into globally useful applications.
+        </p>
+        <p data-lang="tr">
+          Evli ve bir çocuk babasıyım.
+        </p>
+        <p data-lang="en">
+          I am married with one child.
         </p>
       </div>
 
@@ -1274,7 +1314,7 @@ html[lang="en"] [data-lang="en"] { display: revert; }
 
         <div class="book-card">
           <div class="book-cover">
-            <div class="book-cover-placeholder" style="background:linear-gradient(160deg,#1a4a8a,#0d2a5a);">
+            <div class="book-cover-placeholder" style="background:linear-gradient(160deg,#3d6b5a,#234238);">
               <div class="book-emoji">🛰️</div>
               <div class="book-title-small">ILMM-BSE<br/>Ergene River Basin</div>
             </div>
@@ -1307,7 +1347,7 @@ html[lang="en"] [data-lang="en"] { display: revert; }
 
         <div class="book-card">
           <div class="book-cover">
-            <div class="book-cover-placeholder" style="background:linear-gradient(160deg,#4a1a6b,#2d0a4a);">
+            <div class="book-cover-placeholder" style="background:linear-gradient(160deg,#7a3a45,#4a2028);">
               <div class="book-emoji">💻</div>
               <div class="book-title-small">Bilgisayar Temel Bilgileri İşletim Sistemi</div>
             </div>
@@ -1542,8 +1582,8 @@ html[lang="en"] [data-lang="en"] { display: revert; }
 
       <div class="projects-list">
 
-        <div class="project-card" style="border-left:4px solid #1a7a4a;">
-          <div class="project-badge"><div class="eu-flag">🇪🇺</div><div class="project-years">2025–2028</div></div>
+        <div class="project-card" style="border-left:4px solid #556b2f;">
+          <div class="project-badge"><img class="project-poster" src="assets/projects/bsb00734.png" alt="GwB proje posteri"><div class="project-years">2025–2028</div></div>
           <div class="project-body">
             <div class="project-code">BSB00734 · Interreg Next VI-B Karadeniz Havzası</div>
             <h3 data-lang="tr">Küresel Su Dengesi için Karar Destek Sistemi (GwB)</h3>
@@ -1560,8 +1600,8 @@ html[lang="en"] [data-lang="en"] { display: revert; }
           </div>
         </div>
 
-        <div class="project-card" style="border-left:4px solid #1a7a4a;">
-          <div class="project-badge"><div class="eu-flag">🇪🇺</div><div class="project-years">2023–2026</div></div>
+        <div class="project-card" style="border-left:4px solid #556b2f;">
+          <div class="project-badge"><img class="project-poster" src="assets/projects/ccagp088.png" alt="İklimTrak proje posteri"><div class="project-years">2023–2026</div></div>
           <div class="project-body">
             <div class="project-code">CCAGP088 · AB İklim Değişikliğine Uyum Hibe Programı</div>
             <h3 data-lang="tr">TR21 Trakya Bölgesinde İklim Değişimine Adaptasyon için Nötr Arazi Bozunumu — İklimTrak</h3>
@@ -1578,8 +1618,8 @@ html[lang="en"] [data-lang="en"] { display: revert; }
           </div>
         </div>
 
-        <div class="project-card" style="border-left:4px solid #ccc;">
-          <div class="project-badge"><div class="eu-flag">🇪🇺</div><div class="project-years">2017–2021</div></div>
+        <div class="project-card" style="border-left:4px solid #cdbfa4;">
+          <div class="project-badge"><img class="project-poster" src="assets/projects/bsb1135.png" alt="AGREEN proje posteri"><div class="project-years">2017–2021</div></div>
           <div class="project-body">
             <div class="project-code">BSB1135 · AB Karadeniz Havzası Sınır Ötesi İşbirliği</div>
             <h3 data-lang="tr">Karadeniz Havzasında İklim Akıllı ve Yeşil Tarım için Sınır Ötesi İttifak (AGREEN)</h3>
@@ -1596,8 +1636,8 @@ html[lang="en"] [data-lang="en"] { display: revert; }
           </div>
         </div>
 
-        <div class="project-card" style="border-left:4px solid #ccc;">
-          <div class="project-badge"><div class="eu-flag">🇪🇺</div><div class="project-years">2017–2021</div></div>
+        <div class="project-card" style="border-left:4px solid #cdbfa4;">
+          <div class="project-badge"><img class="project-poster" src="assets/projects/bsb217.png" alt="Sıfır Atık Stratejisi proje posteri"><div class="project-years">2017–2021</div></div>
           <div class="project-body">
             <div class="project-code">BSB217 · AB Karadeniz Havzası Sınır Ötesi İşbirliği</div>
             <h3 data-lang="tr">İyi Çevre Durumu için Sıfır Atık Stratejisi</h3>
@@ -1614,8 +1654,8 @@ html[lang="en"] [data-lang="en"] { display: revert; }
           </div>
         </div>
 
-        <div class="project-card" style="border-left:4px solid #ccc;">
-          <div class="project-badge"><div class="eu-flag">🇪🇺</div><div class="project-years">2013–2015</div></div>
+        <div class="project-card" style="border-left:4px solid #cdbfa4;">
+          <div class="project-badge"><img class="project-poster" src="assets/projects/ccgs042.png" alt="CCGS042 proje posteri"><div class="project-years">2013–2015</div></div>
           <div class="project-body">
             <div class="project-code">CCGS042 · AB İklim Değişikliği Kapasite Geliştirme Hibe Programı</div>
             <h3 data-lang="tr">Trakya Bölgesinde İklim Değişikliğinin Azaltılması ve Adaptasyonu için Kapasite Geliştirme</h3>
@@ -1632,8 +1672,8 @@ html[lang="en"] [data-lang="en"] { display: revert; }
           </div>
         </div>
 
-        <div class="project-card" style="border-left:4px solid #ccc;">
-          <div class="project-badge"><div class="eu-flag">🇪🇺</div><div class="project-years">2007–2017</div></div>
+        <div class="project-card" style="border-left:4px solid #cdbfa4;">
+          <div class="project-badge"><img class="project-poster" src="assets/projects/ilmm-bse.png" alt="ILMM-BSE proje posteri"><div class="project-years">2007–2017</div></div>
           <div class="project-body">
             <div class="project-code">ILMM-BSE · AB Karadeniz Havzası Ortak Operasyonel Programı</div>
             <h3 data-lang="tr">Karadeniz Haliçlerinin Entegre Arazi Kullanımı Yönetim Modellemesi (ILMM-BSE)</h3>
@@ -1820,15 +1860,30 @@ html[lang="en"] [data-lang="en"] { display: revert; }
         <div class="app-card">
           <div class="app-icon orange"><img src="assets/app-icons/gst-cycling.png" alt="GST Cycling"></div>
           <div class="app-info">
-            <h3 data-lang="tr">GST Cycling <span style="color:#999;font-weight:400;font-size:0.8rem">— İncelemede</span></h3>
-            <h3 data-lang="en">GST Cycling <span style="color:#999;font-weight:400;font-size:0.8rem">— Waiting for Review</span></h3>
-            <p data-lang="tr">Bisiklet yarışlarını canlı takip edin. Tour de France gibi turlar için gerçek zamanlı etap bilgisi, puan durumu ve sporcu istatistikleri.</p>
-            <p data-lang="en">Follow professional cycling races live. Real-time stage info, classifications and rider statistics for tours like the Tour de France.</p>
+            <h3 data-lang="tr">GST Cycling <span style="color:#999;font-weight:400;font-size:0.8rem">— App Store'da</span></h3>
+            <h3 data-lang="en">GST Cycling <span style="color:#999;font-weight:400;font-size:0.8rem">— On the App Store</span></h3>
+            <p data-lang="tr">Bisiklet yarışlarını canlı takip edin. Tour de France ve La Vuelta gibi turlar için etap bilgisi, parkur profilleri, mesafe/tarih detayları ve hatırlatıcılarla dolu bir yarış takvimi.</p>
+            <p data-lang="en">Follow professional cycling races. Stage-by-stage info, race profiles, distance/date details and reminders for tours like the Tour de France and La Vuelta.</p>
+            <div class="app-shots">
+              <a href="assets/screenshots/gst-cycling/01-home.png" target="_blank" rel="noopener"><img src="assets/screenshots/gst-cycling/01-home.png" alt="GST Cycling - Ana Sayfa"></a>
+              <a href="assets/screenshots/gst-cycling/02-race-preview.png" target="_blank" rel="noopener"><img src="assets/screenshots/gst-cycling/02-race-preview.png" alt="GST Cycling - Yarış Önizleme"></a>
+            </div>
             <div class="platform-tags">
               <span class="ptag">iPhone</span>
               <span class="ptag">iPad</span>
-              <span class="ptag review" data-lang="tr">İncelemede</span>
-              <span class="ptag review" data-lang="en">Waiting for Review</span>
+              <span class="ptag live" data-lang="tr">App Store'da Yayında</span>
+              <span class="ptag live" data-lang="en">Live on the App Store</span>
+            </div>
+            <div class="app-store-row">
+              <a class="app-store-btn" href="https://apps.apple.com/app/id6791187815" target="_blank" rel="noopener">
+                <span data-lang="tr">🍎 App Store'da Görüntüle</span>
+                <span data-lang="en">🍎 View on the App Store</span>
+              </a>
+              <div class="app-qr-wrap">
+                <img src="assets/qrcodes/gst-cycling.png" alt="QR code">
+                <span data-lang="tr">Telefonunuzla okutun</span>
+                <span data-lang="en">Scan with your phone</span>
+              </div>
             </div>
           </div>
         </div>
@@ -2203,6 +2258,41 @@ html[lang="en"] [data-lang="en"] { display: revert; }
             <div class="contact-label" data-lang="tr">Akademik Profil</div>
             <div class="contact-label" data-lang="en">Academic Profile</div>
             <div class="contact-value">salbut.cv.nku.edu.tr</div>
+          </div>
+        </a>
+        <a class="contact-card" href="https://www.linkedin.com/in/selcuk-albut-74729049/" target="_blank" rel="noopener">
+          <span class="icon">💼</span>
+          <div>
+            <div class="contact-label">LinkedIn</div>
+            <div class="contact-value">selcuk-albut</div>
+          </div>
+        </a>
+        <a class="contact-card" href="https://www.instagram.com/selcukalbut/" target="_blank" rel="noopener">
+          <span class="icon">📷</span>
+          <div>
+            <div class="contact-label">Instagram</div>
+            <div class="contact-value">@selcukalbut</div>
+          </div>
+        </a>
+        <a class="contact-card" href="https://www.facebook.com/albut" target="_blank" rel="noopener">
+          <span class="icon">👍</span>
+          <div>
+            <div class="contact-label">Facebook</div>
+            <div class="contact-value">albut</div>
+          </div>
+        </a>
+        <a class="contact-card" href="https://t.me/SelcukAlbut" target="_blank" rel="noopener">
+          <span class="icon">✈️</span>
+          <div>
+            <div class="contact-label">Telegram</div>
+            <div class="contact-value">@SelcukAlbut</div>
+          </div>
+        </a>
+        <a class="contact-card" href="https://www.youtube.com/@selcukalbut2277" target="_blank" rel="noopener">
+          <span class="icon">▶️</span>
+          <div>
+            <div class="contact-label">YouTube</div>
+            <div class="contact-value">@selcukalbut2277</div>
           </div>
         </a>
       </div>
@@ -3544,7 +3634,7 @@ function sulamaAddStationMarkers() {
     const s = sulamaTRData.stations[no];
     const regionName = sulamaTRData.regions[s.blg] || s.blg;
     const dot = L.circleMarker([s.lat, s.lon], {
-      radius: 4, weight: 1.5, color: '#fff', fillColor: '#0d6e6e', fillOpacity: 0.85,
+      radius: 4, weight: 1.5, color: '#fff', fillColor: '#9c4a1e', fillOpacity: 0.85,
     });
     dot.bindTooltip(s.name, { direction: 'top', offset: [0, -3] });
     dot.bindPopup(
@@ -3589,7 +3679,7 @@ function sulamaAddVoronoiLayer() {
     const cell = sulamaVoronoi.voronoi.cellPolygon(i);
     if (!cell) return;
     L.polygon(cell.map(([lon, lat]) => [lat, lon]), {
-      color: '#0d6e6e', weight: 1, opacity: 0.3, fill: false, interactive: false,
+      color: '#9c4a1e', weight: 1, opacity: 0.3, fill: false, interactive: false,
     }).addTo(sulamaVoronoiLayer);
   });
   sulamaVoronoiLayer.addTo(sulamaMap);
@@ -3606,7 +3696,7 @@ function sulamaUpdateActiveCell() {
   const cell = sulamaVoronoi.voronoi.cellPolygon(idx);
   if (!cell) return;
   sulamaActiveCellLayer = L.polygon(cell.map(([lon, lat]) => [lat, lon]), {
-    color: '#f0a500', weight: 2, fillColor: '#f0a500', fillOpacity: 0.12, interactive: false,
+    color: '#8a6416', weight: 2, fillColor: '#8a6416', fillOpacity: 0.12, interactive: false,
   }).addTo(sulamaMap);
 }
 

@@ -13,6 +13,9 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3-delaunay@6/dist/d3-delaunay.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.4/dist/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <!-- Private analytics (dashboard only visible to the site owner, no cookies) — per-page/per-tool
      pageviews are fired manually from showPage() below, since this is a single-page app. -->
 <script data-goatcounter="https://selcukalbut.goatcounter.com/count"
@@ -913,6 +916,7 @@ nav {
 .sulama-source-btn:hover { border-color: var(--primary); }
 .sulama-source-btn.active { background: var(--primary); border-color: var(--primary); color: #fff; }
 .sulama-source-hint { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.5rem; }
+.sulama-export-row { display: flex; gap: 6px; flex-wrap: wrap; margin: 0.9rem 0; }
 .sulama-station-pick-btn {
   margin-top: 4px; background: var(--primary); color: #fff; border: none; border-radius: 6px;
   padding: 4px 10px; font-family: inherit; font-size: 0.72rem; font-weight: 700; cursor: pointer;
@@ -3533,6 +3537,10 @@ function sulamaRenderGuideResults(result) {
       <div class="item"><b>${sumEtc.toFixed(1)} mm</b><span>${tesvikT('Bitki Su Tüketimi (ETc)','Crop Water Use (ETc)')}</span></div>
       <div class="item"><b>${netReq.toFixed(1)} mm · ${netReq.toFixed(1)} m³/da</b><span>${tesvikT('Net Sulama Suyu İhtiyacı','Net Irrigation Requirement')}</span></div>
     </div>
+    <div class="sulama-export-row">
+      <button type="button" class="sulama-source-btn" onclick="sulamaExportPDF()">📄 ${tesvikT('PDF İndir','Download PDF')}</button>
+      <button type="button" class="sulama-source-btn" onclick="sulamaExportExcel()">📊 ${tesvikT('Excel İndir','Download Excel')}</button>
+    </div>
     <div class="sulama-note-line">${tesvikT(`📖 Resmi Kılavuz — istasyon: ${stationName} (uzun yıllar 10 günlük normalleri)`, `📖 Official Guide — station: ${stationName} (long-term 10-day normals)`)}</div>
     <div class="sulama-note-line">${rainLabel}</div>
     <div class="sulama-table-wrap">
@@ -3663,6 +3671,10 @@ function sulamaRenderResults(result) {
       <div class="item"><b>${sumEtc.toFixed(1)} mm</b><span>${tesvikT('Bitki Su Tüketimi (ETc)','Crop Water Use (ETc)')}</span></div>
       <div class="item"><b>${netReq.toFixed(1)} mm · ${netReq.toFixed(1)} m³/da</b><span>${tesvikT('Net Sulama Suyu İhtiyacı','Net Irrigation Requirement')}</span></div>
     </div>
+    <div class="sulama-export-row">
+      <button type="button" class="sulama-source-btn" onclick="sulamaExportPDF()">📄 ${tesvikT('PDF İndir','Download PDF')}</button>
+      <button type="button" class="sulama-source-btn" onclick="sulamaExportExcel()">📊 ${tesvikT('Excel İndir','Download Excel')}</button>
+    </div>
     <div class="sulama-note-line">${rainLabel}</div>
     <div class="sulama-table-wrap">
       <table class="sulama-table">
@@ -3679,6 +3691,140 @@ function sulamaRenderResults(result) {
       </table>
     </div>
   `;
+}
+
+function sulamaExportMeta() {
+  const r = sulamaLastResult;
+  const crop = sulamaGetActiveCrop();
+  const lat = document.getElementById('sulamaLat').value;
+  const lon = document.getElementById('sulamaLon').value;
+  const cropName = crop ? tesvikT(crop.tr, crop.en) : '';
+  const source = r.mode === 'guide'
+    ? tesvikT(`Resmi Kılavuz (istasyon: ${r.stationName})`, `Official Guide (station: ${r.stationName})`)
+    : 'NASA POWER';
+  const rainLabel = r.subtractRain
+    ? tesvikT(`Etkin Yağış: ${r.effRain.toFixed(1)} mm (toplam yağış: ${r.sumRain.toFixed(1)} mm)`, `Effective rainfall: ${r.effRain.toFixed(1)} mm (total rainfall: ${r.sumRain.toFixed(1)} mm)`)
+    : tesvikT(`Toplam Yağış: ${r.sumRain.toFixed(1)} mm (düşülmedi)`, `Total rainfall: ${r.sumRain.toFixed(1)} mm (not subtracted)`);
+  const st = sulamaNearestStationInfo;
+  const stationLabel = tesvikT('En Yakın Meteoroloji İstasyonu', 'Nearest Meteorology Station');
+  const stationValue = st ? `${st.station.name} (${st.station.il}, ${st.distanceKm.toFixed(0)} km)` : null;
+  return { cropName, lat, lon, source, rainLabel, stationLabel, stationValue };
+}
+
+function sulamaExportHead() {
+  return sulamaLastResult.mode === 'guide'
+    ? [tesvikT('Dönem','Period'), tesvikT('Gün','Days'), 'ETo (mm)', 'Kc', 'ETc (mm)', tesvikT('Yağış (mm)','Rain (mm)')]
+    : [tesvikT('Tarih','Date'), 'Tmax (°C)', 'Tmin (°C)', tesvikT('Nem (%)','RH (%)'), tesvikT('Rüzgar (m/s)','Wind (m/s)'), tesvikT('Güneşlenme (MJ/m²)','Solar (MJ/m²)'), 'ETo (mm)', 'Kc', 'ETc (mm)', tesvikT('Yağış (mm)','Rain (mm)')];
+}
+
+function sulamaExportBody() {
+  const r = sulamaLastResult;
+  return r.mode === 'guide'
+    ? r.rows.map(row => [sulamaPeriodLabel(row.pIdx), row.days, row.eto.toFixed(2), row.kc.toFixed(2), row.etc.toFixed(2), row.rain.toFixed(1)])
+    : r.rows.map(row => [`${row.date.slice(6,8)}.${row.date.slice(4,6)}.${row.date.slice(0,4)}`, row.tmax.toFixed(1), row.tmin.toFixed(1), row.rh.toFixed(0), row.ws.toFixed(1), row.rs.toFixed(1), row.eto.toFixed(2), row.kc.toFixed(2), row.etc.toFixed(2), row.rain.toFixed(1)]);
+}
+
+// jsPDF's built-in fonts (Helvetica etc.) only cover WinAnsi and silently drop/mis-space
+// Turkish letters (ı ş ğ ç ö ü). Google's per-script "latin-ext" subset covers those but,
+// by design (it's meant to layer with "latin" via CSS unicode-range), excludes plain ASCII
+// letters — embedding it alone left every string empty. DejaVu Sans ships as one unsplit
+// file with both plain ASCII and Latin Extended-A (Turkish) in the same TTF, so that's
+// fetched once and embedded into the PDF's virtual file system instead.
+let sulamaPdfFontCache = null;
+
+async function sulamaLoadPdfFont(doc) {
+  if (!sulamaPdfFontCache) {
+    const toBase64 = buf => {
+      let binary = '';
+      const bytes = new Uint8Array(buf);
+      for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+      return btoa(binary);
+    };
+    const base = 'https://cdn.jsdelivr.net/npm/dejavu-fonts-ttf@2.37.3/ttf/DejaVuSans';
+    const [regularBuf, boldBuf] = await Promise.all([
+      fetch(base + '.ttf').then(res => res.arrayBuffer()),
+      fetch(base + '-Bold.ttf').then(res => res.arrayBuffer()),
+    ]);
+    sulamaPdfFontCache = { regular: toBase64(regularBuf), bold: toBase64(boldBuf) };
+  }
+  doc.addFileToVFS('DejaVuSans.ttf', sulamaPdfFontCache.regular);
+  doc.addFont('DejaVuSans.ttf', 'Roboto', 'normal');
+  doc.addFileToVFS('DejaVuSans-Bold.ttf', sulamaPdfFontCache.bold);
+  doc.addFont('DejaVuSans-Bold.ttf', 'Roboto', 'bold');
+}
+
+async function sulamaExportPDF() {
+  if (!sulamaLastResult) return;
+  const r = sulamaLastResult;
+  const { cropName, lat, lon, source, rainLabel, stationLabel, stationValue } = sulamaExportMeta();
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  const marginX = 14;
+  const maxWidth = doc.internal.pageSize.getWidth() - marginX * 2;
+
+  try {
+    await sulamaLoadPdfFont(doc);
+  } catch (e) {
+    // Offline or CDN unreachable — fall back to the built-in font (ASCII-safe) rather than failing the export.
+  }
+  const fontName = doc.getFontList().Roboto ? 'Roboto' : 'helvetica';
+
+  let y = 16;
+  doc.setFont(fontName, 'bold');
+  doc.setFontSize(14);
+  doc.splitTextToSize(tesvikT('Sulama Programlama / ETo Hesaplayıcı — Sonuç Raporu', 'Irrigation Scheduling / ETo Calculator — Result Report'), maxWidth)
+    .forEach(line => { doc.text(line, marginX, y); y += 6.5; });
+
+  doc.setFont(fontName, 'normal');
+  doc.setFontSize(9.5);
+  y += 2;
+  const lines = [
+    `${tesvikT('Konum','Location')}: ${lat}, ${lon}`,
+    ...(stationValue ? [`${stationLabel}: ${stationValue}`] : []),
+    `${tesvikT('Bitki','Crop')}: ${cropName}`,
+    `${tesvikT('Kaynak','Source')}: ${source}`,
+    `${tesvikT('Toplam ETo','Total ETo')}: ${r.sumEto.toFixed(1)} mm`,
+    `${tesvikT('Bitki Su Tüketimi (ETc)','Crop Water Use (ETc)')}: ${r.sumEtc.toFixed(1)} mm`,
+    `${tesvikT('Net Sulama Suyu İhtiyacı','Net Irrigation Requirement')}: ${r.netReq.toFixed(1)} mm`,
+    rainLabel,
+  ];
+  lines.forEach(line => {
+    doc.splitTextToSize(line, maxWidth).forEach(wrapped => { doc.text(wrapped, marginX, y); y += 5.5; });
+  });
+
+  doc.autoTable({
+    head: [sulamaExportHead()],
+    body: sulamaExportBody(),
+    startY: y + 2,
+    styles: { fontSize: 7.5, font: fontName, fontStyle: 'normal' },
+    headStyles: { fillColor: [46, 125, 50], font: fontName, fontStyle: 'bold' },
+  });
+  doc.save(`ETo_Hesaplama_${new Date().toISOString().slice(0, 10)}.pdf`);
+}
+
+function sulamaExportExcel() {
+  if (!sulamaLastResult) return;
+  const r = sulamaLastResult;
+  const { cropName, lat, lon, source, rainLabel, stationLabel, stationValue } = sulamaExportMeta();
+
+  const summary = [
+    [tesvikT('Sulama Programlama / ETo Hesaplayıcı — Sonuç Raporu', 'Irrigation Scheduling / ETo Calculator — Result Report')],
+    [tesvikT('Konum','Location'), `${lat}, ${lon}`],
+    ...(stationValue ? [[stationLabel, stationValue]] : []),
+    [tesvikT('Bitki','Crop'), cropName],
+    [tesvikT('Kaynak','Source'), source],
+    [tesvikT('Toplam ETo (mm)','Total ETo (mm)'), +r.sumEto.toFixed(1)],
+    [tesvikT('Bitki Su Tüketimi ETc (mm)','Crop Water Use ETc (mm)'), +r.sumEtc.toFixed(1)],
+    [tesvikT('Net Sulama Suyu İhtiyacı (mm)','Net Irrigation Requirement (mm)'), +r.netReq.toFixed(1)],
+    [rainLabel],
+    [],
+  ];
+  const aoa = [...summary, sulamaExportHead(), ...sulamaExportBody().map(row => row.map(v => (typeof v === 'string' && /^-?\d+(\.\d+)?$/.test(v)) ? +v : v))];
+
+  const ws = XLSX.utils.aoa_to_sheet(aoa);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, tesvikT('Sonuç','Result'));
+  XLSX.writeFile(wb, `ETo_Hesaplama_${new Date().toISOString().slice(0, 10)}.xlsx`);
 }
 
 function sulamaUseGeolocation() {

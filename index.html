@@ -799,6 +799,7 @@ nav {
   background: var(--bg);
   color: var(--text);
 }
+.calc-field input[type=date]:disabled { background: var(--primary-light); color: var(--primary-dark); opacity: 1; }
 .calc-field .calc-hint { font-size: 0.7rem; color: var(--text-muted); }
 .calc-summary {
   position: sticky;
@@ -2189,14 +2190,14 @@ html[lang="en"] [data-lang="en"] { display: revert; }
             <li><b>Konum:</b> Aşağıdaki haritada tarlanızın olduğu yere tıklayın (ya da işaretçiyi sürükleyin), veya "📍 Konumumu Kullan" butonuna basın. Enlem/boylamı GPS'ten biliyorsanız kutulara elle de yazabilirsiniz.</li>
             <li><b>Bitki:</b> Yetiştirdiğiniz bitkiyi listeden seçin.</li>
             <li><b>Ekim/Dikim/Vejetasyon Başlangıcı:</b> Tek yıllık bitkilerde ekim/dikim tarihini, çok yıllık bitkilerde (meyve ağacı, bağ, zeytin vb.) o yılki yaprak açımı/vejetasyon başlangıç tarihini girin — araç bu tarihten itibaren geçen güne göre bitkinin su ihtiyaç katsayısını (Kc) otomatik hesaplar.</li>
-            <li><b>Hesaplama Aralığı:</b> Hangi dönem için sulama suyu ihtiyacını görmek istediğinizi seçin (örn. son 10 gün). Varsayılan aralık zaten makul bir seçimdir.</li>
+            <li><b>Hesaplama Aralığı:</b> Varsayılan olarak "Tüm Sezon" seçilidir — araç, ekim/dikim tarihinden bitkinin toplam gelişim süresi sonuna kadar (hasada kadar) otomatik hesaplar. İsterseniz "Belirli Tarih Aralığı"na geçip yalnızca belli bir dönemi (örn. son 10 gün) sorgulayabilirsiniz.</li>
             <li><b>Hesapla</b> butonuna basın ve aşağıdaki sonuç kartlarını ve günlük tabloyu inceleyin.</li>
           </ol>
           <ol class="sulama-guide-list" data-lang="en">
             <li><b>Location:</b> Click your field's location on the map below (or drag the marker), or press "📍 Use My Location". If you know the exact GPS coordinates, you can also type them into the boxes.</li>
             <li><b>Crop:</b> Pick the crop you're growing from the list.</li>
             <li><b>Planting / Season-Start Date:</b> For annual crops enter the planting date; for perennial crops (fruit trees, vineyard, olive, etc.) enter that year's leaf-out/growing-season start date — the tool uses the days elapsed since then to automatically compute the crop's water-use coefficient (Kc).</li>
-            <li><b>Period:</b> Choose the period you want the irrigation requirement for (e.g. the last 10 days). The default range is already a reasonable choice.</li>
+            <li><b>Calculation Period:</b> "Full Season" is selected by default — the tool automatically computes from the planting date through the end of the crop's total growth period (harvest). You can switch to "Specific Date Range" to query just a shorter window (e.g. the last 10 days).</li>
             <li>Press <b>Calculate</b> and read the result cards and the daily table below.</li>
           </ol>
 
@@ -2272,6 +2273,21 @@ html[lang="en"] [data-lang="en"] { display: revert; }
             <input type="date" id="sulamaPlantDate">
             <span class="calc-hint" data-lang="tr">Çok yıllık bitkilerde (meyve, bağ, zeytin vb.) yaprak açımı/vejetasyonun başladığı tarihi girin.</span>
             <span class="calc-hint" data-lang="en">For perennial crops (fruit trees, vineyard, olive, etc.) enter the leaf-out/growing-season start date.</span>
+          </div>
+          <div class="calc-field" style="grid-column: 1 / -1;">
+            <label data-lang="tr">Hesaplama Aralığı</label>
+            <label data-lang="en">Calculation Period</label>
+            <div class="sulama-source-switch" id="sulamaRangeModeSwitch">
+              <button type="button" class="sulama-source-btn" data-mode="season" onclick="sulamaSetRangeMode('season')">
+                <span data-lang="tr">🌱 Tüm Sezon (ekim/dikimden hasada)</span>
+                <span data-lang="en">🌱 Full Season (planting to harvest)</span>
+              </button>
+              <button type="button" class="sulama-source-btn" data-mode="manual" onclick="sulamaSetRangeMode('manual')">
+                <span data-lang="tr">📅 Belirli Tarih Aralığı</span>
+                <span data-lang="en">📅 Specific Date Range</span>
+              </button>
+            </div>
+            <span id="sulamaRangeHint" class="calc-hint"></span>
           </div>
           <div class="calc-field">
             <label data-lang="tr">Hesaplama Başlangıcı</label>
@@ -4065,6 +4081,7 @@ function sulamaPopulateCropSelect() {
   }
   if (prev && [...sel.options].some(o => o.value === prev)) sel.value = prev;
   else sulamaSuggestPlantDate();
+  sulamaApplySeasonRange();
 }
 
 // In guide mode, prefill the planting date from the crop's official regional ekim/dikim dönemi.
@@ -4094,18 +4111,78 @@ function sulamaSetDefaultDates() {
   endEl.value = fmt(end);
 }
 
+// 'season' auto-fills Start/End from the crop's official planting date through its full FAO-56
+// growth-stage length (Lini+Ldev+Lmid+Llate); 'manual' leaves the two date fields user-editable.
+let sulamaRangeMode = 'season';
+
+function sulamaSetRangeMode(mode) {
+  sulamaRangeMode = mode;
+  const switchEl = document.getElementById('sulamaRangeModeSwitch');
+  if (switchEl) {
+    switchEl.querySelectorAll('.sulama-source-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.mode === mode);
+    });
+  }
+  const startEl = document.getElementById('sulamaStart');
+  const endEl = document.getElementById('sulamaEnd');
+  if (startEl) startEl.disabled = mode === 'season';
+  if (endEl) endEl.disabled = mode === 'season';
+  if (mode === 'season') sulamaApplySeasonRange();
+  else {
+    const hintEl = document.getElementById('sulamaRangeHint');
+    if (hintEl) hintEl.textContent = '';
+  }
+}
+
+function sulamaApplySeasonRange() {
+  if (sulamaRangeMode !== 'season') return;
+  const startEl = document.getElementById('sulamaStart');
+  const endEl = document.getElementById('sulamaEnd');
+  const hintEl = document.getElementById('sulamaRangeHint');
+  if (!startEl || !endEl) return;
+  const plantStr = document.getElementById('sulamaPlantDate').value;
+  const crop = sulamaGetActiveCrop();
+  if (!plantStr || !crop) { if (hintEl) hintEl.textContent = ''; return; }
+
+  const totalDays = crop.Lini + crop.Ldev + crop.Lmid + crop.Llate;
+  const plantDate = new Date(plantStr + 'T00:00:00');
+  let effectiveEnd = new Date(plantDate);
+  effectiveEnd.setDate(effectiveEnd.getDate() + totalDays - 1);
+
+  // NASA POWER only publishes data up to a few days ago; the official guide uses long-term
+  // normals instead, so a "future" season date range is still computable there.
+  const usingGuide = sulamaSource === 'guide' && sulamaNearestStationInfo && sulamaTRData;
+  let clamped = false;
+  if (!usingGuide) {
+    const maxEnd = new Date(); maxEnd.setDate(maxEnd.getDate() - 3);
+    if (effectiveEnd > maxEnd) { effectiveEnd = maxEnd; clamped = true; }
+  }
+  if (effectiveEnd < plantDate) effectiveEnd = new Date(plantDate);
+
+  const fmt = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  startEl.value = fmt(plantDate);
+  endEl.value = fmt(effectiveEnd);
+
+  if (hintEl) {
+    hintEl.textContent = clamped
+      ? tesvikT(`Toplam gelişim süresi ${totalDays} gün. NASA POWER verisi güncel tarihe kadar (birkaç günlük gecikmeyle) yayınlandığından bitiş tarihi ${sulamaFmtDate(effectiveEnd)} ile sınırlandırıldı.`, `Total growth period is ${totalDays} days. Since NASA POWER data is only published up to a few days ago, the end date was capped at ${sulamaFmtDate(effectiveEnd)}.`)
+      : tesvikT(`Toplam gelişim süresi: ${totalDays} gün (${sulamaFmtDate(plantDate)} – ${sulamaFmtDate(effectiveEnd)})`, `Total growth period: ${totalDays} days (${sulamaFmtDate(plantDate)} – ${sulamaFmtDate(effectiveEnd)})`);
+  }
+}
+
 function sulamaInit() {
   if (!document.getElementById('sulamaCrop')) return;
-  sulamaPopulateCropSelect();
   sulamaSetDefaultDates();
+  sulamaSetRangeMode(sulamaRangeMode);
+  sulamaPopulateCropSelect();
   sulamaApplyGuideState();
   sulamaRenderStageInfo();
   sulamaEnsureTRData();
   document.getElementById('sulamaLat').addEventListener('change', sulamaSyncMapFromInputs);
   document.getElementById('sulamaLon').addEventListener('change', sulamaSyncMapFromInputs);
-  document.getElementById('sulamaCrop').addEventListener('change', () => { sulamaSuggestPlantDate(); sulamaRenderStageInfo(); });
+  document.getElementById('sulamaCrop').addEventListener('change', () => { sulamaSuggestPlantDate(); sulamaRenderStageInfo(); sulamaApplySeasonRange(); });
   document.getElementById('sulamaPlantDate').addEventListener('input', () => { sulamaPlantDateManuallySet = true; });
-  document.getElementById('sulamaPlantDate').addEventListener('change', sulamaRenderStageInfo);
+  document.getElementById('sulamaPlantDate').addEventListener('change', () => { sulamaRenderStageInfo(); sulamaApplySeasonRange(); });
 }
 
 function sulamaRefreshLang() {
@@ -4114,6 +4191,7 @@ function sulamaRefreshLang() {
   sulamaApplyGuideState();
   sulamaRenderStageInfo();
   sulamaUpdateDataSourceBox();
+  sulamaApplySeasonRange();
   document.querySelectorAll('.sulama-basemap-btn').forEach(btn => {
     const b = SULAMA_BASEMAPS.find(x => x.id === btn.dataset.basemap);
     if (b) btn.textContent = tesvikT(b.tr, b.en);

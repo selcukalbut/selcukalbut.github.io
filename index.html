@@ -16,6 +16,8 @@
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.4/dist/jspdf.plugin.autotable.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/satellite.js@5.0.0/dist/satellite.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@joergdietrich/leaflet.terminator@1.0.0/L.Terminator.js"></script>
 <!-- Private analytics (dashboard only visible to the site owner, no cookies) — per-page/per-tool
      pageviews are fired manually from showPage() below, since this is a single-page app. -->
 <script data-goatcounter="https://selcukalbut.goatcounter.com/count"
@@ -684,6 +686,7 @@ nav {
 .app-icon.blue { background: #dde8e2; }
 .app-icon.orange { background: #fff4e0; }
 .app-icon.teal { background: var(--primary-light); }
+.app-icon.navy { background: #1d2933; }
 .app-info h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.3rem; }
 .app-info p { font-size: 0.83rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 0.6rem; }
 .platform-tags { display: flex; gap: 6px; flex-wrap: wrap; }
@@ -1040,6 +1043,70 @@ footer {
 [data-lang] { display: none; }
 html[lang="tr"] [data-lang="tr"] { display: revert; }
 html[lang="en"] [data-lang="en"] { display: revert; }
+/* ══ UYDU TAKİP (Orbita Atlas) ══ */
+#page-uydu .page-inner { max-width: 1180px; }
+
+.uydu-status-banner {
+  background: var(--card);
+  border: 1px solid var(--primary);
+  color: var(--primary);
+  border-radius: var(--radius);
+  padding: 0.7rem 1.1rem;
+  font-size: 0.82rem;
+  margin-bottom: 1.5rem;
+}
+
+.uydu-tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+.uydu-tab-btn {
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  border-radius: 10px;
+  padding: 0.55rem 1.1rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+}
+.uydu-tab-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+.uydu-tab-panel { display: none; }
+.uydu-tab-panel.active { display: block; }
+
+.uydu-live-grid { display: grid; grid-template-columns: minmax(0,1fr) 320px; gap: 1.25rem; align-items: start; }
+.uydu-map { height: 520px; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); background: #000; }
+.uydu-dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px rgba(0,0,0,0.35); }
+
+.uydu-stat-row { display: flex; gap: 0.75rem; margin-bottom: 1rem; }
+.uydu-stat { flex: 1; background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 0.8rem; text-align: center; }
+.uydu-stat-value { font-size: 1.5rem; font-weight: 800; color: var(--primary); font-family: 'JetBrains Mono', monospace; }
+.uydu-stat-label { font-size: 0.68rem; color: var(--text-muted); margin-top: 0.15rem; }
+
+.uydu-sat-list { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem; }
+.uydu-sat-pill {
+  display: flex; align-items: center; gap: 0.6rem;
+  background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+  padding: 0.55rem 0.8rem; cursor: pointer; font-family: inherit; color: var(--text);
+  font-size: 0.85rem; font-weight: 600; text-align: left; width: 100%;
+}
+.uydu-sat-pill.active { border-color: var(--primary); box-shadow: 0 0 0 1px var(--primary) inset; }
+.uydu-sat-pill .uydu-dot { border: none; box-shadow: none; flex-shrink: 0; }
+
+.uydu-selected-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.1rem; margin-bottom: 1rem; }
+.uydu-selected-card h3 { font-size: 1rem; margin-bottom: 0.75rem; color: var(--text); }
+.uydu-selected-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; }
+.uydu-selected-grid > div { display: flex; flex-direction: column; gap: 0.15rem; }
+.uydu-selected-grid span { font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+.uydu-selected-grid b { font-size: 1rem; color: var(--text); font-family: 'JetBrains Mono', monospace; }
+
+.uydu-source-note { font-size: 0.72rem; color: var(--text-muted); line-height: 1.5; }
+
+.uydu-analysis-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; max-width: 520px; }
+.uydu-pass-result { margin-top: 0.9rem; font-size: 0.85rem; color: var(--primary); min-height: 1.2em; }
+
+@media (max-width: 860px) {
+  .uydu-live-grid { grid-template-columns: 1fr; }
+  .uydu-map { height: 380px; }
+}
 </style>
 </head>
 <body>
@@ -1803,6 +1870,20 @@ html[lang="en"] [data-lang="en"] { display: revert; }
 
       <div class="apps-list">
         <div class="app-card">
+          <div class="app-icon navy">🛰️</div>
+          <div class="app-info">
+            <h3 data-lang="tr">Uydu Takip — Orbita Atlas</h3>
+            <h3 data-lang="en">Satellite Tracker — Orbita Atlas</h3>
+            <p data-lang="tr">Landsat 8, Landsat 9 ve Terra/ASTER gibi aktif yer gözlem uydularının anlık yörünge konumunu, gerçek TLE verisi ve SGP4 modeliyle canlı haritada izleyin; kataloğu ve yörünge analizlerini inceleyin.</p>
+            <p data-lang="en">Track active Earth observation satellites like Landsat 8, Landsat 9 and Terra/ASTER in real time on a live map, computed from real TLE data with the SGP4 model — browse the catalog and orbit analysis.</p>
+            <button class="app-open-btn" onclick="showPage('uydu')">
+              <span data-lang="tr">Aç →</span>
+              <span data-lang="en">Open →</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="app-card">
           <div class="app-icon orange">💧</div>
           <div class="app-info">
             <h3 data-lang="tr">Sulama Programlama / ETo Hesaplayıcı</h3>
@@ -2160,6 +2241,107 @@ html[lang="en"] [data-lang="en"] { display: revert; }
     </div>
   </div>
 
+  <!-- ══ UYDU TAKİP (Orbita Atlas) ══ -->
+  <div class="page" id="page-uydu">
+    <div class="page-inner">
+      <div class="page-header">
+        <div class="eyebrow" data-lang="tr">Araç</div>
+        <div class="eyebrow" data-lang="en">Tool</div>
+        <h1 data-lang="tr">Uydu Takip — Orbita Atlas</h1>
+        <h1 data-lang="en">Satellite Tracker — Orbita Atlas</h1>
+        <p data-lang="tr">Aktif yer gözlem uydularının anlık yörünge konumunu, gerçek TLE verisi ve SGP4 modeliyle tarayıcınızda hesaplayıp canlı izleyin.</p>
+        <p data-lang="en">Track active Earth observation satellites' real-time orbital position, computed live in your browser from real TLE data with the SGP4 model.</p>
+      </div>
+
+      <div id="uyduStatusBanner" class="uydu-status-banner" style="display:none"></div>
+
+      <div class="uydu-tabs">
+        <button class="uydu-tab-btn active" data-tab="live" onclick="uyduShowTab('live')">
+          <span data-lang="tr">🌍 Canlı Dünya</span>
+          <span data-lang="en">🌍 Live Earth</span>
+        </button>
+        <button class="uydu-tab-btn" data-tab="catalog" onclick="uyduShowTab('catalog')">
+          <span data-lang="tr">🛰️ Uydu Kataloğu</span>
+          <span data-lang="en">🛰️ Satellite Catalog</span>
+        </button>
+        <button class="uydu-tab-btn" data-tab="analysis" onclick="uyduShowTab('analysis')">
+          <span data-lang="tr">📈 Yörünge Analizleri</span>
+          <span data-lang="en">📈 Orbit Analysis</span>
+        </button>
+      </div>
+
+      <!-- LIVE EARTH -->
+      <div class="uydu-tab-panel active" data-tab="live">
+        <div class="uydu-live-grid">
+          <div id="uyduMap" class="uydu-map"></div>
+          <div class="uydu-side-panel">
+            <div class="uydu-stat-row">
+              <div class="uydu-stat">
+                <div class="uydu-stat-value" id="uyduTrackedCount">—</div>
+                <div class="uydu-stat-label" data-lang="tr">Takip edilen uydu</div>
+                <div class="uydu-stat-label" data-lang="en">Tracked satellites</div>
+              </div>
+              <div class="uydu-stat">
+                <div class="uydu-stat-value" id="uyduLiveCount">—</div>
+                <div class="uydu-stat-label" data-lang="tr">Canlı veri alınan</div>
+                <div class="uydu-stat-label" data-lang="en">With live data</div>
+              </div>
+            </div>
+            <div id="uyduSatList" class="uydu-sat-list"></div>
+            <div class="uydu-selected-card">
+              <h3 id="uyduSelName">—</h3>
+              <div class="uydu-selected-grid">
+                <div><span data-lang="tr">İrtifa</span><span data-lang="en">Altitude</span><b id="uyduSelAlt">—</b></div>
+                <div><span data-lang="tr">Hız</span><span data-lang="en">Speed</span><b id="uyduSelSpeed">—</b></div>
+                <div><span data-lang="tr">Periyot</span><span data-lang="en">Period</span><b id="uyduSelPeriod">—</b></div>
+                <div><span data-lang="tr">Eğim</span><span data-lang="en">Inclination</span><b id="uyduSelIncl">—</b></div>
+                <div><span data-lang="tr">Enlem</span><span data-lang="en">Latitude</span><b id="uyduSelLat">—</b></div>
+                <div><span data-lang="tr">Boylam</span><span data-lang="en">Longitude</span><b id="uyduSelLon">—</b></div>
+              </div>
+            </div>
+            <div class="uydu-source-note">
+              <span data-lang="tr">Konumlar CelesTrak TLE verisi ve SGP4 modeliyle tarayıcınızda hesaplanır, ~2 sn'de bir güncellenir.</span>
+              <span data-lang="en">Positions are computed in your browser from CelesTrak TLE data using the SGP4 model, refreshed every ~2s.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CATALOG -->
+      <div class="uydu-tab-panel" data-tab="catalog">
+        <div id="uyduCatalogGrid" class="apps-list"></div>
+        <div class="apps-note" style="margin-top:1rem">
+          <span data-lang="tr">💡 Bir uyduya tıklayarak Canlı Dünya sekmesinde onu seçili hale getirebilirsiniz.</span>
+          <span data-lang="en">💡 Click a satellite to select it on the Live Earth tab.</span>
+        </div>
+      </div>
+
+      <!-- ANALYSIS -->
+      <div class="uydu-tab-panel" data-tab="analysis">
+        <div class="uydu-analysis-card">
+          <div class="calc-field">
+            <label data-lang="tr">Uydu</label>
+            <label data-lang="en">Satellite</label>
+            <select id="uyduAnalysisSelect"></select>
+          </div>
+          <div class="uydu-selected-grid" style="margin-top:1rem">
+            <div><span data-lang="tr">İrtifa</span><span data-lang="en">Altitude</span><b id="uyduAnAlt">—</b></div>
+            <div><span data-lang="tr">Hız</span><span data-lang="en">Speed</span><b id="uyduAnSpeed">—</b></div>
+            <div><span data-lang="tr">Periyot</span><span data-lang="en">Period</span><b id="uyduAnPeriod">—</b></div>
+            <div><span data-lang="tr">Eğim</span><span data-lang="en">Inclination</span><b id="uyduAnIncl">—</b></div>
+          </div>
+          <div class="uydu-actions" style="margin-top:1.25rem">
+            <button class="calc-add-btn" id="uyduNextPassBtn">
+              <span data-lang="tr">📍 Konumumdan bir sonraki geçişi bul</span>
+              <span data-lang="en">📍 Find next pass from my location</span>
+            </button>
+          </div>
+          <p id="uyduNextPassResult" class="uydu-pass-result"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ══ SULAMA / ETo ══ -->
   <div class="page" id="page-sulama">
     <div class="page-inner">
@@ -2477,11 +2659,11 @@ html[lang="en"] [data-lang="en"] { display: revert; }
 </footer>
 
 <script>
-const PAGES = ['home','about','academic','projects','tesvik','koordinat','sulama','apps','contact'];
+const PAGES = ['home','about','academic','projects','tesvik','koordinat','sulama','uydu','apps','contact'];
 
 const NAV_LABELS = {
-  tr: { home:'Ana Sayfa', about:'Hakkımda', academic:'Akademik Yayınlar',      projects:'Projeler', tesvik:'Akademik Teşvik Hesaplama',    koordinat:'Koordinat Dönüştürme', sulama:'Sulama Programlama / ETo', apps:'Uygulamalar', contact:'İletişim' },
-  en: { home:'Home',      about:'About',    academic:'Academic Publications',  projects:'Projects', tesvik:'Academic Incentive Calculator', koordinat:'Coordinate Converter', sulama:'Irrigation Scheduling / ETo', apps:'Apps',        contact:'Contact' }
+  tr: { home:'Ana Sayfa', about:'Hakkımda', academic:'Akademik Yayınlar',      projects:'Projeler', tesvik:'Akademik Teşvik Hesaplama',    koordinat:'Koordinat Dönüştürme', sulama:'Sulama Programlama / ETo', uydu:'Uydu Takip', apps:'Uygulamalar', contact:'İletişim' },
+  en: { home:'Home',      about:'About',    academic:'Academic Publications',  projects:'Projects', tesvik:'Academic Incentive Calculator', koordinat:'Coordinate Converter', sulama:'Irrigation Scheduling / ETo', uydu:'Satellite Tracker', apps:'Apps',        contact:'Contact' }
 };
 
 let currentLang = localStorage.getItem('lang') || 'tr';
@@ -2497,6 +2679,7 @@ function setLang(lang) {
   if (typeof tesvikRefreshLang === 'function') tesvikRefreshLang();
   if (typeof koordRefreshLang === 'function') koordRefreshLang();
   if (typeof sulamaRefreshLang === 'function') sulamaRefreshLang();
+  if (typeof uyduRefreshLang === 'function') uyduRefreshLang();
 }
 
 function submitContactForm(e) {
@@ -2568,6 +2751,7 @@ function showPage(id) {
     });
     // Leaflet needs a visible, sized container: (re)init/resize the map only once the page is actually shown.
     if (id === 'sulama' && typeof sulamaOnShow === 'function') sulamaOnShow();
+    if (id === 'uydu' && typeof uyduOnShow === 'function') uyduOnShow();
   }
   currentPage = id;
   location.hash = id === 'home' ? '' : id;
@@ -4202,6 +4386,358 @@ function sulamaRefreshLang() {
   }
 }
 sulamaInit();
+
+/* ══════════ UYDU TAKİP (Orbita Atlas) ══════════ */
+const SATELLITES = [
+  { id: 'landsat9', noradId: 49260, name: 'Landsat 9', agency: 'NASA / USGS', color: '#7CFFB2',
+    mission: { tr: 'Kara gözlem', en: 'Land observation' },
+    desc: { tr: 'Yeryüzündeki doğal ve insan kaynaklı değişimleri uzun dönemli, kalibre edilmiş multispektral verilerle izleyen gözlem uydusu.',
+            en: "Observes long-term, calibrated multispectral data on natural and human-driven changes on Earth's surface." } },
+  { id: 'landsat8', noradId: 39084, name: 'Landsat 8', agency: 'NASA / USGS', color: '#4FD1E8',
+    mission: { tr: 'Kara gözlem', en: 'Land observation' },
+    desc: { tr: 'Kara yüzeylerinin zamansal değişimini izleyen, açık veri politikasıyla araştırma dünyasının temel görevlerinden biri.',
+            en: 'Tracks temporal change on land surfaces — a foundational open-data mission for the research community.' } },
+  { id: 'terra', noradId: 25994, name: 'Terra / ASTER', agency: 'NASA / METI', color: '#C77DFF',
+    mission: { tr: 'Jeoloji ve topografya', en: 'Geology & topography' },
+    desc: { tr: 'Terra platformu üzerindeki ASTER sensörüyle yüzey mineralojisi, topografya ve termal özellikleri inceleyen görev.',
+            en: 'Uses the ASTER sensor aboard the Terra platform to study surface mineralogy, topography and thermal properties.' } },
+];
+
+const uydu = {
+  map: null,
+  terminatorLayer: null,
+  markers: {},
+  baseTracks: {},
+  trackLine: null,
+  selectedId: SATELLITES[0].id,
+  tles: {},
+  fetchStatus: {},
+  tickTimer: null,
+  fetched: false,
+};
+
+function uyduCacheKey(sat) { return 'uydu_tle_' + sat.id; }
+
+async function uyduFetchOne(sat) {
+  try {
+    const res = await fetch('https://celestrak.org/NORAD/elements/gp.php?CATNR=' + sat.noradId + '&FORMAT=TLE');
+    if (!res.ok) throw new Error('http ' + res.status);
+    const text = await res.text();
+    const lines = text.trim().split(/\r?\n/).filter(l => l.trim().length > 0);
+    if (lines.length < 3) throw new Error('unexpected TLE response');
+    const entry = { line1: lines[lines.length - 2], line2: lines[lines.length - 1], fetchedAt: Date.now() };
+    localStorage.setItem(uyduCacheKey(sat), JSON.stringify(entry));
+    uydu.tles[sat.id] = entry;
+    uydu.fetchStatus[sat.id] = 'ok';
+  } catch (e) {
+    const cachedRaw = localStorage.getItem(uyduCacheKey(sat));
+    if (cachedRaw) {
+      uydu.tles[sat.id] = JSON.parse(cachedRaw);
+      uydu.fetchStatus[sat.id] = 'stale';
+    } else {
+      uydu.fetchStatus[sat.id] = 'error';
+    }
+  }
+}
+
+async function uyduFetchAll() {
+  await Promise.all(SATELLITES.map(uyduFetchOne));
+  uydu.fetched = true;
+  uyduRenderAll();
+}
+
+function uyduSatrec(sat) {
+  const tle = uydu.tles[sat.id];
+  if (!tle) return null;
+  if (!tle.satrec) tle.satrec = satellite.twoline2satrec(tle.line1, tle.line2);
+  return tle.satrec;
+}
+
+function uyduPositionAt(sat, date) {
+  const satrec = uyduSatrec(sat);
+  if (!satrec) return null;
+  const pv = satellite.propagate(satrec, date);
+  if (!pv || !pv.position) return null;
+  const gmst = satellite.gstime(date);
+  const geo = satellite.eciToGeodetic(pv.position, gmst);
+  const speedKmS = Math.sqrt(pv.velocity.x ** 2 + pv.velocity.y ** 2 + pv.velocity.z ** 2);
+  const meanMotionRevPerDay = satrec.no * 1440 / (2 * Math.PI);
+  return {
+    lat: satellite.degreesLat(geo.latitude),
+    lon: satellite.degreesLong(geo.longitude),
+    altKm: geo.height,
+    speedKmS,
+    inclinationDeg: satrec.inclo * 180 / Math.PI,
+    periodMin: 1440 / meanMotionRevPerDay,
+  };
+}
+
+function uyduFormatNum(n, digits) { return (n == null || isNaN(n)) ? '—' : n.toFixed(digits); }
+
+// ── Map (Leaflet needs a visible, sized container: created/resized only once #page-uydu is shown) ──
+function uyduEnsureMap() {
+  if (uydu.map || typeof L === 'undefined') return;
+  const el = document.getElementById('uyduMap');
+  if (!el) return;
+  uydu.map = L.map(el, { worldCopyJump: true }).setView([20, 20], 2);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors', subdomains: 'abc', maxZoom: 19,
+  }).addTo(uydu.map);
+  if (typeof L.terminator === 'function') {
+    uydu.terminatorLayer = L.terminator({ fillColor: '#3d2b1f', fillOpacity: 0.16, color: 'transparent' }).addTo(uydu.map);
+  }
+  SATELLITES.forEach(sat => {
+    const icon = L.divIcon({
+      className: 'uydu-marker',
+      html: '<div class="uydu-dot" style="background:' + sat.color + '"></div>',
+      iconSize: [14, 14], iconAnchor: [7, 7],
+    });
+    const marker = L.marker([0, 0], { icon, title: sat.name, opacity: 0.25 });
+    marker.on('click', () => uyduSelect(sat.id));
+    marker.addTo(uydu.map);
+    uydu.markers[sat.id] = marker;
+    uydu.baseTracks[sat.id] = L.polyline([], { color: '#6b5643', weight: 1.3, opacity: 0.55, dashArray: '2,5' }).addTo(uydu.map);
+  });
+  // Drawn on top of every satellite's muted base track to highlight whichever one is selected.
+  uydu.trackLine = L.polyline([], { color: '#e63946', weight: 3, opacity: 1, dashArray: '6,5' }).addTo(uydu.map);
+}
+
+// Unwraps longitude (lets it run past ±180° instead of snapping back) so the polyline stays a
+// single continuous line into the repeated world copies (map has worldCopyJump: true) — a plain
+// ±180 split looked broken on near-polar orbits, where longitude swings past the antimeridian
+// repeatedly in a single pass. Unwrapping is anchored at the "now" sample (m≈0) so that point
+// keeps its raw longitude — the same value the marker itself is drawn at — instead of drifting
+// into a world copy the marker isn't in.
+function uyduGroundTrack(sat, minutesBack, minutesFwd, stepMin) {
+  const now = Date.now();
+  const samples = [];
+  for (let m = -minutesBack; m <= minutesFwd; m += stepMin) {
+    const pos = uyduPositionAt(sat, new Date(now + m * 60000));
+    if (pos) samples.push({ m, lat: pos.lat, lon: pos.lon });
+  }
+  if (samples.length === 0) return [];
+  let anchor = 0;
+  for (let i = 1; i < samples.length; i++) {
+    if (Math.abs(samples[i].m) < Math.abs(samples[anchor].m)) anchor = i;
+  }
+  const unwrapped = new Array(samples.length);
+  unwrapped[anchor] = samples[anchor].lon;
+  for (let i = anchor + 1; i < samples.length; i++) {
+    let delta = samples[i].lon - samples[i - 1].lon;
+    if (delta > 180) delta -= 360;
+    else if (delta < -180) delta += 360;
+    unwrapped[i] = unwrapped[i - 1] + delta;
+  }
+  for (let i = anchor - 1; i >= 0; i--) {
+    let delta = samples[i].lon - samples[i + 1].lon;
+    if (delta > 180) delta -= 360;
+    else if (delta < -180) delta += 360;
+    unwrapped[i] = unwrapped[i + 1] + delta;
+  }
+  return samples.map((s, i) => [s.lat, unwrapped[i]]);
+}
+
+function uyduSelect(id) {
+  uydu.selectedId = id;
+  document.querySelectorAll('.uydu-sat-pill').forEach(p => p.classList.toggle('active', p.dataset.satId === id));
+  const sel = document.getElementById('uyduAnalysisSelect');
+  if (sel) sel.value = id;
+  uyduRenderAll();
+}
+
+function uyduOpenFromCatalog(id) {
+  uyduSelect(id);
+  uyduShowTab('live');
+}
+
+function uyduShowTab(tab) {
+  document.querySelectorAll('#page-uydu .uydu-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  document.querySelectorAll('#page-uydu .uydu-tab-panel').forEach(p => p.classList.toggle('active', p.dataset.tab === tab));
+  if (tab === 'live' && uydu.map) setTimeout(() => uydu.map.invalidateSize(), 50);
+}
+
+function uyduRenderMap() {
+  if (!uydu.map) return;
+  const now = new Date();
+  if (uydu.terminatorLayer) uydu.terminatorLayer.setTime(now);
+  SATELLITES.forEach(sat => {
+    const pos = uyduPositionAt(sat, now);
+    const marker = uydu.markers[sat.id];
+    if (marker) {
+      if (pos) { marker.setLatLng([pos.lat, pos.lon]); marker.setOpacity(1); }
+      else marker.setOpacity(0.25);
+    }
+    const track = uyduGroundTrack(sat, 45, 45, 1);
+    const baseLine = uydu.baseTracks[sat.id];
+    if (baseLine) baseLine.setLatLngs(track);
+    if (sat.id === uydu.selectedId) {
+      if (uydu.trackLine) uydu.trackLine.setLatLngs(track);
+    }
+  });
+}
+
+function uyduRenderSidePanel() {
+  const sat = SATELLITES.find(s => s.id === uydu.selectedId);
+  const pos = sat ? uyduPositionAt(sat, new Date()) : null;
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  set('uyduSelName', sat ? sat.name : '—');
+  set('uyduSelAlt', pos ? uyduFormatNum(pos.altKm, 0) + ' km' : '—');
+  set('uyduSelSpeed', pos ? uyduFormatNum(pos.speedKmS, 2) + ' km/s' : '—');
+  set('uyduSelPeriod', pos ? uyduFormatNum(pos.periodMin, 1) + ' ' + tesvikT('dk', 'min') : '—');
+  set('uyduSelIncl', pos ? uyduFormatNum(pos.inclinationDeg, 1) + '°' : '—');
+  set('uyduSelLat', pos ? uyduFormatNum(pos.lat, 2) + '°' : '—');
+  set('uyduSelLon', pos ? uyduFormatNum(pos.lon, 2) + '°' : '—');
+  set('uyduTrackedCount', String(SATELLITES.length));
+  set('uyduLiveCount', String(SATELLITES.filter(s => uydu.fetchStatus[s.id] === 'ok').length));
+
+  const anyStale = SATELLITES.some(s => uydu.fetchStatus[s.id] === 'stale');
+  const anyError = SATELLITES.some(s => uydu.fetchStatus[s.id] === 'error');
+  const banner = document.getElementById('uyduStatusBanner');
+  if (banner) {
+    if (!uydu.fetched) { banner.textContent = tesvikT('Uydu verisi yükleniyor…', 'Loading satellite data…'); banner.style.display = 'block'; }
+    else if (anyStale) { banner.textContent = tesvikT('Bazı uydular için canlı veri alınamadı, son bilinen konum gösteriliyor.', 'Live data unavailable for some satellites — showing last known position.'); banner.style.display = 'block'; }
+    else if (anyError) { banner.textContent = tesvikT('Bazı uydular için veri alınamadı.', 'Data unavailable for some satellites.'); banner.style.display = 'block'; }
+    else { banner.style.display = 'none'; }
+  }
+}
+
+function uyduRenderCatalogLive() {
+  SATELLITES.forEach(sat => {
+    const pos = uyduPositionAt(sat, new Date());
+    const altEl = document.getElementById('uyduCatAlt-' + sat.id);
+    const perEl = document.getElementById('uyduCatPeriod-' + sat.id);
+    if (altEl) altEl.textContent = pos ? uyduFormatNum(pos.altKm, 0) + ' km' : '—';
+    if (perEl) perEl.textContent = pos ? uyduFormatNum(pos.periodMin, 1) + ' ' + tesvikT('dk', 'min') : '—';
+  });
+}
+
+function uyduAnalysisRender() {
+  const sel = document.getElementById('uyduAnalysisSelect');
+  if (!sel) return;
+  const sat = SATELLITES.find(s => s.id === sel.value);
+  const pos = sat ? uyduPositionAt(sat, new Date()) : null;
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  set('uyduAnAlt', pos ? uyduFormatNum(pos.altKm, 0) + ' km' : '—');
+  set('uyduAnSpeed', pos ? uyduFormatNum(pos.speedKmS, 2) + ' km/s' : '—');
+  set('uyduAnPeriod', pos ? uyduFormatNum(pos.periodMin, 1) + ' ' + tesvikT('dk', 'min') : '—');
+  set('uyduAnIncl', pos ? uyduFormatNum(pos.inclinationDeg, 1) + '°' : '—');
+}
+
+let uyduPassToken = 0;
+function uyduFindNextPass() {
+  const sel = document.getElementById('uyduAnalysisSelect');
+  const sat = sel && SATELLITES.find(s => s.id === sel.value);
+  const resultEl = document.getElementById('uyduNextPassResult');
+  if (!resultEl) return;
+  if (!sat || !uyduSatrec(sat)) { resultEl.textContent = tesvikT('Uydu verisi henüz hazır değil.', 'Satellite data not ready yet.'); return; }
+  if (!navigator.geolocation) { resultEl.textContent = tesvikT('Tarayıcınız konum servisini desteklemiyor.', 'Your browser does not support geolocation.'); return; }
+  resultEl.textContent = tesvikT('Konum isteniyor…', 'Requesting location…');
+  const myToken = ++uyduPassToken;
+  navigator.geolocation.getCurrentPosition(posResult => {
+    if (myToken !== uyduPassToken) return;
+    const observerGd = {
+      longitude: satellite.degreesToRadians(posResult.coords.longitude),
+      latitude: satellite.degreesToRadians(posResult.coords.latitude),
+      height: (posResult.coords.altitude || 0) / 1000,
+    };
+    const satrec = uyduSatrec(sat);
+    const now = Date.now();
+    let found = null;
+    for (let m = 0; m <= 24 * 60; m++) {
+      const t = new Date(now + m * 60000);
+      const pv = satellite.propagate(satrec, t);
+      if (!pv || !pv.position) continue;
+      const gmst = satellite.gstime(t);
+      const ecf = satellite.eciToEcf(pv.position, gmst);
+      const look = satellite.ecfToLookAngles(observerGd, ecf);
+      if (look.elevation * 180 / Math.PI > 0) { found = t; break; }
+    }
+    if (found) {
+      const hrs = Math.floor((found - now) / 3600000);
+      const mins = Math.round(((found - now) % 3600000) / 60000);
+      resultEl.textContent = tesvikT(
+        'Bir sonraki geçiş: ' + hrs + ' sa ' + mins + ' dk sonra (~' + found.toLocaleTimeString('tr-TR') + ')',
+        'Next pass: in ' + hrs + 'h ' + mins + 'm (~' + found.toLocaleTimeString('en-GB') + ')'
+      );
+    } else {
+      resultEl.textContent = tesvikT('Önümüzdeki 24 saatte geçiş bulunamadı.', 'No pass found in the next 24 hours.');
+    }
+  }, () => {
+    if (myToken !== uyduPassToken) return;
+    resultEl.textContent = tesvikT('Konum izni verilmedi veya alınamadı.', 'Location permission denied or unavailable.');
+  }, { timeout: 10000 });
+}
+
+function uyduBuildStaticUI() {
+  const listEl = document.getElementById('uyduSatList');
+  if (listEl) {
+    listEl.innerHTML = SATELLITES.map(sat =>
+      '<button class="uydu-sat-pill' + (sat.id === uydu.selectedId ? ' active' : '') + '" data-sat-id="' + sat.id + '" onclick="uyduSelect(\'' + sat.id + '\')">' +
+        '<span class="uydu-dot" style="background:' + sat.color + '"></span>' +
+        '<span>' + sat.name + '</span>' +
+      '</button>'
+    ).join('');
+  }
+
+  const catalogEl = document.getElementById('uyduCatalogGrid');
+  if (catalogEl) {
+    catalogEl.innerHTML = SATELLITES.map(sat =>
+      '<div class="app-card uydu-catalog-card" onclick="uyduOpenFromCatalog(\'' + sat.id + '\')">' +
+        '<div class="app-icon" style="background:' + sat.color + '22">🛰️</div>' +
+        '<div class="app-info">' +
+          '<h3>' + sat.name + ' <span style="color:var(--text-muted);font-weight:400;font-size:0.78rem">— ' + sat.agency + '</span></h3>' +
+          '<p>' + sat.desc[currentLang] + '</p>' +
+          '<div class="platform-tags">' +
+            '<span class="ptag">' + sat.mission[currentLang] + '</span>' +
+            '<span class="ptag live" id="uyduCatAlt-' + sat.id + '">—</span>' +
+            '<span class="ptag" id="uyduCatPeriod-' + sat.id + '">—</span>' +
+          '</div>' +
+        '</div>' +
+      '</div>'
+    ).join('');
+  }
+
+  const sel = document.getElementById('uyduAnalysisSelect');
+  if (sel) {
+    sel.innerHTML = SATELLITES.map(sat => '<option value="' + sat.id + '">' + sat.name + '</option>').join('');
+    sel.value = uydu.selectedId;
+  }
+}
+
+function uyduRenderAll() {
+  uyduRenderMap();
+  uyduRenderSidePanel();
+  uyduRenderCatalogLive();
+  uyduAnalysisRender();
+}
+
+function uyduStartTicking() {
+  if (uydu.tickTimer) return;
+  uyduRenderAll();
+  uydu.tickTimer = setInterval(uyduRenderAll, 2000);
+}
+
+function uyduOnShow() {
+  uyduEnsureMap();
+  uyduStartTicking();
+  if (uydu.map) setTimeout(() => uydu.map.invalidateSize(), 50);
+}
+
+function uyduRefreshLang() {
+  if (!document.getElementById('uyduCatalogGrid')) return;
+  uyduBuildStaticUI();
+  uyduRenderAll();
+}
+
+function uyduInit() {
+  uyduBuildStaticUI();
+  const sel = document.getElementById('uyduAnalysisSelect');
+  if (sel) sel.addEventListener('change', uyduAnalysisRender);
+  const passBtn = document.getElementById('uyduNextPassBtn');
+  if (passBtn) passBtn.addEventListener('click', uyduFindNextPass);
+  uyduFetchAll();
+}
+uyduInit();
 
 // init
 setLang(currentLang);

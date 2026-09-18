@@ -1,0 +1,17 @@
+QGIS'te alan ağırlıklı ortalama artık tek eklentiyle
+
+Geçen hafta paylaştığım Sulama Programlama uygulamasında istasyon verilerini Thiessen (Voronoi) yöntemiyle ağırlıklandırıyordum. Aynı yöntemi bu kez QGIS masaüstü ortamına, herkesin kendi verisiyle kullanabileceği açık kaynak bir eklenti olarak taşıdım:
+
+📐 İstasyon noktalarından (yağış, su ihtiyacı, debi, sıcaklık — hangi değişken olursa) otomatik Thiessen poligonları üretir
+✂️ İsteğe bağlı bir sulama alanı/havza sınırına göre kırpar
+⚖️ Her hücrenin gerçek elipsoidal alanına göre alan ağırlıklı ortalamayı hesaplar — düzlem projeksiyon hatası yok
+🔓 QGIS Processing'in yerleşik Voronoi algoritmasını sarmalayan, arayüzlü, açık kaynak (GPLv2+) bir Python eklentisi
+🧮 Sonuç tablosu + harita katmanı olarak doğrudan projenize eklenir
+
+Hidroloji, sulama planlaması veya havza analizi yapan meslektaşlarım için faydalı olacağını düşünüyorum. Geri bildirim ve katkılara açığım.
+
+#QGIS #GIS #CBS #Hidroloji #Sulama #OpenSource #Thiessen #Voronoi #WaterResources
+
+----------------
+
+(İlk yorum): 🔗 Eklenti: https://plugins.qgis.org/plugins/thiessen_sulama/

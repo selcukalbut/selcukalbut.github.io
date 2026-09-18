@@ -17,7 +17,14 @@
 <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.4/dist/jspdf.plugin.autotable.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/satellite.js@5.0.0/dist/satellite.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@joergdietrich/leaflet.terminator@1.0.0/L.Terminator.js"></script>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.min.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
 <!-- Private analytics (dashboard only visible to the site owner, no cookies) — per-page/per-tool
      pageviews are fired manually from showPage() below, since this is a single-page app. -->
 <script data-goatcounter="https://selcukalbut.goatcounter.com/count"
@@ -4403,18 +4410,81 @@ const SATELLITES = [
             en: 'Uses the ASTER sensor aboard the Terra platform to study surface mineralogy, topography and thermal properties.' } },
 ];
 
+const UYDU_EARTH_RADIUS_KM = 6371;
+const UYDU_ALT_EXAGGERATION = 3; // real LEO altitude is ~11% of Earth's radius — barely visible without this
+
 const uydu = {
-  map: null,
-  terminatorLayer: null,
-  markers: {},
-  baseTracks: {},
-  trackLine: null,
+  three: null,
+  scene: null,
+  camera: null,
+  renderer: null,
+  controls: null,
+  earthMesh: null,
+  starPoints: null,
+  raycaster: null,
+  pointer: null,
+  satSprites: {},
+  baseTrackLines: {},
+  selectedTrackLine: null,
+  animating: false,
+  loadingThree: false,
   selectedId: SATELLITES[0].id,
   tles: {},
   fetchStatus: {},
   tickTimer: null,
   fetched: false,
 };
+
+// Standard equirectangular lat/lon → 3D conversion matching THREE.SphereGeometry's default UV
+// layout, so points line up with the day/night texture. The Earth mesh itself is never rotated
+// (only the camera orbits via OrbitControls), so this "world" frame stays fixed and satellites,
+// ground tracks and the sun direction below can all share it directly.
+function uyduLatLonToVector3(THREE, lat, lon, radius) {
+  const phi = (90 - lat) * Math.PI / 180;
+  const theta = (lon + 180) * Math.PI / 180;
+  return new THREE.Vector3(
+    -radius * Math.sin(phi) * Math.cos(theta),
+    radius * Math.cos(phi),
+    radius * Math.sin(phi) * Math.sin(theta)
+  );
+}
+
+// Subsolar point (lat/lon directly under the sun right now), ported from the same low-precision
+// solar-position formulas used by the Leaflet.Terminator plugin in the previous 2D map — verified
+// against that plugin's own primitives to still land on the correct point.
+function uyduSubsolarPoint(date) {
+  const D2R = Math.PI / 180, R2D = 180 / Math.PI;
+  const jd = date.getTime() / 86400000 + 2440587.5;
+  const n = jd - 2451545.0;
+  const L = (280.460 + 0.9856474 * n) % 360;
+  const g = (357.528 + 0.9856003 * n) % 360;
+  const lambda = L + 1.915 * Math.sin(g * D2R) + 0.02 * Math.sin(2 * g * D2R);
+  const T = n / 36525;
+  const eps = 23.43929111 - T * (46.836769 / 3600 - T * (0.0001831 / 3600 + T * (0.00200340 / 3600 - T * (0.576e-6 / 3600 - T * 4.34e-8 / 3600))));
+  let alpha = Math.atan(Math.cos(eps * D2R) * Math.tan(lambda * D2R)) * R2D;
+  const delta = Math.asin(Math.sin(eps * D2R) * Math.sin(lambda * D2R)) * R2D;
+  const lQuadrant = Math.floor(lambda / 90) * 90;
+  const raQuadrant = Math.floor(alpha / 90) * 90;
+  alpha += (lQuadrant - raQuadrant);
+  const gst = (18.697374558 + 24.06570982441908 * n) % 24;
+  let lon = alpha - gst * 15;
+  lon = ((lon + 180) % 360 + 360) % 360 - 180;
+  return { lat: delta, lon };
+}
+
+function uyduMakeGlowTexture(THREE, color) {
+  const size = 64;
+  const canvas = document.createElement('canvas');
+  canvas.width = size; canvas.height = size;
+  const ctx = canvas.getContext('2d');
+  const gradient = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+  gradient.addColorStop(0, '#fff');
+  gradient.addColorStop(0.25, color);
+  gradient.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, size, size);
+  return new THREE.CanvasTexture(canvas);
+}
 
 function uyduCacheKey(sat) { return 'uydu_tle_' + sat.id; }
 
@@ -4474,32 +4544,153 @@ function uyduPositionAt(sat, date) {
 
 function uyduFormatNum(n, digits) { return (n == null || isNaN(n)) ? '—' : n.toFixed(digits); }
 
-// ── Map (Leaflet needs a visible, sized container: created/resized only once #page-uydu is shown) ──
-function uyduEnsureMap() {
-  if (uydu.map || typeof L === 'undefined') return;
+// ── 3D globe (WebGL needs a visible, sized container: created only once #page-uydu is shown).
+// Three.js + OrbitControls are loaded lazily via dynamic import — only visitors who open this
+// tool pay for them — resolved through the import map declared in <head>.
+async function uyduEnsureMap() {
+  if (uydu.renderer || uydu.loadingThree) return;
   const el = document.getElementById('uyduMap');
   if (!el) return;
-  uydu.map = L.map(el, { worldCopyJump: true }).setView([20, 20], 2);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap contributors', subdomains: 'abc', maxZoom: 19,
-  }).addTo(uydu.map);
-  if (typeof L.terminator === 'function') {
-    uydu.terminatorLayer = L.terminator({ fillColor: '#3d2b1f', fillOpacity: 0.16, color: 'transparent' }).addTo(uydu.map);
+  uydu.loadingThree = true;
+  const THREE = await import('three');
+  const { OrbitControls } = await import('three/addons/controls/OrbitControls.js');
+  uydu.three = THREE;
+
+  const width = el.clientWidth || 600, height = el.clientHeight || 520;
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.setSize(width, height);
+  el.innerHTML = '';
+  el.appendChild(renderer.domElement);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
+  camera.position.set(0, 0.4, 2.6);
+
+  const controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.08;
+  controls.minDistance = 1.3;
+  controls.maxDistance = 6;
+  controls.autoRotate = true;
+  controls.autoRotateSpeed = 0.6;
+  controls.addEventListener('start', () => { controls.autoRotate = false; });
+
+  const dayTex = new THREE.TextureLoader().load('assets/earth/earth_day_2048.jpg');
+  const nightTex = new THREE.TextureLoader().load('assets/earth/earth_night_2048.jpg');
+
+  const earthMaterial = new THREE.ShaderMaterial({
+    uniforms: {
+      dayTexture: { value: dayTex },
+      nightTexture: { value: nightTex },
+      sunDirection: { value: new THREE.Vector3(1, 0, 0) },
+    },
+    vertexShader: `
+      varying vec2 vUv;
+      varying vec3 vNormal;
+      void main() {
+        vUv = uv;
+        vNormal = normal;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    fragmentShader: `
+      uniform sampler2D dayTexture;
+      uniform sampler2D nightTexture;
+      uniform vec3 sunDirection;
+      varying vec2 vUv;
+      varying vec3 vNormal;
+      void main() {
+        float intensity = dot(normalize(vNormal), normalize(sunDirection));
+        float mixAmount = smoothstep(-0.15, 0.15, intensity);
+        vec3 day = texture2D(dayTexture, vUv).rgb;
+        vec3 night = texture2D(nightTexture, vUv).rgb * 1.4;
+        gl_FragColor = vec4(mix(night, day, mixAmount), 1.0);
+      }
+    `,
+  });
+  uydu.earthMesh = new THREE.Mesh(new THREE.SphereGeometry(1, 64, 64), earthMaterial);
+  scene.add(uydu.earthMesh);
+
+  // Starfield (no texture needed — a shell of random points around the scene)
+  const starCount = 2000;
+  const starPositions = new Float32Array(starCount * 3);
+  for (let i = 0; i < starCount; i++) {
+    const r = 40 + Math.random() * 20;
+    const theta = Math.random() * Math.PI * 2;
+    const phi = Math.acos(2 * Math.random() - 1);
+    starPositions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+    starPositions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
+    starPositions[i * 3 + 2] = r * Math.cos(phi);
   }
+  const starGeo = new THREE.BufferGeometry();
+  starGeo.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+  uydu.starPoints = new THREE.Points(starGeo, new THREE.PointsMaterial({ color: 0xffffff, size: 0.06 }));
+  scene.add(uydu.starPoints);
+
+  // Satellite markers (glowing sprites) + one muted ground-track line per satellite
   SATELLITES.forEach(sat => {
-    const icon = L.divIcon({
-      className: 'uydu-marker',
-      html: '<div class="uydu-dot" style="background:' + sat.color + '"></div>',
-      iconSize: [14, 14], iconAnchor: [7, 7],
-    });
-    const marker = L.marker([0, 0], { icon, title: sat.name, opacity: 0.25 });
-    marker.on('click', () => uyduSelect(sat.id));
-    marker.addTo(uydu.map);
-    uydu.markers[sat.id] = marker;
-    uydu.baseTracks[sat.id] = L.polyline([], { color: '#6b5643', weight: 1.3, opacity: 0.55, dashArray: '2,5' }).addTo(uydu.map);
+    const sprite = new THREE.Sprite(new THREE.SpriteMaterial({
+      map: uyduMakeGlowTexture(THREE, sat.color), transparent: true, depthWrite: false,
+    }));
+    sprite.scale.set(0.12, 0.12, 1);
+    sprite.userData.satId = sat.id;
+    scene.add(sprite);
+    uydu.satSprites[sat.id] = sprite;
+
+    const line = new THREE.Line(
+      new THREE.BufferGeometry(),
+      new THREE.LineBasicMaterial({ color: 0x6b5643, transparent: true, opacity: 0.55 })
+    );
+    scene.add(line);
+    uydu.baseTrackLines[sat.id] = line;
   });
   // Drawn on top of every satellite's muted base track to highlight whichever one is selected.
-  uydu.trackLine = L.polyline([], { color: '#e63946', weight: 3, opacity: 1, dashArray: '6,5' }).addTo(uydu.map);
+  uydu.selectedTrackLine = new THREE.Line(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({ color: 0xe63946 }));
+  scene.add(uydu.selectedTrackLine);
+
+  uydu.raycaster = new THREE.Raycaster();
+  uydu.pointer = new THREE.Vector2();
+  renderer.domElement.addEventListener('click', ev => {
+    const rect = renderer.domElement.getBoundingClientRect();
+    uydu.pointer.x = ((ev.clientX - rect.left) / rect.width) * 2 - 1;
+    uydu.pointer.y = -((ev.clientY - rect.top) / rect.height) * 2 + 1;
+    uydu.raycaster.setFromCamera(uydu.pointer, camera);
+    const hits = uydu.raycaster.intersectObjects(Object.values(uydu.satSprites));
+    if (hits.length > 0) uyduSelect(hits[0].object.userData.satId);
+  });
+
+  uydu.scene = scene;
+  uydu.camera = camera;
+  uydu.controls = controls;
+  uydu.renderer = renderer;
+  uydu.loadingThree = false;
+  uyduRenderMap();
+  uyduAnimate();
+}
+
+function uyduResizeRenderer() {
+  if (!uydu.renderer) return;
+  const el = document.getElementById('uyduMap');
+  if (!el) return;
+  const width = el.clientWidth || 600, height = el.clientHeight || 520;
+  uydu.renderer.setSize(width, height);
+  uydu.camera.aspect = width / height;
+  uydu.camera.updateProjectionMatrix();
+}
+
+// Runs every frame so OrbitControls' damping/auto-rotate stay smooth; skips real work whenever
+// the tool isn't the visible "page" so it doesn't burn CPU/battery in the background.
+function uyduAnimate() {
+  if (uydu.animating) return;
+  uydu.animating = true;
+  function frame() {
+    requestAnimationFrame(frame);
+    if (currentPage !== 'uydu') return;
+    uydu.controls.update();
+    uydu.renderer.render(uydu.scene, uydu.camera);
+  }
+  frame();
 }
 
 // Unwraps longitude (lets it run past ±180° instead of snapping back) so the polyline stays a
@@ -4553,25 +4744,44 @@ function uyduOpenFromCatalog(id) {
 function uyduShowTab(tab) {
   document.querySelectorAll('#page-uydu .uydu-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
   document.querySelectorAll('#page-uydu .uydu-tab-panel').forEach(p => p.classList.toggle('active', p.dataset.tab === tab));
-  if (tab === 'live' && uydu.map) setTimeout(() => uydu.map.invalidateSize(), 50);
+  if (tab === 'live') setTimeout(uyduResizeRenderer, 50);
+}
+
+function uyduTrackToPositions(THREE, track, radius) {
+  const positions = new Float32Array(track.length * 3);
+  track.forEach((p, i) => {
+    const v = uyduLatLonToVector3(THREE, p[0], p[1], radius);
+    positions[i * 3] = v.x; positions[i * 3 + 1] = v.y; positions[i * 3 + 2] = v.z;
+  });
+  return positions;
 }
 
 function uyduRenderMap() {
-  if (!uydu.map) return;
+  if (!uydu.renderer) return;
+  const THREE = uydu.three;
   const now = new Date();
-  if (uydu.terminatorLayer) uydu.terminatorLayer.setTime(now);
+
+  const sun = uyduSubsolarPoint(now);
+  uydu.earthMesh.material.uniforms.sunDirection.value.copy(uyduLatLonToVector3(THREE, sun.lat, sun.lon, 1).normalize());
+
   SATELLITES.forEach(sat => {
     const pos = uyduPositionAt(sat, now);
-    const marker = uydu.markers[sat.id];
-    if (marker) {
-      if (pos) { marker.setLatLng([pos.lat, pos.lon]); marker.setOpacity(1); }
-      else marker.setOpacity(0.25);
+    const sprite = uydu.satSprites[sat.id];
+    if (sprite) {
+      if (pos) {
+        const altRadius = 1 + (pos.altKm * UYDU_ALT_EXAGGERATION) / UYDU_EARTH_RADIUS_KM;
+        sprite.position.copy(uyduLatLonToVector3(THREE, pos.lat, pos.lon, altRadius));
+        sprite.material.opacity = 1;
+      } else {
+        sprite.material.opacity = 0.25;
+      }
     }
     const track = uyduGroundTrack(sat, 45, 45, 1);
-    const baseLine = uydu.baseTracks[sat.id];
-    if (baseLine) baseLine.setLatLngs(track);
-    if (sat.id === uydu.selectedId) {
-      if (uydu.trackLine) uydu.trackLine.setLatLngs(track);
+    const positions = uyduTrackToPositions(THREE, track, 1.01);
+    const baseLine = uydu.baseTrackLines[sat.id];
+    if (baseLine) baseLine.geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    if (sat.id === uydu.selectedId && uydu.selectedTrackLine) {
+      uydu.selectedTrackLine.geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
     }
   });
 }
@@ -4720,7 +4930,7 @@ function uyduStartTicking() {
 function uyduOnShow() {
   uyduEnsureMap();
   uyduStartTicking();
-  if (uydu.map) setTimeout(() => uydu.map.invalidateSize(), 50);
+  setTimeout(uyduResizeRenderer, 50);
 }
 
 function uyduRefreshLang() {

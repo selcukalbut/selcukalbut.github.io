@@ -1,0 +1,11 @@
+Sulama Planlamasında online ETo/ETc hesaplama...
+
+Sulama mühendisliğinde referans bitki su tüketimi (ETo) ve bitki su ihtiyacı (ETc) hesapları genellikle uzman yazılım ya da elle yapılan hesaplamalar gerektirir. Bu ihtiyaçla, tarayıcıda çalışan ücretsiz bir hesaplama aracı geliştirdim:
+🌱 FAO-56 Penman-Monteith yöntemiyle ETo/ETc hesabı
+🇹🇷 Türkiye'de TAGEM & DSİ'nin 2017 tarihli resmi rehberindeki 259 meteoroloji istasyonunun verileriyle çalışıyor
+🛰️ Türkiye dışında NASA POWER uydu verisiyle otomatik devreye giriyor
+📍 Harita üzerinde Thiessen (Voronoi) poligonlarıyla hangi istasyonun kullanıldığını görebiliyorsunuz
+🌾 80'den fazla bitki için bölgesel gelişim dönemi ve Kc katsayılarını içeriyor
+Sulama planlaması, tarla içi geliştirme hizmetleri veya akademik çalışmalarınız için kullanabilir, geri bildirimlerinizi memnuniyetle karşılarım.
+Uygulama web adresi: https://lnkd.in/dVqxjxjf
+#Sulama #CBS #UzaktanAlgılama #TarımsalSuYönetimi #DSİ #TAGEM #WaterManagement #Irrigation #GIS

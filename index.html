@@ -1050,7 +1050,7 @@ footer {
 [data-lang] { display: none; }
 html[lang="tr"] [data-lang="tr"] { display: revert; }
 html[lang="en"] [data-lang="en"] { display: revert; }
-/* ══ UYDU TAKİP (Orbita Atlas) ══ */
+/* ══ UYDU TAKİP (Yörünge Atlası) ══ */
 #page-uydu .page-inner { max-width: 1180px; }
 
 .uydu-status-banner {
@@ -1088,7 +1088,8 @@ html[lang="en"] [data-lang="en"] { display: revert; }
 .uydu-stat-value { font-size: 1.5rem; font-weight: 800; color: var(--primary); font-family: 'JetBrains Mono', monospace; }
 .uydu-stat-label { font-size: 0.68rem; color: var(--text-muted); margin-top: 0.15rem; }
 
-.uydu-sat-list { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem; }
+.uydu-sat-list { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem; max-height: 260px; overflow-y: auto; padding-right: 4px; }
+.uydu-catalog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
 .uydu-sat-pill {
   display: flex; align-items: center; gap: 0.6rem;
   background: var(--card); border: 1px solid var(--border); border-radius: 10px;
@@ -1879,8 +1880,8 @@ html[lang="en"] [data-lang="en"] { display: revert; }
         <div class="app-card">
           <div class="app-icon navy">🛰️</div>
           <div class="app-info">
-            <h3 data-lang="tr">Uydu Takip — Orbita Atlas</h3>
-            <h3 data-lang="en">Satellite Tracker — Orbita Atlas</h3>
+            <h3 data-lang="tr">Uydu Takip — Yörünge Atlası</h3>
+            <h3 data-lang="en">Satellite Tracker — Orbit Atlas</h3>
             <p data-lang="tr">Landsat 8, Landsat 9 ve Terra/ASTER gibi aktif yer gözlem uydularının anlık yörünge konumunu, gerçek TLE verisi ve SGP4 modeliyle canlı haritada izleyin; kataloğu ve yörünge analizlerini inceleyin.</p>
             <p data-lang="en">Track active Earth observation satellites like Landsat 8, Landsat 9 and Terra/ASTER in real time on a live map, computed from real TLE data with the SGP4 model — browse the catalog and orbit analysis.</p>
             <button class="app-open-btn" onclick="showPage('uydu')">
@@ -2248,14 +2249,14 @@ html[lang="en"] [data-lang="en"] { display: revert; }
     </div>
   </div>
 
-  <!-- ══ UYDU TAKİP (Orbita Atlas) ══ -->
+  <!-- ══ UYDU TAKİP (Yörünge Atlası) ══ -->
   <div class="page" id="page-uydu">
     <div class="page-inner">
       <div class="page-header">
         <div class="eyebrow" data-lang="tr">Araç</div>
         <div class="eyebrow" data-lang="en">Tool</div>
-        <h1 data-lang="tr">Uydu Takip — Orbita Atlas</h1>
-        <h1 data-lang="en">Satellite Tracker — Orbita Atlas</h1>
+        <h1 data-lang="tr">Uydu Takip — Yörünge Atlası</h1>
+        <h1 data-lang="en">Satellite Tracker — Orbit Atlas</h1>
         <p data-lang="tr">Aktif yer gözlem uydularının anlık yörünge konumunu, gerçek TLE verisi ve SGP4 modeliyle tarayıcınızda hesaplayıp canlı izleyin.</p>
         <p data-lang="en">Track active Earth observation satellites' real-time orbital position, computed live in your browser from real TLE data with the SGP4 model.</p>
       </div>
@@ -2316,7 +2317,7 @@ html[lang="en"] [data-lang="en"] { display: revert; }
 
       <!-- CATALOG -->
       <div class="uydu-tab-panel" data-tab="catalog">
-        <div id="uyduCatalogGrid" class="apps-list"></div>
+        <div id="uyduCatalogGrid" class="uydu-catalog-grid"></div>
         <div class="apps-note" style="margin-top:1rem">
           <span data-lang="tr">💡 Bir uyduya tıklayarak Canlı Dünya sekmesinde onu seçili hale getirebilirsiniz.</span>
           <span data-lang="en">💡 Click a satellite to select it on the Live Earth tab.</span>
@@ -4394,21 +4395,240 @@ function sulamaRefreshLang() {
 }
 sulamaInit();
 
-/* ══════════ UYDU TAKİP (Orbita Atlas) ══════════ */
-const SATELLITES = [
-  { id: 'landsat9', noradId: 49260, name: 'Landsat 9', agency: 'NASA / USGS', color: '#7CFFB2',
+/* ══════════ UYDU TAKİP (Yörünge Atlası) ══════════ */
+// Even, well-spread hue per satellite so N colors stay visually distinct without hand-picking hex
+// values one by one; kept as real hex strings (not hsl()) so the existing `color + '22'` alpha
+// trick used for catalog icon backgrounds keeps working.
+function uyduHslToHex(h, s, l) {
+  s /= 100; l /= 100;
+  const k = n => (n + h / 30) % 12;
+  const a = s * Math.min(l, 1 - l);
+  const f = n => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+  const toHex = x => Math.round(255 * x).toString(16).padStart(2, '0');
+  return '#' + toHex(f(0)) + toHex(f(8)) + toHex(f(4));
+}
+
+// NORAD catalog numbers verified against live CelesTrak data (https://celestrak.org/NORAD/elements/gp.php)
+// before adding — satellites without a currently-published TLE (e.g. HISUI, TELEOS-1) were left out.
+const SATELLITES_RAW = [
+  { id: 'landsat9', noradId: 49260, name: 'Landsat 9', agency: 'NASA / USGS',
     mission: { tr: 'Kara gözlem', en: 'Land observation' },
     desc: { tr: 'Yeryüzündeki doğal ve insan kaynaklı değişimleri uzun dönemli, kalibre edilmiş multispektral verilerle izleyen gözlem uydusu.',
             en: "Observes long-term, calibrated multispectral data on natural and human-driven changes on Earth's surface." } },
-  { id: 'landsat8', noradId: 39084, name: 'Landsat 8', agency: 'NASA / USGS', color: '#4FD1E8',
+  { id: 'landsat8', noradId: 39084, name: 'Landsat 8', agency: 'NASA / USGS',
     mission: { tr: 'Kara gözlem', en: 'Land observation' },
     desc: { tr: 'Kara yüzeylerinin zamansal değişimini izleyen, açık veri politikasıyla araştırma dünyasının temel görevlerinden biri.',
             en: 'Tracks temporal change on land surfaces — a foundational open-data mission for the research community.' } },
-  { id: 'terra', noradId: 25994, name: 'Terra / ASTER', agency: 'NASA / METI', color: '#C77DFF',
+  { id: 'landsat7', noradId: 25682, name: 'Landsat 7', agency: 'NASA / USGS',
+    mission: { tr: 'Kara gözlem', en: 'Land observation' },
+    desc: { tr: 'Landsat programının 1999\'dan beri görevde olan, uzun dönemli arşivi genişleten uydusu.',
+            en: 'In service since 1999, extending the Landsat program\'s long-term observational archive.' } },
+  { id: 'terra', noradId: 25994, name: 'Terra / ASTER', agency: 'NASA / METI',
     mission: { tr: 'Jeoloji ve topografya', en: 'Geology & topography' },
     desc: { tr: 'Terra platformu üzerindeki ASTER sensörüyle yüzey mineralojisi, topografya ve termal özellikleri inceleyen görev.',
             en: 'Uses the ASTER sensor aboard the Terra platform to study surface mineralogy, topography and thermal properties.' } },
+  { id: 'aqua', noradId: 27424, name: 'Aqua', agency: 'NASA',
+    mission: { tr: 'Atmosfer ve yüzey gözlemi', en: 'Atmosphere & surface observation' },
+    desc: { tr: 'MODIS sensörüyle su döngüsü, bulut örtüsü ve yüzey sıcaklığını küresel ölçekte izleyen görev.',
+            en: 'Uses the MODIS sensor to monitor the water cycle, cloud cover and surface temperature globally.' } },
+  { id: 'sentinel1a', noradId: 39634, name: 'Sentinel-1A', agency: 'ESA / Copernicus',
+    mission: { tr: 'Sentetik açıklıklı radar', en: 'Synthetic aperture radar' },
+    desc: { tr: 'Bulut ve gece koşullarından bağımsız radar görüntüleriyle kara, deniz ve afet izleme görevi yürütür.',
+            en: 'Radar imaging independent of cloud and daylight, used for land, sea and disaster monitoring.' } },
+  { id: 'sentinel2a', noradId: 40697, name: 'Sentinel-2A', agency: 'ESA / Copernicus',
+    mission: { tr: 'Yüksek çözünürlüklü görüntüleme', en: 'High-resolution imaging' },
+    desc: { tr: 'Kara yüzeylerinin ve kıyı sularının yüksek çözünürlüklü multispektral haritalanmasını sağlayan Copernicus uydusu.',
+            en: 'Copernicus satellite providing high-resolution multispectral mapping of land surfaces and coastal waters.' } },
+  { id: 'gokturk1', noradId: 41875, name: 'Göktürk-1', agency: 'TÜBİTAK UZAY / TUSAŞ',
+    mission: { tr: 'Yüksek çözünürlüklü keşif', en: 'High-resolution reconnaissance' },
+    desc: { tr: 'Türkiye\'nin en yüksek çözünürlüklü yer gözlem uydusu; sivil ve askeri görüntüleme ihtiyaçlarına hizmet eder.',
+            en: 'Turkey\'s highest-resolution Earth observation satellite, serving both civil and defense imaging needs.' } },
+  { id: 'gokturk2', noradId: 39030, name: 'Göktürk-2', agency: 'TÜBİTAK UZAY / TUSAŞ',
+    mission: { tr: 'Yüksek çözünürlüklü keşif', en: 'High-resolution reconnaissance' },
+    desc: { tr: 'Türkiye\'nin yüksek çözünürlüklü yer gözlem uydusu. Sivil ve bilimsel uygulamalar için görüntüleme kabiliyeti sunar.',
+            en: 'Turkey\'s high-resolution Earth observation satellite, providing imaging for civil and scientific applications.' } },
+  { id: 'alos2', noradId: 39766, name: 'ALOS-2', agency: 'JAXA',
+    mission: { tr: 'Sentetik açıklıklı radar', en: 'Synthetic aperture radar' },
+    desc: { tr: 'PALSAR-2 radarıyla afet izleme, ormancılık ve yüzey deformasyonu ölçümü yapan Japon uydusu.',
+            en: 'Japanese satellite using the PALSAR-2 radar for disaster monitoring, forestry and surface-deformation measurement.' } },
+  { id: 'alos4', noradId: 60182, name: 'ALOS-4', agency: 'JAXA',
+    mission: { tr: 'Sentetik açıklıklı radar', en: 'Synthetic aperture radar' },
+    desc: { tr: 'ALOS-2\'nin devamı; geniş alan taraması yapabilen yeni nesil L-bant radar uydusu.',
+            en: 'Successor to ALOS-2 — a next-generation L-band radar satellite capable of wide-area scanning.' } },
+  { id: 'asnaro2', noradId: 43152, name: 'ASNARO-2', agency: 'Japonya',
+    mission: { tr: 'Sentetik açıklıklı radar', en: 'Synthetic aperture radar' },
+    desc: { tr: 'Küçük uydu platformunda X-bant radar taşıyan Japon yer gözlem görevi.',
+            en: 'Japanese Earth-observation mission carrying an X-band radar on a small-satellite platform.' } },
+  { id: 'capella', noradId: 57693, name: 'Capella (Acadia-1)', agency: 'ABD',
+    mission: { tr: 'Sentetik açıklıklı radar', en: 'Synthetic aperture radar' },
+    desc: { tr: 'Ticari SAR takımyıldızından, gece/gündüz ve bulut altı görüntüleme yapan uydu.',
+            en: 'Part of a commercial SAR constellation, imaging day, night and through cloud cover.' } },
+  { id: 'cartosat2f', noradId: 43111, name: 'Cartosat-2F', agency: 'Hindistan / ISRO',
+    mission: { tr: 'Yüksek çözünürlüklü optik', en: 'High-resolution optical' },
+    desc: { tr: 'Kentsel planlama ve altyapı izleme için pankromatik yüksek çözünürlüklü görüntü sağlar.',
+            en: 'Provides high-resolution panchromatic imagery for urban planning and infrastructure monitoring.' } },
+  { id: 'cartosat3', noradId: 44804, name: 'Cartosat-3', agency: 'Hindistan / ISRO',
+    mission: { tr: 'Çok yüksek çözünürlüklü optik', en: 'Very high-resolution optical' },
+    desc: { tr: 'ISRO\'nun bugüne kadarki en yüksek çözünürlüklü sivil yer gözlem uydusu.',
+            en: 'ISRO\'s highest-resolution civilian Earth observation satellite to date.' } },
+  { id: 'cosmoskymed1', noradId: 31598, name: 'COSMO-SkyMed 1', agency: 'İtalya / ASI',
+    mission: { tr: 'Sentetik açıklıklı radar', en: 'Synthetic aperture radar' },
+    desc: { tr: 'Afet yönetimi ve güvenlik amaçlı İtalyan çok uydulu X-bant radar takımyıldızının üyesi.',
+            en: 'Member of Italy\'s multi-satellite X-band radar constellation for disaster management and security.' } },
+  { id: 'enmap', noradId: 52159, name: 'EnMAP', agency: 'Almanya / DLR',
+    mission: { tr: 'Hiperspektral görüntüleme', en: 'Hyperspectral imaging' },
+    desc: { tr: 'Toprak, bitki örtüsü ve su kalitesini yüzlerce spektral banttan inceleyen Alman hiperspektral uydusu.',
+            en: 'German hyperspectral satellite studying soil, vegetation and water quality across hundreds of spectral bands.' } },
+  { id: 'erosc3', noradId: 54880, name: 'EROS C3', agency: 'İsrail / ImageSat',
+    mission: { tr: 'Yüksek çözünürlüklü optik', en: 'High-resolution optical' },
+    desc: { tr: 'Ticari ve savunma amaçlı yüksek çözünürlüklü optik görüntü sağlayan İsrail uydusu.',
+            en: 'Israeli satellite providing high-resolution optical imagery for commercial and defense use.' } },
+  { id: 'formosat5', noradId: 42920, name: 'Formosat-5', agency: 'Tayvan / NSPO',
+    mission: { tr: 'Optik görüntüleme', en: 'Optical imaging' },
+    desc: { tr: 'Tayvan\'ın kendi tasarımı optik sensörle donatılmış ilk yer gözlem uydusu.',
+            en: 'Taiwan\'s first Earth observation satellite equipped with a domestically designed optical sensor.' } },
+  { id: 'geoeye1', noradId: 33331, name: 'GeoEye-1', agency: 'ABD / Maxar',
+    mission: { tr: 'Yüksek çözünürlüklü optik', en: 'High-resolution optical' },
+    desc: { tr: 'Harita ve GIS uygulamaları için altmetre çözünürlüklü ticari görüntü sağlar.',
+            en: 'Provides sub-meter-resolution commercial imagery for mapping and GIS applications.' } },
+  { id: 'deimos1', noradId: 35681, name: 'Deimos-1', agency: 'İspanya',
+    mission: { tr: 'Geniş alan optik görüntüleme', en: 'Wide-area optical imaging' },
+    desc: { tr: 'Tarım ve arazi örtüsü izleme için geniş şeritli çoklu spektral görüntü sağlar.',
+            en: 'Provides wide-swath multispectral imagery for agriculture and land-cover monitoring.' } },
+  { id: 'deimos2', noradId: 40013, name: 'Deimos-2', agency: 'İspanya',
+    mission: { tr: 'Yüksek çözünürlüklü optik', en: 'High-resolution optical' },
+    desc: { tr: 'Kentsel ve altyapı uygulamaları için yüksek çözünürlüklü pankromatik/multispektral görüntü sunar.',
+            en: 'Offers high-resolution panchromatic/multispectral imagery for urban and infrastructure applications.' } },
+  { id: 'gaofen1', noradId: 39150, name: 'Gaofen-1', agency: 'Çin / CNSA',
+    mission: { tr: 'Optik görüntüleme', en: 'Optical imaging' },
+    desc: { tr: 'Çin\'in yüksek çözünürlüklü yer gözlem programının ilk uydusu.',
+            en: 'The first satellite in China\'s high-resolution Earth observation program.' } },
+  { id: 'gaofen2', noradId: 40118, name: 'Gaofen-2', agency: 'Çin / CNSA',
+    mission: { tr: 'Yüksek çözünürlüklü optik', en: 'High-resolution optical' },
+    desc: { tr: 'Altmetre altı pankromatik çözünürlükle kentsel ve arazi haritalama sağlar.',
+            en: 'Provides sub-meter panchromatic resolution for urban and land mapping.' } },
+  { id: 'gaofen3', noradId: 41727, name: 'Gaofen-3', agency: 'Çin / CNSA',
+    mission: { tr: 'Sentetik açıklıklı radar', en: 'Synthetic aperture radar' },
+    desc: { tr: 'Deniz izleme ve afet müdahalesi için çok modlu C-bant SAR uydusu.',
+            en: 'Multi-mode C-band SAR satellite for maritime monitoring and disaster response.' } },
+  { id: 'gaofen4', noradId: 41194, name: 'Gaofen-4', agency: 'Çin / CNSA',
+    mission: { tr: 'Jeostasyoner optik/IR', en: 'Geostationary optical/IR' },
+    desc: { tr: 'Sabit bir bölgeyi sürekli izleyebilen jeostasyoner yörüngeli görüntüleme uydusu.',
+            en: 'Geostationary imaging satellite able to continuously monitor a fixed region.' } },
+  { id: 'gaofen6', noradId: 43484, name: 'Gaofen-6', agency: 'Çin / CNSA',
+    mission: { tr: 'Tarım gözlemi', en: 'Agricultural observation' },
+    desc: { tr: 'Tarımsal izleme için geniş şeritli, yüksek tekrarlı çekim yapan optik uydu.',
+            en: 'Optical satellite with wide swath and frequent revisit, aimed at agricultural monitoring.' } },
+  { id: 'gaofen7', noradId: 44703, name: 'Gaofen-7', agency: 'Çin / CNSA',
+    mission: { tr: 'Stereo yükseklik haritalama', en: 'Stereo elevation mapping' },
+    desc: { tr: 'Çift teleskopla stereo görüntüleme yaparak yüksek hassasiyetli sayısal yükseklik modeli üretir.',
+            en: 'Uses dual telescopes for stereo imaging to produce high-precision digital elevation models.' } },
+  { id: 'grus1a', noradId: 43890, name: 'GRUS-1A (AxelGlobe)', agency: 'Japonya / Axelspace',
+    mission: { tr: 'Optik görüntüleme', en: 'Optical imaging' },
+    desc: { tr: 'Küçük uydu takımyıldızından, sık tekrarlı optik Dünya görüntüleri sağlar.',
+            en: 'Part of a small-satellite constellation providing frequently revisited optical Earth imagery.' } },
+  { id: 'resourcesat2', noradId: 37387, name: 'ResourceSat-2', agency: 'Hindistan / ISRO',
+    mission: { tr: 'Doğal kaynak izleme', en: 'Natural resource monitoring' },
+    desc: { tr: 'Tarım, orman ve su kaynaklarını izlemek için çoklu çözünürlükte görüntü sağlayan Hint uydusu.',
+            en: 'Indian satellite providing multi-resolution imagery to monitor agriculture, forestry and water resources.' } },
+  { id: 'jilin1', noradId: 40961, name: 'Jilin-1', agency: 'Çin',
+    mission: { tr: 'Video ve optik görüntüleme', en: 'Video & optical imaging' },
+    desc: { tr: 'Ticari amaçlı, video görüntüleme kabiliyetine de sahip büyük bir Çin uydu takımyıldızının öncüsü.',
+            en: 'Pioneer of a large Chinese commercial satellite constellation that also offers video imaging.' } },
+  { id: 'kazeosat1', noradId: 39731, name: 'KazEOSat-1', agency: 'Kazakistan',
+    mission: { tr: 'Yüksek çözünürlüklü optik', en: 'High-resolution optical' },
+    desc: { tr: 'Kazakistan\'ın yüksek çözünürlüklü ulusal yer gözlem uydusu.',
+            en: 'Kazakhstan\'s high-resolution national Earth observation satellite.' } },
+  { id: 'kazeosat2', noradId: 40010, name: 'KazEOSat-2', agency: 'Kazakistan',
+    mission: { tr: 'Orta çözünürlüklü optik', en: 'Medium-resolution optical' },
+    desc: { tr: 'KazEOSat-1\'i tamamlayan, geniş alan taramasına uygun orta çözünürlüklü uydu.',
+            en: 'Complements KazEOSat-1 with medium-resolution imagery suited to wide-area coverage.' } },
+  { id: 'kompsat2', noradId: 29268, name: 'Kompsat-2 (Arirang-2)', agency: 'Güney Kore / KARI',
+    mission: { tr: 'Yüksek çözünürlüklü optik', en: 'High-resolution optical' },
+    desc: { tr: 'Güney Kore\'nin altmetre çözünürlüklü ilk yüksek çözünürlüklü yer gözlem uydusu.',
+            en: 'South Korea\'s first sub-meter-resolution high-resolution Earth observation satellite.' } },
+  { id: 'kompsat3', noradId: 38338, name: 'Kompsat-3 (Arirang-3)', agency: 'Güney Kore / KARI',
+    mission: { tr: 'Yüksek çözünürlüklü optik', en: 'High-resolution optical' },
+    desc: { tr: 'Kentsel planlama ve afet izleme için 0.7 m çözünürlükte pankromatik görüntü sağlar.',
+            en: 'Provides 0.7 m-resolution panchromatic imagery for urban planning and disaster monitoring.' } },
+  { id: 'kompsat3a', noradId: 40536, name: 'Kompsat-3A', agency: 'Güney Kore / KARI',
+    mission: { tr: 'Optik ve termal görüntüleme', en: 'Optical & thermal imaging' },
+    desc: { tr: 'Görünür ve kızılötesi bantlarda gece-gündüz görüntüleme yapabilen uydu.',
+            en: 'Capable of day-and-night imaging in visible and infrared bands.' } },
+  { id: 'kompsat5', noradId: 39227, name: 'Kompsat-5 (Arirang-5)', agency: 'Güney Kore / KARI',
+    mission: { tr: 'Sentetik açıklıklı radar', en: 'Synthetic aperture radar' },
+    desc: { tr: 'Güney Kore\'nin hava koşullarından bağımsız görüntü sağlayan ilk SAR uydusu.',
+            en: 'South Korea\'s first SAR satellite, imaging independent of weather conditions.' } },
+  { id: 'paz', noradId: 43215, name: 'PAZ', agency: 'İspanya',
+    mission: { tr: 'Sentetik açıklıklı radar', en: 'Synthetic aperture radar' },
+    desc: { tr: 'Güvenlik ve sivil amaçlı X-bant radar görüntüleri sağlayan İspanyol uydusu.',
+            en: 'Spanish satellite providing X-band radar imagery for security and civil use.' } },
+  { id: 'pleiades1a', noradId: 38012, name: 'Pléiades 1A', agency: 'Fransa / CNES',
+    mission: { tr: 'Çok yüksek çözünürlüklü optik', en: 'Very high-resolution optical' },
+    desc: { tr: 'Aynı yörüngede eşleştirilmiş çift uydudan biri; günlük tekrar ziyaretle 0.5 m çözünürlük sunar.',
+            en: 'One of a paired satellite duo in the same orbit, offering 0.5 m resolution with daily revisit.' } },
+  { id: 'pleiades1b', noradId: 39019, name: 'Pléiades 1B', agency: 'Fransa / CNES',
+    mission: { tr: 'Çok yüksek çözünürlüklü optik', en: 'Very high-resolution optical' },
+    desc: { tr: 'Pléiades 1A\'nın ikizi; birlikte küresel günlük görüntüleme kapasitesi sağlarlar.',
+            en: 'Twin of Pléiades 1A — together they provide daily global imaging capacity.' } },
+  { id: 'prisma', noradId: 44072, name: 'PRISMA', agency: 'İtalya / ASI',
+    mission: { tr: 'Hiperspektral görüntüleme', en: 'Hyperspectral imaging' },
+    desc: { tr: 'Tarım, çevre ve kaynak izleme için yüzlerce dar spektral bantta görüntü toplayan İtalyan uydusu.',
+            en: 'Italian satellite collecting imagery across hundreds of narrow spectral bands for agriculture, environment and resource monitoring.' } },
+  { id: 'radarsat2', noradId: 32382, name: 'RADARSAT-2', agency: 'Kanada / CSA',
+    mission: { tr: 'Sentetik açıklıklı radar', en: 'Synthetic aperture radar' },
+    desc: { tr: 'Buz izleme, denizcilik ve afet yönetimi için çok modlu C-bant radar sağlar.',
+            en: 'Provides multi-mode C-band radar for ice monitoring, maritime surveillance and disaster management.' } },
+  { id: 'nusat26', noradId: 52184, name: 'NuSat-26', agency: 'Arjantin / Satellogic',
+    mission: { tr: 'Optik görüntüleme', en: 'Optical imaging' },
+    desc: { tr: 'Satellogic\'in ticari küçük-uydu takımyıldızının bir üyesi, çoklu spektral ve video görüntü sağlar.',
+            en: 'Member of Satellogic\'s commercial small-satellite constellation, providing multispectral and video imagery.' } },
+  { id: 'skysatc1', noradId: 41601, name: 'SkySat-C1', agency: 'ABD / Planet',
+    mission: { tr: 'Yüksek çöz. optik ve video', en: 'High-res optical & video' },
+    desc: { tr: 'Yüksek çözünürlüklü sabit görüntü ve kısa video klipleri çekebilen ticari uydu.',
+            en: 'Commercial satellite capable of high-resolution still imagery and short video clips.' } },
+  { id: 'spot6', noradId: 38755, name: 'SPOT 6', agency: 'Fransa / Airbus',
+    mission: { tr: 'Optik görüntüleme', en: 'Optical imaging' },
+    desc: { tr: 'Geniş alan haritalama için 1.5 m çözünürlükte görüntü sağlayan Fransız uydusu.',
+            en: 'French satellite providing 1.5 m-resolution imagery for wide-area mapping.' } },
+  { id: 'spot7', noradId: 40053, name: 'SPOT 7', agency: 'Fransa / Airbus',
+    mission: { tr: 'Optik görüntüleme', en: 'Optical imaging' },
+    desc: { tr: 'SPOT 6 ile aynı yörüngede çalışarak küresel kapsama sıklığını artırır.',
+            en: 'Operates in the same orbit as SPOT 6 to increase global coverage frequency.' } },
+  { id: 'superview1', noradId: 43099, name: 'SuperView-1 03', agency: 'Çin',
+    mission: { tr: 'Yüksek çözünürlüklü optik', en: 'High-resolution optical' },
+    desc: { tr: 'Ticari yüksek çözünürlüklü görüntü takımyıldızının bir üyesi.',
+            en: 'Member of a commercial high-resolution imaging constellation.' } },
+  { id: 'tandemx', noradId: 36605, name: 'TanDEM-X', agency: 'Almanya / DLR',
+    mission: { tr: 'Sentetik açıklıklı radar (SYM)', en: 'Synthetic aperture radar (DEM)' },
+    desc: { tr: 'TerraSAR-X ile formasyon uçuşu yaparak küresel yüksek hassasiyetli sayısal yükseklik modeli üretti.',
+            en: 'Flew in formation with TerraSAR-X to generate a global high-precision digital elevation model.' } },
+  { id: 'theos', noradId: 33396, name: 'THEOS', agency: 'Tayland / GISTDA',
+    mission: { tr: 'Optik görüntüleme', en: 'Optical imaging' },
+    desc: { tr: 'Tayland\'ın arazi kullanımı ve tarım izleme için ilk yer gözlem uydusu.',
+            en: 'Thailand\'s first Earth observation satellite, used for land-use and agricultural monitoring.' } },
+  { id: 'worldview1', noradId: 32060, name: 'WorldView-1', agency: 'ABD / Maxar',
+    mission: { tr: 'Yüksek çözünürlüklü optik', en: 'High-resolution optical' },
+    desc: { tr: 'Yüksek konumsal doğrulukla pankromatik görüntü sağlayan ticari uydu.',
+            en: 'Commercial satellite providing panchromatic imagery with high positional accuracy.' } },
+  { id: 'worldview2', noradId: 35946, name: 'WorldView-2', agency: 'ABD / Maxar',
+    mission: { tr: 'Yüksek çözünürlüklü optik', en: 'High-resolution optical' },
+    desc: { tr: '8 spektral bantla altmetre çözünürlükte görüntü sağlayan ticari uydu.',
+            en: 'Commercial satellite providing sub-meter-resolution imagery across 8 spectral bands.' } },
+  { id: 'worldview3', noradId: 40115, name: 'WorldView-3', agency: 'ABD / Maxar',
+    mission: { tr: 'Çok yüksek çözünürlüklü optik', en: 'Very high-resolution optical' },
+    desc: { tr: 'Ticari uydular arasında en yüksek çözünürlüklerden birini sunan çok bantlı görüntüleme uydusu.',
+            en: 'Multi-band imaging satellite offering one of the highest resolutions among commercial satellites.' } },
+  { id: 'zhuhai1ohs2', noradId: 43441, name: 'Zhuhai-1 OHS-02', agency: 'Çin',
+    mission: { tr: 'Hiperspektral görüntüleme', en: 'Hyperspectral imaging' },
+    desc: { tr: 'Çevre ve kaynak izleme için hiperspektral veri toplayan küçük uydu takımyıldızının üyesi.',
+            en: 'Member of a small-satellite constellation collecting hyperspectral data for environment and resource monitoring.' } },
 ];
+
+const SATELLITES = SATELLITES_RAW.map((sat, i) => ({
+  ...sat,
+  color: uyduHslToHex(Math.round((360 * i) / SATELLITES_RAW.length), 78, 58),
+}));
 
 const UYDU_EARTH_RADIUS_KM = 6371;
 const UYDU_ALT_EXAGGERATION = 3; // real LEO altitude is ~11% of Earth's radius — barely visible without this
@@ -4604,13 +4824,47 @@ async function uyduEnsureMap() {
         float intensity = dot(normalize(vNormal), normalize(sunDirection));
         float mixAmount = smoothstep(-0.15, 0.15, intensity);
         vec3 day = texture2D(dayTexture, vUv).rgb;
-        vec3 night = texture2D(nightTexture, vUv).rgb * 1.4;
+        // A small floor color keeps the night side (mostly pure-black ocean in the source imagery)
+        // from reading as literally invisible against the black space background.
+        vec3 night = texture2D(nightTexture, vUv).rgb * 1.6 + vec3(0.015, 0.02, 0.035);
         gl_FragColor = vec4(mix(night, day, mixAmount), 1.0);
       }
     `,
   });
   uydu.earthMesh = new THREE.Mesh(new THREE.SphereGeometry(1, 64, 64), earthMaterial);
   scene.add(uydu.earthMesh);
+
+  // Thin additive "atmosphere" shell (backside-rendered, Fresnel rim) so the planet always reads
+  // as a sphere against the black background, even when its dark side faces the camera.
+  const atmosphereMaterial = new THREE.ShaderMaterial({
+    uniforms: { sunDirection: earthMaterial.uniforms.sunDirection },
+    transparent: true,
+    blending: THREE.AdditiveBlending,
+    side: THREE.BackSide,
+    depthWrite: false,
+    vertexShader: `
+      varying vec3 vNormal;
+      varying vec3 vWorldPosition;
+      void main() {
+        vNormal = normal;
+        vWorldPosition = position;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    fragmentShader: `
+      uniform vec3 sunDirection;
+      varying vec3 vNormal;
+      varying vec3 vWorldPosition;
+      void main() {
+        vec3 viewDir = normalize(cameraPosition - vWorldPosition);
+        float rim = pow(1.0 - max(dot(normalize(vNormal), viewDir), 0.0), 3.0);
+        float sunFactor = smoothstep(-0.3, 0.3, dot(normalize(vNormal), normalize(sunDirection)));
+        vec3 color = mix(vec3(0.05, 0.09, 0.2), vec3(0.35, 0.6, 0.95), sunFactor);
+        gl_FragColor = vec4(color, rim * 0.9);
+      }
+    `,
+  });
+  scene.add(new THREE.Mesh(new THREE.SphereGeometry(1.05, 64, 64), atmosphereMaterial));
 
   // Starfield (no texture needed — a shell of random points around the scene)
   const starCount = 2000;

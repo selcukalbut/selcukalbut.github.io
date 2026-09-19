@@ -4646,6 +4646,7 @@ const uydu = {
   satSprites: {},
   baseTrackLines: {},
   selectedTrackLine: null,
+  selectionRing: null,
   animating: false,
   loadingThree: false,
   selectedId: SATELLITES[0].id,
@@ -4692,17 +4693,58 @@ function uyduSubsolarPoint(date) {
   return { lat: delta, lon };
 }
 
-function uyduMakeGlowTexture(THREE, color) {
+// One shared satellite-icon texture (body + solar panels + antenna) used for every satellite, so
+// the globe reads as "a fleet of satellites" rather than "colored lights" at 53-satellite scale.
+function uyduMakeSatIconTexture(THREE) {
+  const size = 64, c = size / 2;
+  const canvas = document.createElement('canvas');
+  canvas.width = size; canvas.height = size;
+  const ctx = canvas.getContext('2d');
+  ctx.translate(c, c);
+  ctx.fillStyle = '#f4f4f4';
+  ctx.strokeStyle = '#1a1a1a';
+  ctx.lineWidth = 3;
+  const panel = (x) => {
+    ctx.beginPath();
+    ctx.rect(x, -9, 16, 18);
+    ctx.fill();
+    ctx.stroke();
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.moveTo(x, -3); ctx.lineTo(x + 16, -3);
+    ctx.moveTo(x, 3); ctx.lineTo(x + 16, 3);
+    ctx.stroke();
+    ctx.lineWidth = 3;
+  };
+  panel(-28);
+  panel(12);
+  ctx.beginPath();
+  ctx.rect(-7, -7, 14, 14);
+  ctx.fill();
+  ctx.stroke();
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(0, -7); ctx.lineTo(0, -17);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(0, -17, 2, 0, Math.PI * 2);
+  ctx.fillStyle = '#1a1a1a';
+  ctx.fill();
+  return new THREE.CanvasTexture(canvas);
+}
+
+// A ring texture placed behind whichever satellite is currently selected, as a thin highlight
+// frame — used instead of per-satellite colors, which stopped being legible at 53 satellites.
+function uyduMakeRingTexture(THREE, color) {
   const size = 64;
   const canvas = document.createElement('canvas');
   canvas.width = size; canvas.height = size;
   const ctx = canvas.getContext('2d');
-  const gradient = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
-  gradient.addColorStop(0, '#fff');
-  gradient.addColorStop(0.25, color);
-  gradient.addColorStop(1, 'rgba(0,0,0,0)');
-  ctx.fillStyle = gradient;
-  ctx.fillRect(0, 0, size, size);
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.arc(size / 2, size / 2, size / 2 - 3, 0, Math.PI * 2);
+  ctx.stroke();
   return new THREE.CanvasTexture(canvas);
 }
 
@@ -4834,38 +4876,6 @@ async function uyduEnsureMap() {
   uydu.earthMesh = new THREE.Mesh(new THREE.SphereGeometry(1, 64, 64), earthMaterial);
   scene.add(uydu.earthMesh);
 
-  // Thin additive "atmosphere" shell (backside-rendered, Fresnel rim) so the planet always reads
-  // as a sphere against the black background, even when its dark side faces the camera.
-  const atmosphereMaterial = new THREE.ShaderMaterial({
-    uniforms: { sunDirection: earthMaterial.uniforms.sunDirection },
-    transparent: true,
-    blending: THREE.AdditiveBlending,
-    side: THREE.BackSide,
-    depthWrite: false,
-    vertexShader: `
-      varying vec3 vNormal;
-      varying vec3 vWorldPosition;
-      void main() {
-        vNormal = normal;
-        vWorldPosition = position;
-        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-      }
-    `,
-    fragmentShader: `
-      uniform vec3 sunDirection;
-      varying vec3 vNormal;
-      varying vec3 vWorldPosition;
-      void main() {
-        vec3 viewDir = normalize(cameraPosition - vWorldPosition);
-        float rim = pow(1.0 - max(dot(normalize(vNormal), viewDir), 0.0), 3.0);
-        float sunFactor = smoothstep(-0.3, 0.3, dot(normalize(vNormal), normalize(sunDirection)));
-        vec3 color = mix(vec3(0.05, 0.09, 0.2), vec3(0.35, 0.6, 0.95), sunFactor);
-        gl_FragColor = vec4(color, rim * 0.9);
-      }
-    `,
-  });
-  scene.add(new THREE.Mesh(new THREE.SphereGeometry(1.05, 64, 64), atmosphereMaterial));
-
   // Starfield (no texture needed — a shell of random points around the scene)
   const starCount = 2000;
   const starPositions = new Float32Array(starCount * 3);
@@ -4882,12 +4892,15 @@ async function uyduEnsureMap() {
   uydu.starPoints = new THREE.Points(starGeo, new THREE.PointsMaterial({ color: 0xffffff, size: 0.06 }));
   scene.add(uydu.starPoints);
 
-  // Satellite markers (glowing sprites) + one muted ground-track line per satellite
+  // Satellite markers: one shared icon texture/material for every satellite (uniform look at
+  // 53-satellite scale), plus a single reusable ring sprite repositioned to whichever one is
+  // selected, and one muted ground-track line per satellite.
+  const satIconMaterial = new THREE.SpriteMaterial({
+    map: uyduMakeSatIconTexture(THREE), transparent: true, depthWrite: false,
+  });
   SATELLITES.forEach(sat => {
-    const sprite = new THREE.Sprite(new THREE.SpriteMaterial({
-      map: uyduMakeGlowTexture(THREE, sat.color), transparent: true, depthWrite: false,
-    }));
-    sprite.scale.set(0.12, 0.12, 1);
+    const sprite = new THREE.Sprite(satIconMaterial);
+    sprite.scale.set(0.1, 0.1, 1);
     sprite.userData.satId = sat.id;
     scene.add(sprite);
     uydu.satSprites[sat.id] = sprite;
@@ -4899,6 +4912,11 @@ async function uyduEnsureMap() {
     scene.add(line);
     uydu.baseTrackLines[sat.id] = line;
   });
+  uydu.selectionRing = new THREE.Sprite(new THREE.SpriteMaterial({
+    map: uyduMakeRingTexture(THREE, '#e63946'), transparent: true, depthWrite: false,
+  }));
+  uydu.selectionRing.scale.set(0.17, 0.17, 1);
+  scene.add(uydu.selectionRing);
   // Drawn on top of every satellite's muted base track to highlight whichever one is selected.
   uydu.selectedTrackLine = new THREE.Line(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({ color: 0xe63946 }));
   scene.add(uydu.selectedTrackLine);
@@ -4958,7 +4976,7 @@ function uyduGroundTrack(sat, minutesBack, minutesFwd, stepMin) {
   const samples = [];
   for (let m = -minutesBack; m <= minutesFwd; m += stepMin) {
     const pos = uyduPositionAt(sat, new Date(now + m * 60000));
-    if (pos) samples.push({ m, lat: pos.lat, lon: pos.lon });
+    if (pos) samples.push({ m, lat: pos.lat, lon: pos.lon, altKm: pos.altKm });
   }
   if (samples.length === 0) return [];
   let anchor = 0;
@@ -4979,7 +4997,7 @@ function uyduGroundTrack(sat, minutesBack, minutesFwd, stepMin) {
     else if (delta < -180) delta += 360;
     unwrapped[i] = unwrapped[i + 1] + delta;
   }
-  return samples.map((s, i) => [s.lat, unwrapped[i]]);
+  return samples.map((s, i) => [s.lat, unwrapped[i], s.altKm]);
 }
 
 function uyduSelect(id) {
@@ -5001,10 +5019,14 @@ function uyduShowTab(tab) {
   if (tab === 'live') setTimeout(uyduResizeRenderer, 50);
 }
 
-function uyduTrackToPositions(THREE, track, radius) {
+function uyduAltToRadius(altKm) { return 1 + (altKm * UYDU_ALT_EXAGGERATION) / UYDU_EARTH_RADIUS_KM; }
+
+// Each track point carries its own altitude (p[2]), so the line is drawn at the satellite's real
+// orbital height rather than glued to the Earth's surface.
+function uyduTrackToPositions(THREE, track) {
   const positions = new Float32Array(track.length * 3);
   track.forEach((p, i) => {
-    const v = uyduLatLonToVector3(THREE, p[0], p[1], radius);
+    const v = uyduLatLonToVector3(THREE, p[0], p[1], uyduAltToRadius(p[2]));
     positions[i * 3] = v.x; positions[i * 3 + 1] = v.y; positions[i * 3 + 2] = v.z;
   });
   return positions;
@@ -5023,15 +5045,16 @@ function uyduRenderMap() {
     const sprite = uydu.satSprites[sat.id];
     if (sprite) {
       if (pos) {
-        const altRadius = 1 + (pos.altKm * UYDU_ALT_EXAGGERATION) / UYDU_EARTH_RADIUS_KM;
-        sprite.position.copy(uyduLatLonToVector3(THREE, pos.lat, pos.lon, altRadius));
+        const spritePos = uyduLatLonToVector3(THREE, pos.lat, pos.lon, uyduAltToRadius(pos.altKm));
+        sprite.position.copy(spritePos);
         sprite.material.opacity = 1;
+        if (sat.id === uydu.selectedId && uydu.selectionRing) uydu.selectionRing.position.copy(spritePos);
       } else {
         sprite.material.opacity = 0.25;
       }
     }
     const track = uyduGroundTrack(sat, 45, 45, 1);
-    const positions = uyduTrackToPositions(THREE, track, 1.01);
+    const positions = uyduTrackToPositions(THREE, track);
     const baseLine = uydu.baseTrackLines[sat.id];
     if (baseLine) baseLine.geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
     if (sat.id === uydu.selectedId && uydu.selectedTrackLine) {

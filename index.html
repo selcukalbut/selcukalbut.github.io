@@ -204,7 +204,7 @@ nav {
 }
 
 .page-inner {
-  max-width: 960px;
+  max-width: 1320px;
   margin: 0 auto;
   padding: 3rem 2rem 5rem;
 }
@@ -278,7 +278,7 @@ nav {
   opacity: 0.32;
 }
 .home-inner {
-  max-width: 1060px;
+  max-width: 1320px;
   margin: 0 auto;
   padding: 4rem 2rem;
   display: grid;
@@ -410,7 +410,7 @@ nav {
 
 /* ══ HOME FEATURED ══ */
 .home-featured {
-  max-width: 960px;
+  max-width: 1320px;
   margin: 0 auto;
   padding: 0 2rem 4rem;
 }
@@ -455,7 +455,7 @@ nav {
   display: flex;
   justify-content: center;
   gap: 14px;
-  max-width: 960px;
+  max-width: 1320px;
   margin: 0 auto;
   padding: 0 2rem 4rem;
 }
@@ -629,7 +629,7 @@ nav {
 .project-years { font-size: 0.65rem; font-weight: 700; color: var(--text-muted); text-align: center; }
 .project-body h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.25rem; line-height: 1.4; }
 .project-code { font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; color: var(--text-muted); margin-bottom: 0.35rem; }
-.project-program { font-size: 0.8rem; color: var(--text-muted); }
+.project-program { font-size: 0.8rem; color: var(--text-muted); max-width: 640px; }
 .project-right { text-align: right; min-width: 110px; }
 .project-budget-label { font-size: 0.65rem; color: var(--text-muted); margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
 .project-budget { font-size: 0.9rem; font-weight: 800; color: var(--primary-dark); }
@@ -695,7 +695,7 @@ nav {
 .app-icon.teal { background: var(--primary-light); }
 .app-icon.navy { background: #1d2933; }
 .app-info h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.3rem; }
-.app-info p { font-size: 0.83rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 0.6rem; }
+.app-info p { font-size: 0.83rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 0.6rem; max-width: 760px; }
 .platform-tags { display: flex; gap: 6px; flex-wrap: wrap; }
 .ptag { font-size: 0.68rem; font-weight: 600; padding: 3px 9px; border-radius: 5px; background: var(--primary-light); color: var(--primary); }
 .ptag.watch { background: #f0dfe0; color: #8a3f4a; }
@@ -1051,7 +1051,7 @@ footer {
 html[lang="tr"] [data-lang="tr"] { display: revert; }
 html[lang="en"] [data-lang="en"] { display: revert; }
 /* ══ UYDU TAKİP (Yörünge Atlası) ══ */
-#page-uydu .page-inner { max-width: 1180px; }
+#page-uydu .page-inner { max-width: 1600px; }
 
 .uydu-status-banner {
   background: var(--card);
@@ -1079,9 +1079,31 @@ html[lang="en"] [data-lang="en"] { display: revert; }
 .uydu-tab-panel { display: none; }
 .uydu-tab-panel.active { display: block; }
 
-.uydu-live-grid { display: grid; grid-template-columns: minmax(0,1fr) 320px; gap: 1.25rem; align-items: start; }
-.uydu-map { height: 520px; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); background: #000; }
+.uydu-map-wrap { position: relative; height: 640px; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); background: #000; }
+.uydu-map { position: absolute; inset: 0; }
 .uydu-dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px rgba(0,0,0,0.35); }
+
+/* Overlaid on the dark 3D globe (not the page background), so re-themed light-on-dark locally —
+   these CSS variables cascade into .uydu-stat/.uydu-sat-pill/.uydu-selected-card below since they
+   all read var(--card)/var(--border)/var(--text)/var(--text-muted)/var(--primary). */
+.uydu-side-panel {
+  --text: #f3f6f7;
+  --text-muted: #aebac1;
+  --card: rgba(15, 20, 27, 0.8);
+  --border: rgba(255, 255, 255, 0.14);
+  --primary: #ffffff;
+  position: absolute;
+  top: 1rem; right: 1rem;
+  width: 300px;
+  max-height: calc(100% - 2rem);
+  overflow-y: auto;
+  z-index: 2;
+  background: rgba(10, 14, 20, 0.6);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  padding: 1rem;
+}
 
 .uydu-stat-row { display: flex; gap: 0.75rem; margin-bottom: 1rem; }
 .uydu-stat { flex: 1; background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 0.8rem; text-align: center; }
@@ -1112,8 +1134,8 @@ html[lang="en"] [data-lang="en"] { display: revert; }
 .uydu-pass-result { margin-top: 0.9rem; font-size: 0.85rem; color: var(--primary); min-height: 1.2em; }
 
 @media (max-width: 860px) {
-  .uydu-live-grid { grid-template-columns: 1fr; }
-  .uydu-map { height: 380px; }
+  .uydu-map-wrap { height: 460px; }
+  .uydu-side-panel { top: 0.5rem; right: 0.5rem; left: 0.5rem; width: auto; max-height: 55%; }
 }
 </style>
 </head>
@@ -2265,8 +2287,8 @@ html[lang="en"] [data-lang="en"] { display: revert; }
 
       <div class="uydu-tabs">
         <button class="uydu-tab-btn active" data-tab="live" onclick="uyduShowTab('live')">
-          <span data-lang="tr">🌍 Canlı Dünya</span>
-          <span data-lang="en">🌍 Live Earth</span>
+          <span data-lang="tr">🌍 Canlı Takip</span>
+          <span data-lang="en">🌍 Live Tracking</span>
         </button>
         <button class="uydu-tab-btn" data-tab="catalog" onclick="uyduShowTab('catalog')">
           <span data-lang="tr">🛰️ Uydu Kataloğu</span>
@@ -2280,7 +2302,7 @@ html[lang="en"] [data-lang="en"] { display: revert; }
 
       <!-- LIVE EARTH -->
       <div class="uydu-tab-panel active" data-tab="live">
-        <div class="uydu-live-grid">
+        <div class="uydu-map-wrap">
           <div id="uyduMap" class="uydu-map"></div>
           <div class="uydu-side-panel">
             <div class="uydu-stat-row">
@@ -2319,8 +2341,8 @@ html[lang="en"] [data-lang="en"] { display: revert; }
       <div class="uydu-tab-panel" data-tab="catalog">
         <div id="uyduCatalogGrid" class="uydu-catalog-grid"></div>
         <div class="apps-note" style="margin-top:1rem">
-          <span data-lang="tr">💡 Bir uyduya tıklayarak Canlı Dünya sekmesinde onu seçili hale getirebilirsiniz.</span>
-          <span data-lang="en">💡 Click a satellite to select it on the Live Earth tab.</span>
+          <span data-lang="tr">💡 Bir uyduya tıklayarak Canlı Takip sekmesinde onu seçili hale getirebilirsiniz.</span>
+          <span data-lang="en">💡 Click a satellite to select it on the Live Tracking tab.</span>
         </div>
       </div>
 

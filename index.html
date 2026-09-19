@@ -1133,6 +1133,23 @@ html[lang="en"] [data-lang="en"] { display: revert; }
 .uydu-analysis-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; max-width: 520px; }
 .uydu-pass-result { margin-top: 0.9rem; font-size: 0.85rem; color: var(--primary); min-height: 1.2em; }
 
+.uydu-usage-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.25rem; }
+.uydu-usage-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; }
+.uydu-usage-card h3 { font-size: 1.05rem; font-weight: 800; margin-bottom: 0.4rem; }
+.uydu-usage-card > p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1rem; }
+.uydu-usage-label { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 0.5rem; }
+.uydu-usage-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.1rem; }
+.uydu-usage-chip {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  background: var(--primary-light); color: var(--primary);
+  border: none; border-radius: 999px; padding: 0.3rem 0.7rem;
+  font-size: 0.75rem; font-weight: 600; cursor: pointer; font-family: inherit;
+}
+.uydu-usage-chip:hover { filter: brightness(0.95); }
+.uydu-usage-uses { display: flex; flex-direction: column; gap: 0.75rem; }
+.uydu-usage-use b { display: block; font-size: 0.85rem; margin-bottom: 0.15rem; }
+.uydu-usage-use span { font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; }
+
 @media (max-width: 860px) {
   .uydu-map-wrap { height: 460px; }
   .uydu-side-panel { top: 0.5rem; right: 0.5rem; left: 0.5rem; width: auto; max-height: 55%; }
@@ -1904,8 +1921,13 @@ html[lang="en"] [data-lang="en"] { display: revert; }
           <div class="app-info">
             <h3 data-lang="tr">Uydu Takip — Yörünge Atlası</h3>
             <h3 data-lang="en">Satellite Tracker — Orbit Atlas</h3>
-            <p data-lang="tr">Landsat 8, Landsat 9 ve Terra/ASTER gibi aktif yer gözlem uydularının anlık yörünge konumunu, gerçek TLE verisi ve SGP4 modeliyle canlı haritada izleyin; kataloğu ve yörünge analizlerini inceleyin.</p>
-            <p data-lang="en">Track active Earth observation satellites like Landsat 8, Landsat 9 and Terra/ASTER in real time on a live map, computed from real TLE data with the SGP4 model — browse the catalog and orbit analysis.</p>
+            <p data-lang="tr">Landsat, Sentinel, Göktürk, Cartosat, WorldView, Gaofen ve daha fazlası — 53 aktif yer gözlem uydusunun anlık yörünge konumunu gerçek TLE verisi ve SGP4 modeliyle 3B dünya üzerinde canlı izleyin; kataloğu ve yörünge analizlerini inceleyin.</p>
+            <p data-lang="en">Landsat, Sentinel, Göktürk, Cartosat, WorldView, Gaofen and more — track 53 active Earth observation satellites live on a 3D globe, computed from real TLE data with the SGP4 model. Browse the catalog and orbit analysis.</p>
+            <div class="platform-tags" style="margin-bottom:0.9rem">
+              <span class="ptag live">🛰️ 53 <span data-lang="tr">uydu</span><span data-lang="en">satellites</span></span>
+              <span class="ptag live" data-lang="tr">🌍 3B canlı harita</span>
+              <span class="ptag live" data-lang="en">🌍 Live 3D globe</span>
+            </div>
             <button class="app-open-btn" onclick="showPage('uydu')">
               <span data-lang="tr">Aç →</span>
               <span data-lang="en">Open →</span>
@@ -2298,6 +2320,10 @@ html[lang="en"] [data-lang="en"] { display: revert; }
           <span data-lang="tr">📈 Yörünge Analizleri</span>
           <span data-lang="en">📈 Orbit Analysis</span>
         </button>
+        <button class="uydu-tab-btn" data-tab="usage" onclick="uyduShowTab('usage')">
+          <span data-lang="tr">🔬 Kullanım Rehberi</span>
+          <span data-lang="en">🔬 Usage Guide</span>
+        </button>
       </div>
 
       <!-- LIVE EARTH -->
@@ -2368,6 +2394,15 @@ html[lang="en"] [data-lang="en"] { display: revert; }
           </div>
           <p id="uyduNextPassResult" class="uydu-pass-result"></p>
         </div>
+      </div>
+
+      <!-- USAGE GUIDE -->
+      <div class="uydu-tab-panel" data-tab="usage">
+        <div class="apps-note" style="margin-bottom:1.25rem">
+          <span data-lang="tr">💡 Bir uydu adına tıklayarak Canlı Takip sekmesinde onu seçili hale getirebilirsiniz.</span>
+          <span data-lang="en">💡 Click a satellite's name to select it on the Live Tracking tab.</span>
+        </div>
+        <div id="uyduUsageGuide" class="uydu-usage-grid"></div>
       </div>
     </div>
   </div>
@@ -4647,10 +4682,90 @@ const SATELLITES_RAW = [
             en: 'Member of a small-satellite constellation collecting hyperspectral data for environment and resource monitoring.' } },
 ];
 
+SATELLITES_RAW.sort((a, b) => a.name.localeCompare(b.name, 'tr'));
 const SATELLITES = SATELLITES_RAW.map((sat, i) => ({
   ...sat,
   color: uyduHslToHex(Math.round((360 * i) / SATELLITES_RAW.length), 78, 58),
 }));
+
+// Groups the tracked satellites by imaging type/resolution class and links each group to the
+// kinds of scientific/practical work it's typically used for — grounded in the satellites this
+// tool actually tracks (satIds), not generic examples.
+const USAGE_CATEGORIES = [
+  {
+    title: { tr: 'Çok Yüksek Çözünürlüklü Optik (~0.3–1 m)', en: 'Very High-Resolution Optical (~0.3–1 m)' },
+    desc: { tr: 'Tek tek bina, araç ve yol detayını ayırt edebilen en keskin ticari/sivil görüntüler.',
+            en: 'The sharpest commercial/civil imagery — sharp enough to resolve individual buildings, vehicles and roads.' },
+    satIds: ['worldview1', 'worldview2', 'worldview3', 'geoeye1', 'gokturk1', 'pleiades1a', 'pleiades1b', 'cartosat3', 'cartosat2f', 'kompsat2', 'kompsat3', 'kompsat3a', 'deimos2', 'erosc3', 'skysatc1', 'superview1', 'jilin1', 'nusat26', 'kazeosat1'],
+    uses: [
+      { tr: ['Kentsel Planlama ve Kadastro', 'Bina tespiti, parselasyon, yol ağı analizi ve mülk takibi.'], en: ['Urban Planning & Cadastre', 'Building detection, parcel mapping, road-network analysis and property tracking.'] },
+      { tr: ['Savunma ve İstihbarat', 'Hedef tespiti, sınır güvenliği ve askerî hareketlilik izleme.'], en: ['Defense & Intelligence', 'Target detection, border security and monitoring military activity.'] },
+      { tr: ['Afet Yönetimi', 'Deprem veya sel sonrasında bina bazlı hasar tespiti.'], en: ['Disaster Management', 'Building-level damage assessment after earthquakes or floods.'] },
+    ],
+  },
+  {
+    title: { tr: 'Orta Çözünürlüklü Optik Gözlem (~1.5–30 m)', en: 'Medium-Resolution Optical Observation (~1.5–30 m)' },
+    desc: { tr: 'Geniş alanları düzenli olarak tarayan, uzun dönemli ve karşılaştırılabilir arşivler sunan uydular.',
+            en: 'Satellites that regularly scan wide areas, building long-term, comparable archives.' },
+    satIds: ['landsat9', 'landsat8', 'landsat7', 'terra', 'aqua', 'sentinel2a', 'gokturk2', 'formosat5', 'deimos1', 'gaofen1', 'gaofen2', 'grus1a', 'spot6', 'spot7', 'theos', 'resourcesat2', 'kazeosat2', 'gaofen4', 'gaofen6', 'gaofen7'],
+    uses: [
+      { tr: ['Arazi Örtüsü ve Kullanımı', 'Orman, tarım ve su yüzeyi değişimlerinin uzun dönemli izlenmesi.'], en: ['Land Cover & Land Use', 'Long-term monitoring of forest, agricultural and water-surface change.'] },
+      { tr: ['Tarım ve Ormancılık', 'Bitki sağlığı (NDVI) analizleri, rekolte tahmini ve ormansızlaşma takibi.'], en: ['Agriculture & Forestry', 'Vegetation-health (NDVI) analysis, yield estimation and deforestation tracking.'] },
+      { tr: ['Jeoloji ve Çevresel Araştırmalar', 'Kıyı çizgisi değişimi, çevre kirliliği ve iklim etkisi çalışmaları.'], en: ['Geology & Environmental Research', 'Coastline change, pollution studies and climate-impact research.'] },
+    ],
+  },
+  {
+    title: { tr: 'Sentetik Açıklıklı Radar (SAR)', en: 'Synthetic Aperture Radar (SAR)' },
+    desc: { tr: 'Bulut örtüsü ve karanlıktan etkilenmeyen, radar sinyaliyle görüntüleme yapan uydular.',
+            en: 'Satellites that image with radar signals, unaffected by cloud cover or darkness.' },
+    satIds: ['sentinel1a', 'alos2', 'alos4', 'asnaro2', 'capella', 'cosmoskymed1', 'gaofen3', 'kompsat5', 'paz', 'radarsat2', 'tandemx'],
+    uses: [
+      { tr: ['Afet Müdahalesi', 'Sel, deprem ve heyelanları hava koşulundan bağımsız, gece-gündüz izleme.'], en: ['Disaster Response', 'Monitoring floods, earthquakes and landslides day or night, in any weather.'] },
+      { tr: ['Deniz ve Buz İzleme', 'Gemi tespiti, petrol sızıntısı ve kutup buzu hareketlerinin takibi.'], en: ['Maritime & Ice Monitoring', 'Ship detection, oil-spill tracking and polar-ice movement.'] },
+      { tr: ['Yüzey Deformasyonu', 'Zemin çökmesi, heyelan riski ve altyapı stabilitesinin milimetrik ölçümü.'], en: ['Surface Deformation', 'Millimeter-scale measurement of ground subsidence, landslide risk and infrastructure stability.'] },
+    ],
+  },
+  {
+    title: { tr: 'Hiperspektral Görüntüleme', en: 'Hyperspectral Imaging' },
+    desc: { tr: 'Yüzlerce dar spektral bantta veri toplayarak malzeme bileşimini ayırt edebilen uydular.',
+            en: 'Satellites that collect data across hundreds of narrow spectral bands to distinguish material composition.' },
+    satIds: ['enmap', 'prisma', 'zhuhai1ohs2'],
+    uses: [
+      { tr: ['Mineral ve Jeoloji Haritalama', 'Kayaç ve maden türlerinin spektral imzadan ayırt edilmesi.'], en: ['Mineral & Geological Mapping', 'Distinguishing rock and mineral types from their spectral signatures.'] },
+      { tr: ['Bitki Sağlığı ve Türü', 'Bitki örtüsü stresi, türü ve biyokimyasal içeriğinin ince analizi.'], en: ['Vegetation Health & Species', 'Fine-grained analysis of plant stress, species and biochemical content.'] },
+      { tr: ['Su Kalitesi', 'Göl ve kıyı sularında klorofil, sediman ve kirlilik düzeyinin izlenmesi.'], en: ['Water Quality', 'Monitoring chlorophyll, sediment and pollution levels in lakes and coastal waters.'] },
+    ],
+  },
+];
+
+function uyduBuildUsageGuide() {
+  const el = document.getElementById('uyduUsageGuide');
+  if (!el) return;
+  el.innerHTML = USAGE_CATEGORIES.map(cat => {
+    const chips = cat.satIds
+      .map(id => SATELLITES.find(s => s.id === id))
+      .filter(Boolean)
+      .map(sat =>
+        '<button class="uydu-usage-chip" onclick="uyduOpenFromCatalog(\'' + sat.id + '\')">' +
+          '<span style="width:8px;height:8px;border-radius:50%;flex-shrink:0;background:' + sat.color + '"></span>' + sat.name +
+        '</button>'
+      ).join('');
+    const uses = cat.uses.map(u => {
+      const t = u[currentLang] || u.tr;
+      return '<div class="uydu-usage-use"><b>' + t[0] + '</b><span>' + t[1] + '</span></div>';
+    }).join('');
+    return (
+      '<div class="uydu-usage-card">' +
+        '<h3>' + cat.title[currentLang] + '</h3>' +
+        '<p>' + cat.desc[currentLang] + '</p>' +
+        '<div class="uydu-usage-label">' + tesvikT('Örnek uydular', 'Example satellites') + '</div>' +
+        '<div class="uydu-usage-chips">' + chips + '</div>' +
+        '<div class="uydu-usage-label">' + tesvikT('Kullanım alanları', 'Use cases') + '</div>' +
+        '<div class="uydu-usage-uses">' + uses + '</div>' +
+      '</div>'
+    );
+  }).join('');
+}
 
 const UYDU_EARTH_RADIUS_KM = 6371;
 const UYDU_ALT_EXAGGERATION = 3; // real LEO altitude is ~11% of Earth's radius — barely visible without this
@@ -5211,6 +5326,8 @@ function uyduBuildStaticUI() {
     sel.innerHTML = SATELLITES.map(sat => '<option value="' + sat.id + '">' + sat.name + '</option>').join('');
     sel.value = uydu.selectedId;
   }
+
+  uyduBuildUsageGuide();
 }
 
 function uyduRenderAll() {

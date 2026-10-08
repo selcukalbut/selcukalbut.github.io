@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en" data-lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DiskBreeze – Disk Cleaner for Mac</title>
+<meta name="description" content="DiskBreeze is a free, simple and safe disk cleaner for Macs with small drives. Everything goes to the Trash first, and nothing ever leaves your Mac.">
+<meta property="og:title" content="DiskBreeze – Disk Cleaner for Mac">
+<meta property="og:description" content="Free up space on your Mac safely, in a few clicks. Free, private, in 10 languages.">
+<meta property="og:image" content="https://selcukalbut.com/diskbreeze/images/icon.png">
+<link rel="icon" type="image/png" href="images/favicon.png">
+<link rel="apple-touch-icon" href="images/icon.png">
+<style>
+  :root {
+    --bg: #f5f9fd; --card: #ffffff; --text: #16222e; --muted: #5a6b7c; --line: #dbe5ef;
+    --accent: #2170cc; --accent-strong: #1b5fae; --accent-soft: #e4f0fb; --good: #1f8a4c;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #0f1720; --card: #17222e; --text: #e8eef5; --muted: #9db0c3; --line: #263545;
+            --accent: #5aaef0; --accent-strong: #7bc0f5; --accent-soft: #1b3550; --good: #4cc07c; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+         background: var(--bg); color: var(--text); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  html[data-lang="en"] body [lang="tr"], html[data-lang="tr"] body [lang="en"] { display: none !important; }
+  a { color: var(--accent); }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 0 20px; }
+
+  header.top { display: flex; justify-content: space-between; align-items: center; padding: 18px 0; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 600; color: var(--text); text-decoration: none; }
+  .brand img { width: 32px; height: 32px; }
+  .lang-switch button { font: inherit; font-size: 14px; border: 1px solid var(--line); background: var(--card); color: var(--muted);
+                        padding: 4px 12px; cursor: pointer; }
+  .lang-switch button:first-child { border-radius: 8px 0 0 8px; }
+  .lang-switch button:last-child { border-radius: 0 8px 8px 0; border-left: none; }
+  .lang-switch button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  .hero { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 40px; align-items: center; padding: 40px 0 56px; }
+  .hero h1 { font-size: 52px; line-height: 1.05; margin: 12px 0 8px; letter-spacing: -0.02em; }
+  .hero .subtitle { font-size: 21px; color: var(--muted); margin: 0 0 28px; }
+  .hero .icon { width: 96px; height: 96px; }
+  .hero .art { width: 100%; max-width: 380px; justify-self: center; filter: drop-shadow(0 20px 40px rgba(20, 60, 110, 0.18)); }
+  .download { display: inline-flex; align-items: center; gap: 10px; background: var(--accent); color: #fff; text-decoration: none;
+              font-size: 19px; font-weight: 600; padding: 14px 28px; border-radius: 14px; }
+  .download:hover { background: var(--accent-strong); }
+  .download svg { width: 20px; height: 20px; }
+  .meta { font-size: 14px; color: var(--muted); margin-top: 12px; }
+  .badges { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+  .badge { font-size: 13px; background: var(--accent-soft); color: var(--accent-strong); padding: 4px 12px; border-radius: 999px; }
+
+  section { padding: 48px 0; border-top: 1px solid var(--line); }
+  section h2 { font-size: 30px; margin: 0 0 8px; letter-spacing: -0.01em; }
+  section .lead { color: var(--muted); font-size: 18px; margin: 0 0 28px; max-width: 680px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 20px 22px; }
+  .card h3 { font-size: 18px; margin: 8px 0 6px; }
+  .card p { margin: 0; color: var(--muted); font-size: 15px; }
+  .card .glyph { font-size: 26px; line-height: 1; }
+
+  ol.steps { counter-reset: step; list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+  ol.steps li { counter-increment: step; background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+                padding: 14px 18px 14px 60px; position: relative; }
+  ol.steps li::before { content: counter(step); position: absolute; left: 16px; top: 13px; width: 30px; height: 30px; border-radius: 50%;
+                        background: var(--accent-soft); color: var(--accent-strong); font-weight: 700; display: grid; place-items: center; }
+  .note { font-size: 14px; color: var(--muted); margin-top: 16px; }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; background: var(--accent-soft); padding: 2px 6px; border-radius: 6px; word-break: break-all; }
+
+  footer { border-top: 1px solid var(--line); padding: 28px 0 56px; color: var(--muted); font-size: 14px; display: flex; flex-wrap: wrap; gap: 8px 20px; }
+  footer a { color: var(--muted); }
+
+  @media (max-width: 760px) {
+    .hero { grid-template-columns: 1fr; padding-top: 16px; text-align: center; }
+    .hero .icon { margin: 0 auto; }
+    .badges { justify-content: center; }
+    .hero h1 { font-size: 40px; }
+    .hero .art { max-width: 280px; order: -1; }
+  }
+</style>
+<script>
+  // Turkish for Turkish browsers, English otherwise; a choice made on the page is remembered.
+  (function () {
+    var saved = null;
+    try { saved = localStorage.getItem("diskbreeze-lang"); } catch (e) {}
+    var lang = saved || ((navigator.language || "").toLowerCase().indexOf("tr") === 0 ? "tr" : "en");
+    document.documentElement.setAttribute("data-lang", lang);
+    document.documentElement.lang = lang;
+  })();
+  function setLang(lang) {
+    document.documentElement.setAttribute("data-lang", lang);
+    document.documentElement.lang = lang;
+    try { localStorage.setItem("diskbreeze-lang", lang); } catch (e) {}
+    document.querySelectorAll(".lang-switch button").forEach(function (b) {
+      b.setAttribute("aria-pressed", String(b.dataset.lang === lang));
+    });
+  }
+  document.addEventListener("DOMContentLoaded", function () { setLang(document.documentElement.getAttribute("data-lang")); });
+</script>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <a class="brand" href="./"><img src="images/favicon.png" alt="">DiskBreeze</a>
+  <div class="lang-switch" role="group" aria-label="Language">
+    <button type="button" data-lang="en" onclick="setLang('en')">EN</button><button type="button" data-lang="tr" onclick="setLang('tr')">TR</button>
+  </div>
+</header>
+
+<div class="hero">
+  <div>
+    <img class="icon" src="images/icon.png" alt="DiskBreeze app icon">
+    <h1>DiskBreeze</h1>
+    <p class="subtitle" lang="en">Free up space on your Mac safely, in a few clicks.</p>
+    <p class="subtitle" lang="tr">Mac'inizde birkaç tıklamayla, güvenle yer açın.</p>
+    <a class="download" href="DiskBreeze-1.0.0.dmg" download>
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3v10m0 0l-4-4m4 4l4-4M4 17h12"/></svg>
+      <span lang="en">Download for Mac</span><span lang="tr">Mac için indir</span>
+    </a>
+    <p class="meta" lang="en">Version 1.0.0 · 1.4 MB · macOS 14 Sonoma or later · Apple silicon and Intel</p>
+    <p class="meta" lang="tr">Sürüm 1.0.0 · 1,4 MB · macOS 14 Sonoma veya üstü · Apple silicon ve Intel</p>
+    <div class="badges">
+      <span class="badge" lang="en">Free, no ads</span><span class="badge" lang="tr">Ücretsiz, reklamsız</span>
+      <span class="badge" lang="en">Notarized by Apple</span><span class="badge" lang="tr">Apple onaylı</span>
+      <span class="badge" lang="en">No internet connection</span><span class="badge" lang="tr">İnternet bağlantısı yok</span>
+      <span class="badge" lang="en">10 languages</span><span class="badge" lang="tr">10 dil</span>
+    </div>
+  </div>
+  <img class="art" src="images/hero.png" alt="A robot vacuum cleaning the dust off a disk">
+</div>
+
+<section>
+  <h2 lang="en">Made for Macs with small drives</h2>
+  <h2 lang="tr">Küçük diskli Mac'ler için</h2>
+  <p class="lead" lang="en">A 256 GB MacBook fills up fast. DiskBreeze finds what you no longer need and explains every item in plain words, so you never have to guess what is safe to remove.</p>
+  <p class="lead" lang="tr">256 GB'lık bir MacBook çabuk dolar. DiskBreeze artık ihtiyacınız olmayan dosyaları bulur ve her birini sade bir dille açıklar; neyin güvenle silinebileceğini tahmin etmek zorunda kalmazsınız.</p>
+  <div class="grid">
+    <div class="card"><div class="glyph" aria-hidden="true">🧹</div>
+      <h3 lang="en">One button</h3><h3 lang="tr">Tek düğme</h3>
+      <p lang="en">Scan, look at what was found, clean up. Safe items are selected for you; everything else waits for your decision.</p>
+      <p lang="tr">Tarayın, bulunanlara bakın, temizleyin. Güvenli öğeler sizin için seçilir; geri kalanı sizin kararınızı bekler.</p></div>
+    <div class="card"><div class="glyph" aria-hidden="true">↩️</div>
+      <h3 lang="en">Undo is always there</h3><h3 lang="tr">Her zaman geri alınabilir</h3>
+      <p lang="en">Everything goes to the Trash first. Your photos, documents and system files are never selected automatically.</p>
+      <p lang="tr">Her şey önce Çöp Sepeti'ne gider. Fotoğraflarınız, belgeleriniz ve sistem dosyaları asla otomatik seçilmez.</p></div>
+    <div class="card"><div class="glyph" aria-hidden="true">📦</div>
+      <h3 lang="en">Remove apps completely</h3><h3 lang="tr">Uygulamaları tamamen kaldırın</h3>
+      <p lang="en">Drag an app into the window: DiskBreeze also finds the settings, caches and data it left behind.</p>
+      <p lang="tr">Bir uygulamayı pencereye sürükleyin: DiskBreeze geride bıraktığı ayarları, önbellekleri ve verileri de bulur.</p></div>
+    <div class="card"><div class="glyph" aria-hidden="true">🔍</div>
+      <h3 lang="en">Leftovers of removed apps</h3><h3 lang="tr">Silinmiş uygulamaların kalıntıları</h3>
+      <p lang="en">Finds data from apps you already deleted — carefully, leaving out anything a related app might still use.</p>
+      <p lang="tr">Daha önce sildiğiniz uygulamalardan kalan verileri bulur; ilgili bir uygulamanın kullanıyor olabileceği her şeyi dışarıda bırakarak.</p></div>
+    <div class="card"><div class="glyph" aria-hidden="true">🗑️</div>
+      <h3 lang="en">Space you can see</h3><h3 lang="tr">Göz önünde boş alan</h3>
+      <p lang="en">Free space in the menu bar, and a reminder when cleaned-up files are still waiting in the Trash.</p>
+      <p lang="tr">Menü çubuğunda boş alan ve temizlenen dosyalar hâlâ Çöp Sepeti'nde beklerken bir hatırlatma.</p></div>
+    <div class="card"><div class="glyph" aria-hidden="true">🔒</div>
+      <h3 lang="en">Private by design</h3><h3 lang="tr">Tasarımı gereği gizli</h3>
+      <p lang="en">No account, no tracking, no internet connection at all. Your files never leave your Mac.</p>
+      <p lang="tr">Hesap yok, izleme yok, hiçbir internet bağlantısı yok. Dosyalarınız asla Mac'inizden çıkmaz.</p></div>
+  </div>
+</section>
+
+<section>
+  <h2 lang="en">Install in a minute</h2>
+  <h2 lang="tr">Bir dakikada kurun</h2>
+  <ol class="steps">
+    <li><span lang="en">Download <strong>DiskBreeze-1.0.0.dmg</strong> and open it.</span><span lang="tr"><strong>DiskBreeze-1.0.0.dmg</strong> dosyasını indirip açın.</span></li>
+    <li><span lang="en">Drag <strong>DiskBreeze</strong> onto the <strong>Applications</strong> folder.</span><span lang="tr"><strong>DiskBreeze</strong> simgesini <strong>Applications</strong> (Uygulamalar) klasörüne sürükleyin.</span></li>
+    <li><span lang="en">Open DiskBreeze from Applications. The welcome guide shows how to allow <strong>Full Disk Access</strong>, which lets it check folders like Mail and the Trash. You can also continue without it.</span><span lang="tr">DiskBreeze'i Uygulamalar klasöründen açın. Tanıtım rehberi, Mail ve Çöp Sepeti gibi klasörleri kontrol edebilmesi için <strong>Tam Disk Erişimi</strong> vermeyi adım adım gösterir. İzin vermeden de devam edebilirsiniz.</span></li>
+  </ol>
+  <p class="note" lang="en">DiskBreeze is signed with Developer ID and notarized by Apple, so macOS opens it without warnings. SHA-256 of the disk image: <code>0eaa9e644a80d1cf2d8dec99ee4c6b5433e21000f2bc7739648e087a9f43ba83</code></p>
+  <p class="note" lang="tr">DiskBreeze, Developer ID ile imzalanmış ve Apple tarafından onaylanmıştır (notarized); macOS uyarı göstermeden açar. Disk görüntüsünün SHA-256 değeri: <code>0eaa9e644a80d1cf2d8dec99ee4c6b5433e21000f2bc7739648e087a9f43ba83</code></p>
+</section>
+
+<section>
+  <h2 lang="en">Languages</h2>
+  <h2 lang="tr">Diller</h2>
+  <p class="lead" lang="en">English, Türkçe, Deutsch, Français, Italiano, Español, Русский, 简体中文, 日本語 and 한국어. DiskBreeze uses your Mac's language automatically.</p>
+  <p class="lead" lang="tr">English, Türkçe, Deutsch, Français, Italiano, Español, Русский, 简体中文, 日本語 ve 한국어. DiskBreeze, Mac'inizin dilini kendiliğinden kullanır.</p>
+</section>
+
+<footer>
+  <span>© 2026 Selcuk Albut</span>
+  <a href="support.html"><span lang="en">Support</span><span lang="tr">Destek</span></a>
+  <a href="privacy.html"><span lang="en">Privacy Policy</span><span lang="tr">Gizlilik Politikası</span></a>
+  <a href="../"><span lang="en">selcukalbut.com</span><span lang="tr">selcukalbut.com</span></a>
+</footer>
+
+</div>
+</body>
+</html>

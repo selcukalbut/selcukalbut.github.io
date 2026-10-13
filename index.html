@@ -667,7 +667,6 @@ nav {
 .projects-total .amount { font-size: 1.6rem; font-weight: 800; letter-spacing: -1px; }
 
 /* ══ APPS ══ */
-.apps-list { display: flex; flex-direction: column; gap: 1rem; }
 .app-card {
   background: var(--card);
   border: 1px solid var(--border);
@@ -703,32 +702,6 @@ nav {
 .ptag.review { background: #dde8e2; color: #2f6b5c; }
 .ptag.ready { background: #edf0d9; color: #556b2f; }
 .ptag.live { background: #edf0d9; color: #556b2f; }
-.app-shots { display: flex; gap: 10px; margin: 0.9rem 0; flex-wrap: wrap; }
-.app-shots img {
-  width: 120px;
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow);
-  cursor: zoom-in;
-}
-.app-store-row { display: flex; align-items: center; gap: 14px; margin-top: 0.9rem; flex-wrap: wrap; }
-.app-store-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: var(--primary);
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 9px 16px;
-  font-size: 0.82rem;
-  font-weight: 700;
-  text-decoration: none;
-}
-.app-store-btn:hover { background: var(--primary-dark); text-decoration: none; }
-.app-qr-wrap { display: flex; align-items: center; gap: 8px; }
-.app-qr-wrap img { width: 60px; height: 60px; border-radius: 8px; border: 1px solid var(--border); }
-.app-qr-wrap span { font-size: 0.7rem; color: var(--text-muted); max-width: 90px; line-height: 1.3; }
 .apps-note {
   background: var(--card);
   border: 1px solid var(--border);
@@ -738,21 +711,6 @@ nav {
   color: var(--text-muted);
   margin-top: 0.5rem;
 }
-.app-open-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  background: var(--primary);
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 7px 14px;
-  font-size: 0.8rem;
-  font-weight: 700;
-  cursor: pointer;
-  font-family: inherit;
-}
-.app-open-btn:hover { background: var(--primary-dark); }
 .pub-empty-note {
   background: var(--card);
   border: 1px dashed var(--border);
@@ -933,6 +891,149 @@ nav {
   padding: 4px 10px; font-family: inherit; font-size: 0.72rem; font-weight: 700; cursor: pointer;
 }
 .sulama-station-pick-btn:hover { background: var(--primary-dark); }
+
+/* ══ APPS PAGE ══ */
+.ap-hero {
+  position: relative; isolation: isolate; padding-bottom: 0.5rem;
+  --ap-aura-peach: rgba(240,190,140,.50); --ap-aura-gold: rgba(138,100,22,.16); --ap-aura-rose: rgba(246,227,209,.95);
+}
+.ap-aura {
+  position: absolute; inset: -3rem 0 0; z-index: -1; pointer-events: none; filter: blur(28px);
+  background:
+    radial-gradient(38% 60% at 22% 38%, var(--ap-aura-peach), transparent 72%),
+    radial-gradient(34% 54% at 78% 26%, var(--ap-aura-gold), transparent 72%),
+    radial-gradient(40% 52% at 58% 88%, var(--ap-aura-rose), transparent 72%);
+  animation: ap-aura 16s ease-in-out infinite alternate;
+}
+@keyframes ap-aura { from { transform: translate3d(-1.5%,0,0) scale(1); } to { transform: translate3d(1.5%,-2%,0) scale(1.06); } }
+.ap-hero-inner { display: grid; grid-template-columns: minmax(0,1.15fr) minmax(0,.85fr); gap: 2rem; align-items: center; }
+.ap-eyebrow { margin-bottom: 0.6rem; font-size: 0.74rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
+.ap-hero h1 { font-weight: 800; font-size: clamp(2.2rem, 5.6vw, 3.6rem); line-height: 1.02; letter-spacing: -0.035em; text-wrap: balance; }
+.ap-lede { margin-top: 1rem; max-width: 46ch; font-size: 1.06rem; color: var(--text-muted); }
+.ap-stats { margin-top: 1.25rem; display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 0.92rem; color: var(--text-muted); }
+.ap-stats span b { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 1.25rem; color: var(--text); margin-right: 5px; font-variant-numeric: tabular-nums; }
+.ap-cluster { position: relative; height: 260px; transform: rotate(-6deg); }
+.ap-cluster img {
+  position: absolute; width: 92px; height: 92px; border-radius: 22px; box-shadow: var(--shadow-lg);
+  background: var(--card); border: 3px solid var(--card); animation: ap-float 7s ease-in-out infinite alternate;
+}
+.ap-cluster img:nth-child(1) { left: 6%; top: 6%; }
+.ap-cluster img:nth-child(2) { left: 36%; top: 0; width: 104px; height: 104px; animation-delay: -1.2s; }
+.ap-cluster img:nth-child(3) { left: 68%; top: 10%; animation-delay: -2.4s; }
+.ap-cluster img:nth-child(4) { left: 18%; top: 40%; width: 100px; height: 100px; animation-delay: -3.6s; }
+.ap-cluster img:nth-child(5) { left: 52%; top: 42%; animation-delay: -0.6s; }
+.ap-cluster img:nth-child(6) { left: 2%; top: 72%; width: 78px; height: 78px; animation-delay: -4.4s; }
+.ap-cluster img:nth-child(7) { left: 36%; top: 74%; width: 84px; height: 84px; animation-delay: -5.2s; }
+@keyframes ap-float { from { transform: translateY(-6px); } to { transform: translateY(8px); } }
+@media (max-width: 820px) { .ap-hero-inner { grid-template-columns: 1fr; } .ap-cluster { display: none; } }
+
+.ap-filters { margin-top: 1.75rem; display: flex; gap: 8px; overflow-x: auto; padding-block: 4px 10px; scrollbar-width: none; }
+.ap-filters::-webkit-scrollbar { display: none; }
+.ap-chip {
+  flex: none; display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; border-radius: 999px;
+  background: var(--card); border: 1px solid var(--border); color: var(--text); font: 600 0.92rem 'Karla', sans-serif; cursor: pointer;
+  transition: background .18s, border-color .18s, transform .18s;
+}
+.ap-chip i { font-style: normal; font-size: 0.76rem; font-weight: 700; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+.ap-chip:hover { border-color: var(--accent); transform: translateY(-1px); }
+.ap-chip[aria-pressed="true"] { background: var(--primary); border-color: var(--primary); color: var(--primary-light); }
+.ap-chip[aria-pressed="true"] i { color: var(--primary-light); opacity: .8; }
+
+.ap-sec { margin: 2.4rem 0 0.9rem; display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.ap-sec h2 { font-weight: 700; font-size: 1.3rem; letter-spacing: -0.015em; }
+.ap-sec small { color: var(--text-muted); font-size: 0.86rem; }
+
+.ap-feat-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 18px; }
+@media (max-width: 940px) { .ap-feat-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 640px) { .ap-feat-grid { grid-template-columns: 1fr; } }
+.ap-feat {
+  display: flex; flex-direction: column; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+  box-shadow: var(--shadow); overflow: hidden; transition: transform .22s, box-shadow .22s; animation: ap-rise .5s both;
+}
+.ap-feat:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+@keyframes ap-rise { from { transform: translateY(10px); } to { transform: none; } }
+.ap-feat-open { display: flex; flex-direction: column; flex: 1; text-align: left; background: none; border: 0; padding: 0; color: inherit; font: inherit; cursor: pointer; }
+.ap-feat-media { position: relative; width: 100%; height: 190px; overflow: hidden; display: flex; align-items: flex-end; justify-content: center; }
+.ap-feat-media.t-orange { background: #fff4e0; }
+.ap-feat-media.t-navy { background: radial-gradient(120% 90% at 50% 120%, #2c4a57 0%, #1d2933 55%, #141d24 100%); }
+.ap-feat-media.t-map { background: #dde8e2; }
+.ap-feat-media.t-map img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.ap-feat-media .ap-pill { position: absolute; left: 12px; bottom: 12px; background: rgba(255,252,247,.94); color: var(--text); font-size: 0.74rem; font-weight: 700; padding: 4px 10px; border-radius: 999px; box-shadow: var(--shadow); }
+.ap-phones img { position: absolute; bottom: -42px; width: 112px; border-radius: 16px; box-shadow: var(--shadow-lg); border: 3px solid var(--card); transition: transform .3s; }
+.ap-phones img:first-child { left: calc(50% - 118px); transform: rotate(-5deg); }
+.ap-phones img:last-child { left: calc(50% + 6px); transform: rotate(4deg) translateY(10px); }
+.ap-feat:hover .ap-phones img:first-child { transform: rotate(-7deg) translateY(-6px); }
+.ap-feat:hover .ap-phones img:last-child { transform: rotate(6deg) translateY(2px); }
+.ap-orbits { position: absolute; inset: 0; display: grid; place-items: center; }
+.ap-globe { width: 74px; height: 74px; border-radius: 50%; background: radial-gradient(circle at 32% 30%, #7fb3a8, #2f6b5c 55%, #183a37); box-shadow: 0 0 36px rgba(127,179,168,.35); }
+.ap-ring { position: absolute; left: 50%; top: 50%; border: 1px solid rgba(246,227,209,.28); border-radius: 50%; translate: -50% -50%; }
+.ap-ring.r1 { width: 210px; height: 210px; transform: rotateX(68deg); animation: ap-spin 14s linear infinite; }
+.ap-ring.r2 { width: 290px; height: 290px; transform: rotateX(68deg) rotateZ(35deg); animation: ap-spin 22s linear infinite reverse; }
+.ap-ring::after { content: ""; position: absolute; left: 50%; top: -4px; width: 8px; height: 8px; margin-left: -4px; border-radius: 50%; background: var(--primary-light); box-shadow: 0 0 12px 2px rgba(246,227,209,.7); }
+@keyframes ap-spin { to { rotate: 360deg; } }
+.ap-feat-body { display: flex; gap: 12px; align-items: center; padding: 16px 18px 6px; }
+.ap-feat-body h3 { font-weight: 700; font-size: 1.05rem; line-height: 1.2; letter-spacing: -0.01em; margin: 0; }
+.ap-feat-body p { margin: 2px 0 0; font-size: 0.88rem; color: var(--text-muted); line-height: 1.4; }
+.ap-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 18px 16px; }
+
+.ap-tile { flex: none; width: 52px; height: 52px; border-radius: 14px; display: grid; place-items: center; font-size: 1.6rem; overflow: hidden; }
+.ap-tile img { width: 100%; height: 100%; object-fit: cover; }
+.ap-tile.sm { width: 44px; height: 44px; border-radius: 12px; font-size: 1.35rem; }
+.ap-tile.c-orange { background: #fff4e0; } .ap-tile.c-green { background: #edf0d9; } .ap-tile.c-blue { background: #dde8e2; }
+.ap-tile.c-primary { background: var(--primary-light); } .ap-tile.c-navy { background: #1d2933; color: var(--primary-light); }
+
+.ap-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.ap-tag { font-size: 0.68rem; font-weight: 700; padding: 3px 9px; border-radius: 6px; background: var(--primary-light); color: var(--primary); }
+.ap-tag.new { background: var(--accent); color: #fff; letter-spacing: 0.04em; text-transform: uppercase; }
+.ap-tag.live { background: #edf0d9; color: #556b2f; }
+.ap-tag.exp { background: #dde8e2; color: #2f6b5c; }
+.ap-act {
+  font-weight: 700; font-size: 0.88rem; text-decoration: none; padding: 6px 12px; border-radius: 999px; background: var(--primary);
+  color: var(--primary-light); white-space: nowrap; transition: background .18s, transform .18s;
+}
+.ap-act:hover { background: var(--primary-dark); transform: translateX(2px); text-decoration: none; }
+
+.ap-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 16px; }
+@media (max-width: 940px) { .ap-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 620px) { .ap-grid { grid-template-columns: 1fr; } }
+.ap-card {
+  display: flex; flex-direction: column; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+  box-shadow: var(--shadow); transition: transform .22s, box-shadow .22s, border-color .22s; animation: ap-rise .5s both;
+}
+.ap-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: #e0c7a6; }
+.ap-card-open { display: flex; gap: 14px; align-items: flex-start; flex: 1; text-align: left; background: none; border: 0; padding: 18px 18px 10px; color: inherit; font: inherit; cursor: pointer; }
+.ap-card-open h3 { font-weight: 700; font-size: 1.02rem; line-height: 1.2; letter-spacing: -0.01em; margin: 0; }
+.ap-card-open p { margin: 4px 0 0; font-size: 0.86rem; color: var(--text-muted); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.ap-card .ap-foot { padding-top: 6px; }
+.ap-empty { padding: 28px; text-align: center; color: var(--text-muted); }
+.ap-chip:focus-visible, .ap-feat-open:focus-visible, .ap-card-open:focus-visible, .ap-act:focus-visible, .ap-cta:focus-visible, .ap-close:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 12px; }
+
+.ap-scrim { position: fixed; inset: 0; z-index: 1000; background: rgba(36,24,17,.46); backdrop-filter: blur(4px); display: grid; place-items: center; padding: 20px; animation: ap-fade .18s; }
+@keyframes ap-fade { from { opacity: 0; } to { opacity: 1; } }
+.ap-scrim[hidden] { display: none; }
+.ap-sheet { position: relative; width: min(760px, 100%); max-height: min(88vh, 860px); overflow: auto; background: var(--card); border-radius: 24px; box-shadow: var(--shadow-lg); padding: 26px 26px 24px; animation: ap-pop .22s; }
+@keyframes ap-pop { from { transform: translateY(14px) scale(.98); } to { transform: none; } }
+.ap-sheet-head { display: flex; gap: 16px; align-items: center; padding-right: 44px; }
+.ap-sheet-head .ap-tile { width: 68px; height: 68px; border-radius: 18px; font-size: 2rem; }
+.ap-sheet-head h2 { font-weight: 800; font-size: 1.5rem; line-height: 1.1; letter-spacing: -0.02em; }
+.ap-sheet-head .ap-tags { margin-top: 8px; }
+.ap-close { position: absolute; right: 16px; top: 16px; width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border); background: var(--bg); color: var(--text); font-size: 1.1rem; line-height: 1; cursor: pointer; }
+.ap-close:hover { background: var(--primary-light); }
+.ap-shots { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 18px 4px 6px; margin-inline: -4px; }
+.ap-shots img { flex: none; height: 300px; width: auto; max-width: none; border-radius: 16px; border: 1px solid var(--border); box-shadow: var(--shadow); scroll-snap-align: start; background: var(--bg); }
+.ap-desc { margin-top: 14px; font-size: 0.97rem; color: var(--text-muted); max-width: 62ch; }
+.ap-sheet-actions { margin-top: 20px; display: flex; gap: 18px; align-items: center; flex-wrap: wrap; }
+.ap-cta { display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 12px; background: var(--primary); color: var(--primary-light); font-weight: 700; text-decoration: none; transition: background .18s, transform .18s; }
+.ap-cta:hover { background: var(--primary-dark); transform: translateY(-1px); text-decoration: none; }
+.ap-qr { display: flex; align-items: center; gap: 10px; font-size: 0.8rem; color: var(--text-muted); }
+.ap-qr img { width: 72px; height: 72px; border-radius: 10px; border: 1px solid var(--border); background: #fff; }
+@media (max-width: 720px) {
+  .ap-qr { display: none; }
+  .ap-scrim { padding: 0; place-items: end center; }
+  .ap-sheet { border-radius: 24px 24px 0 0; max-height: 90vh; padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)); }
+  .ap-shots img { height: 240px; }
+}
+@media (prefers-reduced-motion: reduce) { .ap-hero *, .ap-feat, .ap-card, .ap-scrim, .ap-sheet { animation: none !important; transition: none !important; } }
 
 /* ══ CONTACT ══ */
 .contact-grid {
@@ -1265,9 +1366,9 @@ html[lang="en"] [data-lang="en"] { display: revert; }
             <span data-lang="en">Published Books</span>
           </div>
           <div class="stat green">
-            <b>9</b>
-            <span data-lang="tr">Uygulama (5 iOS + 3 Web + 1 QGIS)</span>
-            <span data-lang="en">Apps (5 iOS + 3 Web + 1 QGIS)</span>
+            <b>11</b>
+            <span data-lang="tr">Uygulama (5 iOS + 4 Web + 1 Mac + 1 QGIS)</span>
+            <span data-lang="en">Apps (5 iOS + 4 Web + 1 Mac + 1 QGIS)</span>
           </div>
         </div>
       </div>
@@ -1903,304 +2004,32 @@ html[lang="en"] [data-lang="en"] { display: revert; }
   <!-- ══ APPS ══ -->
   <div class="page" id="page-apps">
     <div class="page-inner">
-      <div class="page-header">
-        <div class="eyebrow" data-lang="tr">Uygulamalar</div>
-        <div class="eyebrow" data-lang="en">Apps</div>
-        <h1 data-lang="tr">Web, Mobil & QGIS Uygulamalarım</h1>
-        <h1 data-lang="en">My Web, Mobile & QGIS Apps</h1>
-        <p data-lang="tr">Tarayıcıda doğrudan çalışan web araçlarım, Swift/Xcode ile geliştirdiğim iOS uygulamalarım ve CBS iş akışları için yazdığım QGIS eklentilerim.</p>
-        <p data-lang="en">Web tools that run directly in your browser, iOS apps I've built with Swift and Xcode, and QGIS plugins I've written for GIS workflows.</p>
-      </div>
-
-      <div class="section-subtitle" data-lang="tr">Web Uygulamaları</div>
-      <div class="section-subtitle" data-lang="en">Web Apps</div>
-
-      <div class="apps-list">
-        <div class="app-card">
-          <div class="app-icon navy">🛰️</div>
-          <div class="app-info">
-            <h3 data-lang="tr">Uydu Takip — Yörünge Atlası</h3>
-            <h3 data-lang="en">Satellite Tracker — Orbit Atlas</h3>
-            <p data-lang="tr">Landsat, Sentinel, Göktürk, Cartosat, WorldView, Gaofen ve daha fazlası — 53 aktif yer gözlem uydusunun anlık yörünge konumunu gerçek TLE verisi ve SGP4 modeliyle 3B dünya üzerinde canlı izleyin; kataloğu ve yörünge analizlerini inceleyin.</p>
-            <p data-lang="en">Landsat, Sentinel, Göktürk, Cartosat, WorldView, Gaofen and more — track 53 active Earth observation satellites live on a 3D globe, computed from real TLE data with the SGP4 model. Browse the catalog and orbit analysis.</p>
-            <div class="platform-tags" style="margin-bottom:0.9rem">
-              <span class="ptag live">🛰️ 53 <span data-lang="tr">uydu</span><span data-lang="en">satellites</span></span>
-              <span class="ptag live" data-lang="tr">🌍 3B canlı harita</span>
-              <span class="ptag live" data-lang="en">🌍 Live 3D globe</span>
-            </div>
-            <button class="app-open-btn" onclick="showPage('uydu')">
-              <span data-lang="tr">Aç →</span>
-              <span data-lang="en">Open →</span>
-            </button>
+      <header class="ap-hero">
+        <div class="ap-aura" aria-hidden="true"></div>
+        <div class="ap-hero-inner">
+          <div>
+            <div class="ap-eyebrow" data-lang="tr">Uygulamalar</div>
+            <div class="ap-eyebrow" data-lang="en">Apps</div>
+            <h1 data-lang="tr">Geliştirdiğim uygulamalar</h1>
+            <h1 data-lang="en">Apps I've built</h1>
+            <p class="ap-lede" data-lang="tr">Tarayıcıda çalışan web araçları, Swift ile yazdığım iOS ve Mac uygulamaları ve CBS iş akışları için QGIS eklentisi.</p>
+            <p class="ap-lede" data-lang="en">Web tools that run in your browser, iOS and Mac apps I've written in Swift, and a QGIS plugin for GIS workflows.</p>
+            <p class="ap-stats" id="apStats"></p>
           </div>
+          <div class="ap-cluster" aria-hidden="true"><img src="assets/app-icons/cabinok.png" alt=""><img src="assets/app-icons/kalorimatik-ai.png" alt=""><img src="assets/app-icons/gst-cycling.png" alt=""><img src="assets/app-icons/diskbreeze.png" alt=""><img src="assets/app-icons/sayac-ve-takvim.png" alt=""><img src="assets/app-icons/global-sports-tracker.png" alt=""><img src="assets/app-icons/thiessen-qgis-plugin.png" alt=""></div>
         </div>
+        <div class="ap-filters" id="apFilters" role="group" aria-label="Filter"></div>
+      </header>
 
-        <div class="app-card">
-          <div class="app-icon orange">💧</div>
-          <div class="app-info">
-            <h3 data-lang="tr">Sulama Programlama / ETo Hesaplayıcı</h3>
-            <h3 data-lang="en">Irrigation Scheduling / ETo Calculator</h3>
-            <p data-lang="tr">NASA POWER uydu/reanaliz iklim verisiyle FAO-56 Penman-Monteith yöntemine göre referans buharlaşma-terleme (ETo) ve bitki su tüketimini (ETc) hesaplayın; net sulama suyu ihtiyacını görün.</p>
-            <p data-lang="en">Calculate reference evapotranspiration (ETo) and crop water use (ETc) with the FAO-56 Penman-Monteith method, fed automatically by NASA POWER satellite/reanalysis climate data — get the net irrigation water requirement.</p>
-            <button class="app-open-btn" onclick="showPage('sulama')">
-              <span data-lang="tr">Aç →</span>
-              <span data-lang="en">Open →</span>
-            </button>
-          </div>
-        </div>
+      <section id="apFeatSec">
+        <div class="ap-sec"><h2 data-lang="tr">Öne çıkanlar</h2><h2 data-lang="en">Featured</h2></div>
+        <div class="ap-feat-grid" id="apFeatGrid"></div>
+      </section>
 
-        <div class="app-card">
-          <div class="app-icon blue">🧭</div>
-          <div class="app-info">
-            <h3 data-lang="tr">Koordinat ve Datum Dönüştürme</h3>
-            <h3 data-lang="en">Coordinate &amp; Datum Converter</h3>
-            <p data-lang="tr">Ondalık Derece, DMS, DDM, UTM ve MGRS formatları; ED50, WGS84 ve ITRF96/TUREF datumları arasında dönüştürün. Sonucu tek tıkla kopyalayıp CBS yazılımınıza aktarın.</p>
-            <p data-lang="en">Convert between Decimal Degree, DMS, DDM, UTM and MGRS formats, and between ED50, WGS84 and ITRF96/TUREF datums. Copy the result straight into your GIS software.</p>
-            <button class="app-open-btn" onclick="showPage('koordinat')">
-              <span data-lang="tr">Aç →</span>
-              <span data-lang="en">Open →</span>
-            </button>
-          </div>
-        </div>
-
-        <div class="app-card">
-          <div class="app-icon teal">🧮</div>
-          <div class="app-info">
-            <h3 data-lang="tr">Akademik Teşvik Hesaplama</h3>
-            <h3 data-lang="en">Academic Incentive Calculator</h3>
-            <p data-lang="tr">Akademik Teşvik Ödeneği Yönetmeliği'ne göre puanınızı ve tahmini aylık ödeneğinizi hesaplayın — Proje, Yayın, Atıf, Tebliğ ve diğer faaliyet türlerini ekleyerek.</p>
-            <p data-lang="en">Calculate your academic incentive score and estimated monthly payment under Turkey's Academic Incentive Regulation — add your projects, publications, citations and more.</p>
-            <button class="app-open-btn" onclick="showPage('tesvik')">
-              <span data-lang="tr">Aç →</span>
-              <span data-lang="en">Open →</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div class="section-divider"></div>
-      <div class="section-subtitle" data-lang="tr">Mobil Uygulamalar</div>
-      <div class="section-subtitle" data-lang="en">Mobile Apps</div>
-
-      <div class="apps-list">
-        <div class="app-card">
-          <div class="app-icon teal"><img src="assets/app-icons/sayac-ve-takvim.png" alt="Sayaç ve Takvim"></div>
-          <div class="app-info">
-            <h3 data-lang="tr">Sayaç ve Takvim <span style="color:#999;font-weight:400;font-size:0.8rem">— App Store'da</span></h3>
-            <h3 data-lang="en">Sayaç ve Takvim <span style="color:#999;font-weight:400;font-size:0.8rem">— On the App Store</span></h3>
-            <p data-lang="tr">Hayatındaki önemli anları geri sayımla takip et: seyahatler, sınavlar, doğum günleri ve daha fazlası. Hedeflerini kategorilere ayır, her birine gün/saat/dakika olarak ne kadar kaldığını gör ve ilerlemeni tek bakışta takip et.</p>
-            <p data-lang="en">Count down to what matters — trips, exams, birthdays and more. Organize your goals into categories, see exactly how much time is left for each in days, hours and minutes, and track your progress at a glance.</p>
-            <div class="app-shots">
-              <a href="assets/screenshots/sayac-ve-takvim/01-home.png" target="_blank" rel="noopener"><img src="assets/screenshots/sayac-ve-takvim/01-home.png" alt="Sayaç ve Takvim - Ana Sayfa"></a>
-              <a href="assets/screenshots/sayac-ve-takvim/02-detail.png" target="_blank" rel="noopener"><img src="assets/screenshots/sayac-ve-takvim/02-detail.png" alt="Sayaç ve Takvim - Detay"></a>
-            </div>
-            <div class="platform-tags">
-              <span class="ptag">iPhone</span>
-              <span class="ptag live" data-lang="tr">App Store'da Yayında</span>
-              <span class="ptag live" data-lang="en">Live on the App Store</span>
-            </div>
-            <div class="app-store-row">
-              <a class="app-store-btn" href="https://apps.apple.com/app/id6796331393" target="_blank" rel="noopener">
-                <span data-lang="tr">🍎 App Store'da Görüntüle</span>
-                <span data-lang="en">🍎 View on the App Store</span>
-              </a>
-              <div class="app-qr-wrap">
-                <img src="assets/qrcodes/sayac-ve-takvim.png" alt="QR code">
-                <span data-lang="tr">Telefonunuzla okutun</span>
-                <span data-lang="en">Scan with your phone</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="app-card">
-          <div class="app-icon blue"><img src="assets/app-icons/global-sports-tracker.png" alt="Global Sports Tracker"></div>
-          <div class="app-info">
-            <h3 data-lang="tr">Global Sports Tracker <span style="color:#999;font-weight:400;font-size:0.8rem">— App Store'da</span></h3>
-            <h3 data-lang="en">Global Sports Tracker <span style="color:#999;font-weight:400;font-size:0.8rem">— On the App Store</span></h3>
-            <p data-lang="tr">Büyük turnuvaları tek yerden takip et: canlı skorlar, gruplar, eleme turları/bracket, puan durumu ve takım istatistikleri — güncel bir turnuva takip merkezi.</p>
-            <p data-lang="en">Track major tournaments in one place: live scores, groups, knockout brackets, standings and team statistics — a complete tournament tracking hub.</p>
-            <div class="app-shots">
-              <a href="assets/screenshots/global-sports-tracker/01-home.png" target="_blank" rel="noopener"><img src="assets/screenshots/global-sports-tracker/01-home.png" alt="Global Sports Tracker - Ana Sayfa"></a>
-              <a href="assets/screenshots/global-sports-tracker/02-standings.png" target="_blank" rel="noopener"><img src="assets/screenshots/global-sports-tracker/02-standings.png" alt="Global Sports Tracker - Puan Durumu"></a>
-            </div>
-            <div class="platform-tags">
-              <span class="ptag">iPhone</span>
-              <span class="ptag">iPad</span>
-              <span class="ptag live" data-lang="tr">App Store'da Yayında</span>
-              <span class="ptag live" data-lang="en">Live on the App Store</span>
-            </div>
-            <div class="app-store-row">
-              <a class="app-store-btn" href="https://apps.apple.com/app/id6778697792" target="_blank" rel="noopener">
-                <span data-lang="tr">🍎 App Store'da Görüntüle</span>
-                <span data-lang="en">🍎 View on the App Store</span>
-              </a>
-              <div class="app-qr-wrap">
-                <img src="assets/qrcodes/global-sports-tracker.png" alt="QR code">
-                <span data-lang="tr">Telefonunuzla okutun</span>
-                <span data-lang="en">Scan with your phone</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="app-card">
-          <div class="app-icon green"><img src="assets/app-icons/kalorimatik-ai.png" alt="Kalorimatik AI"></div>
-          <div class="app-info">
-            <h3 data-lang="tr">Kalorimatik AI <span style="color:#999;font-weight:400;font-size:0.8rem">— App Store'da</span></h3>
-            <h3 data-lang="en">Kalorimatik AI <span style="color:#999;font-weight:400;font-size:0.8rem">— On the App Store</span></h3>
-            <p data-lang="tr">Tabağınızın fotoğrafını çekin, yapay zeka saniyeler içinde kalori ve besin değerlerini (protein, karbonhidrat, yağ) tahmin etsin. Kayıt gerekmez, sonuçlar isterseniz Apple Sağlık'a otomatik kaydedilir. Artık İngilizce, Almanca, Fransızca, İtalyanca ve İspanyolca dillerinde de kullanılabilir.</p>
-            <p data-lang="en">Snap a photo of your plate and let AI estimate calories and macros (protein, carbs, fat) in seconds. No account needed — results can sync automatically with Apple Health. Now also available in English, German, French, Italian and Spanish.</p>
-            <div class="app-shots">
-              <a href="assets/screenshots/kalorimatik-ai/01-home.png" target="_blank" rel="noopener"><img src="assets/screenshots/kalorimatik-ai/01-home.png" alt="Kalorimatik AI - Ana Sayfa"></a>
-              <a href="assets/screenshots/kalorimatik-ai/02-result.png" target="_blank" rel="noopener"><img src="assets/screenshots/kalorimatik-ai/02-result.png" alt="Kalorimatik AI - Sonuç"></a>
-            </div>
-            <div class="platform-tags">
-              <span class="ptag">iPhone</span>
-              <span class="ptag live" data-lang="tr">App Store'da Yayında</span>
-              <span class="ptag live" data-lang="en">Live on the App Store</span>
-            </div>
-            <div class="app-store-row">
-              <a class="app-store-btn" href="https://apps.apple.com/app/id6801614159" target="_blank" rel="noopener">
-                <span data-lang="tr">🍎 App Store'da Görüntüle</span>
-                <span data-lang="en">🍎 View on the App Store</span>
-              </a>
-              <div class="app-qr-wrap">
-                <img src="assets/qrcodes/kalorimatik-ai.png" alt="QR code">
-                <span data-lang="tr">Telefonunuzla okutun</span>
-                <span data-lang="en">Scan with your phone</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="app-card">
-          <div class="app-icon orange"><img src="assets/app-icons/gst-cycling.png" alt="GST Cycling"></div>
-          <div class="app-info">
-            <h3 data-lang="tr">GST Cycling <span style="color:#999;font-weight:400;font-size:0.8rem">— App Store'da</span></h3>
-            <h3 data-lang="en">GST Cycling <span style="color:#999;font-weight:400;font-size:0.8rem">— On the App Store</span></h3>
-            <p data-lang="tr">Bisiklet yarışlarını canlı takip edin. Tour de France ve La Vuelta gibi turlar için etap bilgisi, parkur profilleri, mesafe/tarih detayları ve hatırlatıcılarla dolu bir yarış takvimi.</p>
-            <p data-lang="en">Follow professional cycling races. Stage-by-stage info, race profiles, distance/date details and reminders for tours like the Tour de France and La Vuelta.</p>
-            <div class="app-shots">
-              <a href="assets/screenshots/gst-cycling/01-home.png" target="_blank" rel="noopener"><img src="assets/screenshots/gst-cycling/01-home.png" alt="GST Cycling - Ana Sayfa"></a>
-              <a href="assets/screenshots/gst-cycling/02-race-preview.png" target="_blank" rel="noopener"><img src="assets/screenshots/gst-cycling/02-race-preview.png" alt="GST Cycling - Yarış Önizleme"></a>
-            </div>
-            <div class="platform-tags">
-              <span class="ptag">iPhone</span>
-              <span class="ptag">iPad</span>
-              <span class="ptag live" data-lang="tr">App Store'da Yayında</span>
-              <span class="ptag live" data-lang="en">Live on the App Store</span>
-            </div>
-            <div class="app-store-row">
-              <a class="app-store-btn" href="https://apps.apple.com/app/id6791187815" target="_blank" rel="noopener">
-                <span data-lang="tr">🍎 App Store'da Görüntüle</span>
-                <span data-lang="en">🍎 View on the App Store</span>
-              </a>
-              <div class="app-qr-wrap">
-                <img src="assets/qrcodes/gst-cycling.png" alt="QR code">
-                <span data-lang="tr">Telefonunuzla okutun</span>
-                <span data-lang="en">Scan with your phone</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="app-card">
-          <div class="app-icon orange"><img src="assets/app-icons/cabinok.png" alt="CabinOK"></div>
-          <div class="app-info">
-            <h3 data-lang="tr">CabinOK: Bagaj Kontrolü <span style="color:#999;font-weight:400;font-size:0.8rem">— App Store'da</span></h3>
-            <h3 data-lang="en">CabinOK: Baggage Check <span style="color:#999;font-weight:400;font-size:0.8rem">— On the App Store</span></h3>
-            <p data-lang="tr">Valizinizi kamerayla artırılmış gerçeklikle saniyeler içinde ölçün ve 20'den fazla havayolunun güncel kabin/alt bagaj limitleriyle anında karşılaştırın. Hesap gerektirmez, ölçüm verisi cihazınızdan çıkmaz — havaalanında sürpriz ücret ödemeyin.</p>
-            <p data-lang="en">Measure your suitcase in seconds with AR using your camera and instantly compare it against 20+ airlines' current cabin and checked-baggage limits. No account needed, measurements never leave your device — skip the surprise airport fees.</p>
-            <div class="app-shots">
-              <a href="assets/screenshots/cabinok/01-home.png" target="_blank" rel="noopener"><img src="assets/screenshots/cabinok/01-home.png" alt="CabinOK - Havayolu Seç"></a>
-              <a href="assets/screenshots/cabinok/02-detail.png" target="_blank" rel="noopener"><img src="assets/screenshots/cabinok/02-detail.png" alt="CabinOK - Havayolu Detayı"></a>
-            </div>
-            <div class="platform-tags">
-              <span class="ptag">iPhone</span>
-              <span class="ptag live" data-lang="tr">App Store'da Yayında</span>
-              <span class="ptag live" data-lang="en">Live on the App Store</span>
-            </div>
-            <div class="app-store-row">
-              <a class="app-store-btn" href="https://apps.apple.com/app/id6811025104" target="_blank" rel="noopener">
-                <span data-lang="tr">🍎 App Store'da Görüntüle</span>
-                <span data-lang="en">🍎 View on the App Store</span>
-              </a>
-              <div class="app-qr-wrap">
-                <img src="assets/qrcodes/cabinok.png" alt="QR code">
-                <span data-lang="tr">Telefonunuzla okutun</span>
-                <span data-lang="en">Scan with your phone</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="section-divider"></div>
-      <div class="section-subtitle" data-lang="tr">Mac Uygulamaları</div>
-      <div class="section-subtitle" data-lang="en">Mac Apps</div>
-
-      <div class="apps-list">
-        <div class="app-card">
-          <div class="app-icon blue"><img src="assets/app-icons/diskbreeze.png" alt="DiskBreeze"></div>
-          <div class="app-info">
-            <h3 data-lang="tr">DiskBreeze <span style="color:#999;font-weight:400;font-size:0.8rem">— Mac için ücretsiz</span></h3>
-            <h3 data-lang="en">DiskBreeze <span style="color:#999;font-weight:400;font-size:0.8rem">— Free for Mac</span></h3>
-            <p data-lang="tr">256 GB gibi küçük diskli Mac'ler için basit ve güvenli disk temizleyici. Gereksiz dosyaları bulup her birini sade bir dille açıklar; her şey önce Çöp Sepeti'ne gider, geri alınabilir. Uygulamaları kalıntılarıyla birlikte kaldırır, silinmiş uygulamalardan kalan verileri bulur. İnternet bağlantısı kurmaz, 10 dilde kullanılabilir.</p>
-            <p data-lang="en">A simple, safe disk cleaner for Macs with small drives like 256 GB. It finds files you no longer need and explains each one in plain words; everything goes to the Trash first, so you can undo. Removes apps together with their leftovers and finds data from apps you already deleted. No internet connection, available in 10 languages.</p>
-            <div class="platform-tags">
-              <span class="ptag">macOS 14+</span>
-              <span class="ptag">Apple silicon · Intel</span>
-              <span class="ptag live" data-lang="tr">Yayında · Apple onaylı</span>
-              <span class="ptag live" data-lang="en">Available · Notarized by Apple</span>
-            </div>
-            <div class="app-store-row">
-              <a class="app-store-btn" href="diskbreeze/">
-                <span data-lang="tr">⬇️ Mac için indir</span>
-                <span data-lang="en">⬇️ Download for Mac</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="section-divider"></div>
-      <div class="section-subtitle" data-lang="tr">QGIS Eklentileri</div>
-      <div class="section-subtitle" data-lang="en">QGIS Plugins</div>
-
-      <div class="apps-list">
-        <div class="app-card">
-          <div class="app-icon teal"><img src="assets/app-icons/thiessen-qgis-plugin.png" alt="Thiessen Sulama Ağırlıklandırma"></div>
-          <div class="app-info">
-            <h3 data-lang="tr">Thiessen Sulama Ağırlıklandırma <span style="color:#999;font-weight:400;font-size:0.8rem">— plugins.qgis.org'da Deneysel</span></h3>
-            <h3 data-lang="en">Thiessen Irrigation Weighting <span style="color:#999;font-weight:400;font-size:0.8rem">— Experimental on plugins.qgis.org</span></h3>
-            <p data-lang="tr">İstasyon noktalarından (yağış, su ihtiyacı, debi vb.) Thiessen/Voronoi poligonları üretip isteğe bağlı bir sulama alanı sınırına göre keser, her hücrenin gerçek (elipsoidal) alanına göre alan ağırlıklı ortalamayı hesaplar. QGIS Processing'in yerleşik Voronoi algoritmasını sarmalayan, arayüzlü ve açık kaynaklı bir Python eklentisi.</p>
-            <p data-lang="en">Generates Thiessen (Voronoi) polygons from station points (rainfall, irrigation water requirement, discharge, etc.), optionally clips them to an irrigation area boundary, and computes the area-weighted average based on each cell's true ellipsoidal area. An open-source Python plugin with a GUI, built on top of QGIS Processing's native Voronoi algorithm.</p>
-            <div class="app-shots">
-              <a href="assets/screenshots/thiessen-qgis-plugin/01-dialog.png" target="_blank" rel="noopener"><img src="assets/screenshots/thiessen-qgis-plugin/01-dialog.png" alt="Thiessen Sulama Ağırlıklandırma - Eklenti Arayüzü"></a>
-              <a href="assets/screenshots/thiessen-qgis-plugin/02-map.png" target="_blank" rel="noopener"><img src="assets/screenshots/thiessen-qgis-plugin/02-map.png" alt="Thiessen Sulama Ağırlıklandırma - Harita Sonucu"></a>
-            </div>
-            <div class="platform-tags">
-              <span class="ptag">QGIS 3.16+</span>
-              <span class="ptag review" data-lang="tr">Deneysel Sürüm</span>
-              <span class="ptag review" data-lang="en">Experimental Release</span>
-              <span class="ptag" data-lang="tr">Açık Kaynak (GPLv2+)</span>
-              <span class="ptag" data-lang="en">Open Source (GPLv2+)</span>
-            </div>
-            <div class="app-store-row">
-              <a class="app-store-btn" href="https://plugins.qgis.org/plugins/thiessen_sulama/" target="_blank" rel="noopener">
-                <span data-lang="tr">🧩 plugins.qgis.org'da Görüntüle</span>
-                <span data-lang="en">🧩 View on plugins.qgis.org</span>
-              </a>
-              <div class="app-qr-wrap">
-                <img src="assets/qrcodes/thiessen-qgis-plugin.png" alt="QR code">
-                <span data-lang="tr">Telefonunuzla okutun</span>
-                <span data-lang="en">Scan with your phone</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <section>
+        <div class="ap-sec"><h2 id="apGridTitle"></h2><small id="apGridCount"></small></div>
+        <div class="ap-grid" id="apGrid"></div>
+      </section>
 
       <div class="apps-note">
         <span data-lang="tr">📦 Mobil uygulamalar Apple App Store'da, Mac uygulamaları bu sitede, QGIS eklentileri plugins.qgis.org'da yayınlanır. Güncel gelişmeler için <a href="https://github.com/selcukalbut" target="_blank">GitHub</a> sayfamı takip edin.</span>
@@ -2751,6 +2580,14 @@ html[lang="en"] [data-lang="en"] { display: revert; }
   <span data-lang="en">© 2026 Selçuk ALBUT · selcukalbut.com</span>
 </footer>
 
+<!-- Uygulama ayrıntı penceresi: .page içinde olmamalı (sayfaların transform'u fixed konumu bozar) -->
+<div class="ap-scrim" id="apScrim" hidden>
+  <div class="ap-sheet" role="dialog" aria-modal="true" aria-labelledby="apSheetTitle">
+    <button type="button" class="ap-close" id="apClose">✕</button>
+    <div id="apSheetBody"></div>
+  </div>
+</div>
+
 <script>
 const PAGES = ['home','about','academic','projects','tesvik','koordinat','sulama','uydu','apps','contact'];
 
@@ -2773,6 +2610,7 @@ function setLang(lang) {
   if (typeof koordRefreshLang === 'function') koordRefreshLang();
   if (typeof sulamaRefreshLang === 'function') sulamaRefreshLang();
   if (typeof uyduRefreshLang === 'function') uyduRefreshLang();
+  if (typeof appsRefreshLang === 'function') appsRefreshLang();
 }
 
 function submitContactForm(e) {
@@ -5392,6 +5230,616 @@ function uyduInit() {
   uyduFetchAll();
 }
 uyduInit();
+
+/* ══ APPS PAGE ══ */
+// Her uygulamanın metinleri {tr, en} çiftleri halinde burada tutulur; sayfa tesvikT() ile dile göre çizilir.
+const AP_APPS = [
+ {
+  "id": "sulama",
+  "cat": "web",
+  "name": {
+   "tr": "Sulama Programlama / ETo Hesaplayıcı",
+   "en": "Irrigation Scheduling / ETo Calculator"
+  },
+  "tagline": {
+   "tr": "ETo, ETc ve net sulama ihtiyacı; 259 resmi istasyonla",
+   "en": "ETo, ETc and net irrigation need, with 259 official stations"
+  },
+  "tint": "orange",
+  "icon": null,
+  "emoji": "💧",
+  "platforms": [
+   "Web"
+  ],
+  "isNew": false,
+  "extraTags": [],
+  "status": [],
+  "page": "sulama",
+  "url": "#sulama",
+  "act": {
+   "tr": "Aç →",
+   "en": "Open →"
+  },
+  "cta": {
+   "tr": "Uygulamayı aç →",
+   "en": "Open the app →"
+  },
+  "shots": [],
+  "qr": null,
+  "desc": {
+   "tr": "NASA POWER uydu/reanaliz iklim verisiyle FAO-56 Penman-Monteith yöntemine göre referans buharlaşma-terleme (ETo) ve bitki su tüketimini (ETc) hesaplayın; net sulama suyu ihtiyacını görün.",
+   "en": "Calculate reference evapotranspiration (ETo) and crop water use (ETc) with the FAO-56 Penman-Monteith method, fed automatically by NASA POWER satellite/reanalysis climate data — get the net irrigation water requirement."
+  }
+ },
+ {
+  "id": "uydu",
+  "cat": "web",
+  "name": {
+   "tr": "Uydu Takip — Yörünge Atlası",
+   "en": "Satellite Tracker — Orbit Atlas"
+  },
+  "tagline": {
+   "tr": "53 yer gözlem uydusunu 3B dünyada canlı izleyin",
+   "en": "Track 53 Earth observation satellites live on a 3D globe"
+  },
+  "tint": "navy",
+  "icon": null,
+  "emoji": "🛰️",
+  "platforms": [
+   "Web"
+  ],
+  "isNew": true,
+  "extraTags": [
+   {
+    "tr": "🛰️ 53 uydu",
+    "en": "🛰️ 53 satellites"
+   },
+   {
+    "tr": "🌍 3B canlı harita",
+    "en": "🌍 Live 3D globe"
+   }
+  ],
+  "status": [],
+  "page": "uydu",
+  "url": "#uydu",
+  "act": {
+   "tr": "Aç →",
+   "en": "Open →"
+  },
+  "cta": {
+   "tr": "Uygulamayı aç →",
+   "en": "Open the app →"
+  },
+  "shots": [],
+  "qr": null,
+  "desc": {
+   "tr": "Landsat, Sentinel, Göktürk, Cartosat, WorldView, Gaofen ve daha fazlası — 53 aktif yer gözlem uydusunun anlık yörünge konumunu gerçek TLE verisi ve SGP4 modeliyle 3B dünya üzerinde canlı izleyin; kataloğu ve yörünge analizlerini inceleyin.",
+   "en": "Landsat, Sentinel, Göktürk, Cartosat, WorldView, Gaofen and more — track 53 active Earth observation satellites live on a 3D globe, computed from real TLE data with the SGP4 model. Browse the catalog and orbit analysis."
+  }
+ },
+ {
+  "id": "cabinok",
+  "cat": "ios",
+  "name": {
+   "tr": "CabinOK: Bagaj Kontrolü",
+   "en": "CabinOK: Baggage Check"
+  },
+  "tagline": {
+   "tr": "Bagajın kabine sığar mı?",
+   "en": "Will your bag fit in the cabin?"
+  },
+  "tint": "orange",
+  "icon": "assets/app-icons/cabinok.png",
+  "platforms": [
+   "iPhone"
+  ],
+  "isNew": true,
+  "extraTags": [],
+  "status": [
+   {
+    "kind": "live",
+    "tr": "App Store'da Yayında",
+    "en": "Live on the App Store"
+   }
+  ],
+  "url": "https://apps.apple.com/app/id6811025104",
+  "act": {
+   "tr": "App Store ↗",
+   "en": "App Store ↗"
+  },
+  "cta": {
+   "tr": "🍎 App Store'da Görüntüle",
+   "en": "🍎 View on the App Store"
+  },
+  "shots": [
+   "assets/screenshots/cabinok/01-home.png",
+   "assets/screenshots/cabinok/02-detail.png"
+  ],
+  "qr": "assets/qrcodes/cabinok.png",
+  "desc": {
+   "tr": "Valizinizi kamerayla artırılmış gerçeklikle saniyeler içinde ölçün ve 20'den fazla havayolunun güncel kabin/alt bagaj limitleriyle anında karşılaştırın. Hesap gerektirmez, ölçüm verisi cihazınızdan çıkmaz — havaalanında sürpriz ücret ödemeyin.",
+   "en": "Measure your suitcase in seconds with AR using your camera and instantly compare it against 20+ airlines' current cabin and checked-baggage limits. No account needed, measurements never leave your device — skip the surprise airport fees."
+  },
+  "page": null,
+  "emoji": ""
+ },
+ {
+  "id": "koordinat",
+  "cat": "web",
+  "name": {
+   "tr": "Koordinat ve Datum Dönüştürme",
+   "en": "Coordinate & Datum Converter"
+  },
+  "tagline": {
+   "tr": "DD, DMS, UTM, MGRS ve ED50/WGS84/TUREF dönüşümü",
+   "en": "DD, DMS, UTM, MGRS and ED50/WGS84/TUREF conversion"
+  },
+  "tint": "blue",
+  "icon": null,
+  "emoji": "🧭",
+  "platforms": [
+   "Web"
+  ],
+  "isNew": false,
+  "extraTags": [],
+  "status": [],
+  "page": "koordinat",
+  "url": "#koordinat",
+  "act": {
+   "tr": "Aç →",
+   "en": "Open →"
+  },
+  "cta": {
+   "tr": "Uygulamayı aç →",
+   "en": "Open the app →"
+  },
+  "shots": [],
+  "qr": null,
+  "desc": {
+   "tr": "Ondalık Derece, DMS, DDM, UTM ve MGRS formatları; ED50, WGS84 ve ITRF96/TUREF datumları arasında dönüştürün. Sonucu tek tıkla kopyalayıp CBS yazılımınıza aktarın.",
+   "en": "Convert between Decimal Degree, DMS, DDM, UTM and MGRS formats, and between ED50, WGS84 and ITRF96/TUREF datums. Copy the result straight into your GIS software."
+  }
+ },
+ {
+  "id": "tesvik",
+  "cat": "web",
+  "name": {
+   "tr": "Akademik Teşvik Hesaplama",
+   "en": "Academic Incentive Calculator"
+  },
+  "tagline": {
+   "tr": "Teşvik puanı ve tahmini aylık ödenek hesabı",
+   "en": "Incentive score and estimated monthly payment"
+  },
+  "tint": "primary",
+  "icon": null,
+  "emoji": "🧮",
+  "platforms": [
+   "Web"
+  ],
+  "isNew": false,
+  "extraTags": [],
+  "status": [],
+  "page": "tesvik",
+  "url": "#tesvik",
+  "act": {
+   "tr": "Aç →",
+   "en": "Open →"
+  },
+  "cta": {
+   "tr": "Uygulamayı aç →",
+   "en": "Open the app →"
+  },
+  "shots": [],
+  "qr": null,
+  "desc": {
+   "tr": "Akademik Teşvik Ödeneği Yönetmeliği'ne göre puanınızı ve tahmini aylık ödeneğinizi hesaplayın — Proje, Yayın, Atıf, Tebliğ ve diğer faaliyet türlerini ekleyerek.",
+   "en": "Calculate your academic incentive score and estimated monthly payment under Turkey's Academic Incentive Regulation — add your projects, publications, citations and more."
+  }
+ },
+ {
+  "id": "sayac",
+  "cat": "ios",
+  "name": {
+   "tr": "Sayaç ve Takvim",
+   "en": "Sayaç ve Takvim"
+  },
+  "tagline": {
+   "tr": "Önemli günler için geri sayım",
+   "en": "Countdowns for the days that matter"
+  },
+  "tint": "primary",
+  "icon": "assets/app-icons/sayac-ve-takvim.png",
+  "platforms": [
+   "iPhone"
+  ],
+  "isNew": false,
+  "extraTags": [],
+  "status": [
+   {
+    "kind": "live",
+    "tr": "App Store'da Yayında",
+    "en": "Live on the App Store"
+   }
+  ],
+  "url": "https://apps.apple.com/app/id6796331393",
+  "act": {
+   "tr": "App Store ↗",
+   "en": "App Store ↗"
+  },
+  "cta": {
+   "tr": "🍎 App Store'da Görüntüle",
+   "en": "🍎 View on the App Store"
+  },
+  "shots": [
+   "assets/screenshots/sayac-ve-takvim/01-home.png",
+   "assets/screenshots/sayac-ve-takvim/02-detail.png"
+  ],
+  "qr": "assets/qrcodes/sayac-ve-takvim.png",
+  "desc": {
+   "tr": "Hayatındaki önemli anları geri sayımla takip et: seyahatler, sınavlar, doğum günleri ve daha fazlası. Hedeflerini kategorilere ayır, her birine gün/saat/dakika olarak ne kadar kaldığını gör ve ilerlemeni tek bakışta takip et.",
+   "en": "Count down to what matters — trips, exams, birthdays and more. Organize your goals into categories, see exactly how much time is left for each in days, hours and minutes, and track your progress at a glance."
+  },
+  "page": null,
+  "emoji": ""
+ },
+ {
+  "id": "gst",
+  "cat": "ios",
+  "name": {
+   "tr": "Global Sports Tracker",
+   "en": "Global Sports Tracker"
+  },
+  "tagline": {
+   "tr": "Turnuvalar için canlı skor, bracket ve puan durumu",
+   "en": "Live scores, brackets and standings for tournaments"
+  },
+  "tint": "blue",
+  "icon": "assets/app-icons/global-sports-tracker.png",
+  "platforms": [
+   "iPhone",
+   "iPad"
+  ],
+  "isNew": false,
+  "extraTags": [],
+  "status": [
+   {
+    "kind": "live",
+    "tr": "App Store'da Yayında",
+    "en": "Live on the App Store"
+   }
+  ],
+  "url": "https://apps.apple.com/app/id6778697792",
+  "act": {
+   "tr": "App Store ↗",
+   "en": "App Store ↗"
+  },
+  "cta": {
+   "tr": "🍎 App Store'da Görüntüle",
+   "en": "🍎 View on the App Store"
+  },
+  "shots": [
+   "assets/screenshots/global-sports-tracker/01-home.png",
+   "assets/screenshots/global-sports-tracker/02-standings.png"
+  ],
+  "qr": "assets/qrcodes/global-sports-tracker.png",
+  "desc": {
+   "tr": "Büyük turnuvaları tek yerden takip et: canlı skorlar, gruplar, eleme turları/bracket, puan durumu ve takım istatistikleri — güncel bir turnuva takip merkezi.",
+   "en": "Track major tournaments in one place: live scores, groups, knockout brackets, standings and team statistics — a complete tournament tracking hub."
+  },
+  "page": null,
+  "emoji": ""
+ },
+ {
+  "id": "kalori",
+  "cat": "ios",
+  "name": {
+   "tr": "Kalorimatik AI",
+   "en": "Kalorimatik AI"
+  },
+  "tagline": {
+   "tr": "Fotoğrafla kalori ve besin değeri hesabı",
+   "en": "Calories and macros from a photo"
+  },
+  "tint": "green",
+  "icon": "assets/app-icons/kalorimatik-ai.png",
+  "platforms": [
+   "iPhone"
+  ],
+  "isNew": false,
+  "extraTags": [],
+  "status": [
+   {
+    "kind": "live",
+    "tr": "App Store'da Yayında",
+    "en": "Live on the App Store"
+   }
+  ],
+  "url": "https://apps.apple.com/app/id6801614159",
+  "act": {
+   "tr": "App Store ↗",
+   "en": "App Store ↗"
+  },
+  "cta": {
+   "tr": "🍎 App Store'da Görüntüle",
+   "en": "🍎 View on the App Store"
+  },
+  "shots": [
+   "assets/screenshots/kalorimatik-ai/01-home.png",
+   "assets/screenshots/kalorimatik-ai/02-result.png"
+  ],
+  "qr": "assets/qrcodes/kalorimatik-ai.png",
+  "desc": {
+   "tr": "Tabağınızın fotoğrafını çekin, yapay zeka saniyeler içinde kalori ve besin değerlerini (protein, karbonhidrat, yağ) tahmin etsin. Kayıt gerekmez, sonuçlar isterseniz Apple Sağlık'a otomatik kaydedilir. Artık İngilizce, Almanca, Fransızca, İtalyanca ve İspanyolca dillerinde de kullanılabilir.",
+   "en": "Snap a photo of your plate and let AI estimate calories and macros (protein, carbs, fat) in seconds. No account needed — results can sync automatically with Apple Health. Now also available in English, German, French, Italian and Spanish."
+  },
+  "page": null,
+  "emoji": ""
+ },
+ {
+  "id": "cycling",
+  "cat": "ios",
+  "name": {
+   "tr": "GST Cycling",
+   "en": "GST Cycling"
+  },
+  "tagline": {
+   "tr": "Bisiklet turları için etap ve yarış takvimi",
+   "en": "Stages and race calendar for cycling tours"
+  },
+  "tint": "orange",
+  "icon": "assets/app-icons/gst-cycling.png",
+  "platforms": [
+   "iPhone",
+   "iPad"
+  ],
+  "isNew": false,
+  "extraTags": [],
+  "status": [
+   {
+    "kind": "live",
+    "tr": "App Store'da Yayında",
+    "en": "Live on the App Store"
+   }
+  ],
+  "url": "https://apps.apple.com/app/id6791187815",
+  "act": {
+   "tr": "App Store ↗",
+   "en": "App Store ↗"
+  },
+  "cta": {
+   "tr": "🍎 App Store'da Görüntüle",
+   "en": "🍎 View on the App Store"
+  },
+  "shots": [
+   "assets/screenshots/gst-cycling/01-home.png",
+   "assets/screenshots/gst-cycling/02-race-preview.png"
+  ],
+  "qr": "assets/qrcodes/gst-cycling.png",
+  "desc": {
+   "tr": "Bisiklet yarışlarını canlı takip edin. Tour de France ve La Vuelta gibi turlar için etap bilgisi, parkur profilleri, mesafe/tarih detayları ve hatırlatıcılarla dolu bir yarış takvimi.",
+   "en": "Follow professional cycling races. Stage-by-stage info, race profiles, distance/date details and reminders for tours like the Tour de France and La Vuelta."
+  },
+  "page": null,
+  "emoji": ""
+ },
+ {
+  "id": "disk",
+  "cat": "mac",
+  "name": {
+   "tr": "DiskBreeze",
+   "en": "DiskBreeze"
+  },
+  "tagline": {
+   "tr": "Küçük diskli Mac'ler için güvenli disk temizleyici",
+   "en": "Safe disk cleaner for Macs with small drives"
+  },
+  "tint": "blue",
+  "icon": "assets/app-icons/diskbreeze.png",
+  "platforms": [
+   "macOS 14+"
+  ],
+  "isNew": true,
+  "extraTags": [
+   {
+    "tr": "Apple silicon · Intel",
+    "en": "Apple silicon · Intel"
+   }
+  ],
+  "status": [
+   {
+    "kind": "live",
+    "tr": "Yayında · Apple onaylı",
+    "en": "Available · Notarized by Apple"
+   }
+  ],
+  "url": "diskbreeze/",
+  "act": {
+   "tr": "İndir ↓",
+   "en": "Download ↓"
+  },
+  "cta": {
+   "tr": "⬇️ Mac için indir",
+   "en": "⬇️ Download for Mac"
+  },
+  "shots": [],
+  "qr": null,
+  "desc": {
+   "tr": "256 GB gibi küçük diskli Mac'ler için basit ve güvenli disk temizleyici. Gereksiz dosyaları bulup her birini sade bir dille açıklar; her şey önce Çöp Sepeti'ne gider, geri alınabilir. Uygulamaları kalıntılarıyla birlikte kaldırır, silinmiş uygulamalardan kalan verileri bulur. İnternet bağlantısı kurmaz, 10 dilde kullanılabilir.",
+   "en": "A simple, safe disk cleaner for Macs with small drives like 256 GB. It finds files you no longer need and explains each one in plain words; everything goes to the Trash first, so you can undo. Removes apps together with their leftovers and finds data from apps you already deleted. No internet connection, available in 10 languages."
+  },
+  "page": null,
+  "emoji": ""
+ },
+ {
+  "id": "thiessen",
+  "cat": "qgis",
+  "name": {
+   "tr": "Thiessen Sulama Ağırlıklandırma",
+   "en": "Thiessen Irrigation Weighting"
+  },
+  "tagline": {
+   "tr": "QGIS'te Thiessen poligonlarıyla alan ağırlıklı ortalama",
+   "en": "Area-weighted averages with Thiessen polygons in QGIS"
+  },
+  "tint": "primary",
+  "icon": "assets/app-icons/thiessen-qgis-plugin.png",
+  "platforms": [
+   "QGIS 3.16+"
+  ],
+  "isNew": false,
+  "extraTags": [],
+  "status": [
+   {
+    "kind": "exp",
+    "tr": "Deneysel Sürüm",
+    "en": "Experimental Release"
+   },
+   {
+    "kind": "",
+    "tr": "Açık Kaynak (GPLv2+)",
+    "en": "Open Source (GPLv2+)"
+   }
+  ],
+  "url": "https://plugins.qgis.org/plugins/thiessen_sulama/",
+  "act": {
+   "tr": "Eklenti ↗",
+   "en": "Plugin ↗"
+  },
+  "cta": {
+   "tr": "🧩 plugins.qgis.org'da Görüntüle",
+   "en": "🧩 View on plugins.qgis.org"
+  },
+  "shots": [
+   "assets/screenshots/thiessen-qgis-plugin/01-dialog.png",
+   "assets/screenshots/thiessen-qgis-plugin/02-map.png"
+  ],
+  "qr": "assets/qrcodes/thiessen-qgis-plugin.png",
+  "desc": {
+   "tr": "İstasyon noktalarından (yağış, su ihtiyacı, debi vb.) Thiessen/Voronoi poligonları üretip isteğe bağlı bir sulama alanı sınırına göre keser, her hücrenin gerçek (elipsoidal) alanına göre alan ağırlıklı ortalamayı hesaplar. QGIS Processing'in yerleşik Voronoi algoritmasını sarmalayan, arayüzlü ve açık kaynaklı bir Python eklentisi.",
+   "en": "Generates Thiessen (Voronoi) polygons from station points (rainfall, irrigation water requirement, discharge, etc.), optionally clips them to an irrigation area boundary, and computes the area-weighted average based on each cell's true ellipsoidal area. An open-source Python plugin with a GUI, built on top of QGIS Processing's native Voronoi algorithm."
+  },
+  "page": null,
+  "emoji": ""
+ }
+];
+const AP_CATS = [
+  { k: 'all',  tr: 'Tümü',          en: 'All' },
+  { k: 'web',  tr: 'Web',           en: 'Web' },
+  { k: 'ios',  tr: 'iPhone & iPad', en: 'iPhone & iPad' },
+  { k: 'mac',  tr: 'Mac',           en: 'Mac' },
+  { k: 'qgis', tr: 'QGIS',          en: 'QGIS' },
+];
+const AP_FEATURED = ['sulama', 'uydu', 'cabinok'];
+let apCat = 'all', apOpenId = null, apLastFocus = null;
+
+const apEsc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const apT = o => apEsc(tesvikT(o.tr, o.en));
+const apById = id => AP_APPS.find(a => a.id === id);
+const apCount = k => k === 'all' ? AP_APPS.length : AP_APPS.filter(a => a.cat === k).length;
+const apIsExternal = u => /^https?:/.test(u);
+
+function apTile(a, small) {
+  const cls = 'ap-tile c-' + a.tint + (small ? ' sm' : '');
+  return a.icon ? `<span class="${cls}"><img src="${a.icon}" alt=""></span>` : `<span class="${cls}">${a.emoji}</span>`;
+}
+function apTags(a, full) {
+  let h = a.platforms.map(p => `<span class="ap-tag">${apEsc(p)}</span>`).join('');
+  if (a.isNew) h += `<span class="ap-tag new">${apEsc(tesvikT('Yeni', 'New'))}</span>`;
+  if (full) h += a.extraTags.map(t => `<span class="ap-tag">${apT(t)}</span>`).join('') + a.status.map(s => `<span class="ap-tag ${s.kind}">${apT(s)}</span>`).join('');
+  return `<div class="ap-tags">${h}</div>`;
+}
+function apLink(a, cls, label) {
+  if (a.page) return `<a class="${cls}" href="#${a.page}" data-ap-page="${a.page}">${label}</a>`;
+  const ext = apIsExternal(a.url) ? ' target="_blank" rel="noopener"' : '';
+  return `<a class="${cls}" href="${a.url}"${ext}>${label}</a>`;
+}
+function apFeatMedia(a) {
+  if (a.id === 'sulama') return `<span class="ap-feat-media t-map"><img src="assets/app-previews/sulama-map.jpg" alt=""><span class="ap-pill">${apEsc(tesvikT('259 istasyon · Thiessen poligonları', '259 stations · Thiessen polygons'))}</span></span>`;
+  if (a.id === 'uydu') return `<span class="ap-feat-media t-navy"><span class="ap-orbits"><span class="ap-ring r1"></span><span class="ap-ring r2"></span><span class="ap-globe"></span></span></span>`;
+  return `<span class="ap-feat-media t-orange ap-phones"><img src="${a.shots[0]}" alt=""><img src="${a.shots[1]}" alt=""></span>`;
+}
+
+function apRenderStats() {
+  const l = (n, tr, en) => `<span><b>${n}</b>${apEsc(tesvikT(tr, en))}</span>`;
+  document.getElementById('apStats').innerHTML =
+    l(AP_APPS.length, 'uygulama', 'apps') + l(apCount('web'), 'web', 'web') + l(apCount('ios'), 'iPhone & iPad', 'iPhone & iPad') + l(apCount('mac'), 'Mac', 'Mac') + l(apCount('qgis'), 'QGIS', 'QGIS');
+}
+function apRenderFilters() {
+  document.getElementById('apFilters').innerHTML = AP_CATS.map(c =>
+    `<button type="button" class="ap-chip" data-ap-cat="${c.k}" aria-pressed="${c.k === apCat}">${apT(c)}<i>${apCount(c.k)}</i></button>`).join('');
+}
+function apRenderFeatured() {
+  document.getElementById('apFeatGrid').innerHTML = AP_FEATURED.map((id, i) => {
+    const a = apById(id);
+    return `<article class="ap-feat" style="animation-delay:${i * 70}ms">
+      <button type="button" class="ap-feat-open" data-ap-open="${a.id}" aria-label="${apEsc(tesvikT(a.name.tr, a.name.en))} — ${apEsc(tesvikT('ayrıntılar', 'details'))}">
+        ${apFeatMedia(a)}
+        <span class="ap-feat-body">${apTile(a, true)}<span><h3>${apT(a.name)}</h3><p>${apT(a.tagline)}</p></span></span>
+      </button>
+      <div class="ap-foot">${apTags(a)}${apLink(a, 'ap-act', apT(a.act))}</div>
+    </article>`;
+  }).join('');
+}
+function apRenderGrid() {
+  const list = AP_APPS.filter(a => apCat === 'all' ? !AP_FEATURED.includes(a.id) : a.cat === apCat);
+  document.getElementById('apGridTitle').textContent = apCat === 'all' ? tesvikT('Diğer uygulamalar', 'More apps') : tesvikT(AP_CATS.find(c => c.k === apCat).tr, AP_CATS.find(c => c.k === apCat).en);
+  document.getElementById('apGridCount').textContent = list.length + ' ' + tesvikT('uygulama', 'apps');
+  document.getElementById('apGrid').innerHTML = list.map((a, i) => `
+    <article class="ap-card" style="animation-delay:${i * 45}ms">
+      <button type="button" class="ap-card-open" data-ap-open="${a.id}" aria-label="${apEsc(tesvikT(a.name.tr, a.name.en))} — ${apEsc(tesvikT('ayrıntılar', 'details'))}">
+        ${apTile(a)}<span><h3>${apT(a.name)}</h3><p>${apT(a.tagline)}</p></span>
+      </button>
+      <div class="ap-foot">${apTags(a)}${apLink(a, 'ap-act', apT(a.act))}</div>
+    </article>`).join('') || `<div class="ap-empty">${apEsc(tesvikT('Bu türde uygulama yok.', 'No apps of this type.'))}</div>`;
+}
+function apRender() {
+  apRenderStats(); apRenderFilters(); apRenderFeatured(); apRenderGrid();
+  document.getElementById('apFeatSec').hidden = apCat !== 'all';
+  if (apOpenId) apFillSheet(apOpenId);
+}
+
+function apFillSheet(id) {
+  const a = apById(id);
+  const shots = a.shots.length ? `<div class="ap-shots" tabindex="0" aria-label="${apEsc(tesvikT('Ekran görüntüleri', 'Screenshots'))}">${a.shots.map(s => `<img src="${s}" alt="${apEsc(tesvikT(a.name.tr, a.name.en))}" loading="lazy">`).join('')}</div>` : '';
+  const qr = a.qr ? `<div class="ap-qr"><img src="${a.qr}" alt="QR"><span>${apEsc(tesvikT('Telefonunuzla okutun', 'Scan with your phone'))}</span></div>` : '';
+  document.getElementById('apSheetBody').innerHTML = `
+    <div class="ap-sheet-head">${apTile(a)}<div><h2 id="apSheetTitle">${apT(a.name)}</h2>${apTags(a, true)}</div></div>
+    ${shots}
+    <p class="ap-desc">${apT(a.desc)}</p>
+    <div class="ap-sheet-actions">${apLink(a, 'ap-cta', apT(a.cta))}${qr}</div>`;
+  document.getElementById('apClose').setAttribute('aria-label', tesvikT('Kapat', 'Close'));
+}
+function apOpenSheet(id) {
+  apLastFocus = document.activeElement;
+  apOpenId = id;
+  apFillSheet(id);
+  document.getElementById('apScrim').hidden = false;
+  document.body.style.overflow = 'hidden';
+  document.getElementById('apClose').focus();
+}
+function apCloseSheet() {
+  apOpenId = null;
+  document.getElementById('apScrim').hidden = true;
+  document.body.style.overflow = '';
+  if (apLastFocus && apLastFocus.focus) apLastFocus.focus();
+}
+
+document.addEventListener('click', e => {
+  const pg = e.target.closest('[data-ap-page]');
+  if (pg) { e.preventDefault(); if (apOpenId) apCloseSheet(); showPage(pg.dataset.apPage); return; }
+  const o = e.target.closest('[data-ap-open]');
+  if (o) { apOpenSheet(o.dataset.apOpen); return; }
+  const c = e.target.closest('[data-ap-cat]');
+  if (c) { apCat = c.dataset.apCat; apRender(); return; }
+  if (e.target.id === 'apScrim' || e.target.closest('#apClose')) apCloseSheet();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && apOpenId) apCloseSheet(); });
+
+function apInit() { if (document.getElementById('apGrid')) apRender(); }
+function appsRefreshLang() { if (document.getElementById('apGrid')) apRender(); }
+apInit();
+
 
 // init
 setLang(currentLang);

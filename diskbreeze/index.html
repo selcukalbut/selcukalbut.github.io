@@ -44,6 +44,16 @@
               font-size: 19px; font-weight: 600; padding: 14px 28px; border-radius: 14px; }
   .download:hover { background: var(--accent-strong); }
   .download svg { width: 20px; height: 20px; }
+  .store-link { display: inline-flex; align-items: center; gap: 10px; margin-top: 14px; padding: 9px 18px; border-radius: 12px;
+                border: 1px solid var(--line); background: var(--card); color: var(--text); text-decoration: none; font-size: 15px; }
+  .store-link:hover { border-color: var(--accent); }
+  .store-link img { width: 28px; height: 28px; }
+  .store-link small { display: block; color: var(--muted); font-size: 12px; }
+  .editions { width: 100%; border-collapse: collapse; background: var(--card); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; font-size: 15px; }
+  .editions th, .editions td { padding: 12px 16px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+  .editions th { font-weight: 600; }
+  .editions tr:last-child td { border-bottom: none; }
+  .editions td:not(:first-child), .editions th:not(:first-child) { text-align: center; width: 22%; }
   .meta { font-size: 14px; color: var(--muted); margin-top: 12px; }
   .badges { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
   .badge { font-size: 13px; background: var(--accent-soft); color: var(--accent-strong); padding: 4px 12px; border-radius: 999px; }
@@ -118,6 +128,11 @@
     </a>
     <p class="meta" lang="en">Version 1.0.0 · 1.4 MB · macOS 14 Sonoma or later · Apple silicon and Intel</p>
     <p class="meta" lang="tr">Sürüm 1.0.0 · 1,4 MB · macOS 14 Sonoma veya üstü · Apple silicon ve Intel</p>
+    <a class="store-link" href="https://apps.apple.com/app/diskbreeze-lite/id6820493687" target="_blank" rel="noopener">
+      <img src="images/icon-lite.png" alt="">
+      <span><span lang="en">DiskBreeze Lite on the Mac App Store</span><span lang="tr">Mac App Store'da DiskBreeze Lite</span>
+        <small lang="en">A simpler edition with automatic updates</small><small lang="tr">Otomatik güncellenen, daha sade sürüm</small></span>
+    </a>
     <div class="badges">
       <span class="badge" lang="en">Free, no ads</span><span class="badge" lang="tr">Ücretsiz, reklamsız</span>
       <span class="badge" lang="en">Notarized by Apple</span><span class="badge" lang="tr">Apple onaylı</span>
@@ -159,6 +174,23 @@
       <p lang="en">No account, no tracking, no internet connection at all. Your files never leave your Mac.</p>
       <p lang="tr">Hesap yok, izleme yok, hiçbir internet bağlantısı yok. Dosyalarınız asla Mac'inizden çıkmaz.</p></div>
   </div>
+</section>
+
+<section>
+  <h2 lang="en">DiskBreeze or DiskBreeze Lite?</h2>
+  <h2 lang="tr">DiskBreeze mi, DiskBreeze Lite mı?</h2>
+  <p class="lead" lang="en">Both are free and work the same way. Lite comes from the Mac App Store, where Apple's sandbox allows fewer places to clean.</p>
+  <p class="lead" lang="tr">İkisi de ücretsiz ve aynı şekilde çalışır. Lite, Mac App Store'dan gelir; Apple'ın korumalı alanı temizlenebilecek yerleri sınırlar.</p>
+  <table class="editions">
+    <tr><th></th><th>DiskBreeze</th><th>DiskBreeze Lite</th></tr>
+    <tr><td><span lang="en">App caches, log files, installers</span><span lang="tr">Uygulama önbellekleri, kayıt ve kurulum dosyaları</span></td><td>✓</td><td>✓</td></tr>
+    <tr><td><span lang="en">Large files</span><span lang="tr">Büyük dosyalar</span></td><td><span lang="en">All personal folders</span><span lang="tr">Tüm kişisel klasörler</span></td><td><span lang="en">Downloads and Desktop</span><span lang="tr">İndirilenler ve Masaüstü</span></td></tr>
+    <tr><td><span lang="en">Remove apps with their leftovers</span><span lang="tr">Uygulamaları kalıntılarıyla kaldırma</span></td><td>✓</td><td>–</td></tr>
+    <tr><td><span lang="en">Leftovers of removed apps</span><span lang="tr">Silinmiş uygulamaların kalıntıları</span></td><td>✓</td><td>–</td></tr>
+    <tr><td><span lang="en">Trash, Mail attachments, iPhone backups</span><span lang="tr">Çöp Sepeti, Mail ekleri, iPhone yedekleri</span></td><td>✓</td><td>–</td></tr>
+    <tr><td><span lang="en">Updates</span><span lang="tr">Güncellemeler</span></td><td><span lang="en">From this page</span><span lang="tr">Bu sayfadan</span></td><td><span lang="en">Automatic, via the App Store</span><span lang="tr">App Store'dan otomatik</span></td></tr>
+    <tr><td></td><td><a href="DiskBreeze-1.0.0.dmg" download><span lang="en">Download</span><span lang="tr">İndir</span></a></td><td><a href="https://apps.apple.com/app/diskbreeze-lite/id6820493687" target="_blank" rel="noopener">Mac App Store</a></td></tr>
+  </table>
 </section>
 
 <section>

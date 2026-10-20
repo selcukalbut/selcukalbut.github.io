@@ -1,6 +1,6 @@
 QGIS'te alan ağırlıklı ortalama artık tek eklentiyle
 
-Geçen hafta paylaştığım Sulama Programlama uygulamasında istasyon verilerini Thiessen (Voronoi) yöntemiyle ağırlıklandırıyordum. Aynı yöntemi bu kez QGIS masaüstü ortamına, herkesin kendi verisiyle kullanabileceği açık kaynak bir eklenti olarak taşıdım:
+İstasyon (nokta) verilerini alansal olarak ağırlıklandırmanın klasik yöntemi olan Thiessen (Voronoi) poligonlarını bu kez QGIS masaüstü ortamına, herkesin kendi verisiyle kullanabileceği açık kaynak bir eklenti olarak taşıdım:
 
 📐 İstasyon noktalarından (yağış, su ihtiyacı, debi, sıcaklık — hangi değişken olursa) otomatik Thiessen poligonları üretir
 ✂️ İsteğe bağlı bir sulama alanı/havza sınırına göre kırpar
@@ -14,7 +14,7 @@ Hidroloji, sulama planlaması veya havza analizi yapan meslektaşlarım için fa
 
 One plugin for area-weighted averages in QGIS
 
-Last week I shared my Irrigation Scheduling web app, which weights station data using the Thiessen (Voronoi) method. I've now brought the same method to QGIS as an open-source plugin anyone can use with their own data:
+Thiessen (Voronoi) polygons are the classic way to areal-weight station (point) data. I've now brought the method to QGIS as an open-source plugin anyone can use with their own data:
 
 📐 Automatically generates Thiessen polygons from station points (rainfall, irrigation water requirement, discharge, temperature — any variable)
 ✂️ Optionally clips them to an irrigation area or watershed boundary

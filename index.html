@@ -1224,8 +1224,10 @@ html[lang="en"] [data-lang="en"] { display: revert; }
 .uydu-usage-use span { font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; }
 
 @media (max-width: 860px) {
-  .uydu-map-wrap { height: 460px; }
-  .uydu-side-panel { top: 0.5rem; right: 0.5rem; left: 0.5rem; width: auto; max-height: 55%; }
+  /* On phones the panel would cover most of the globe, so it drops below the map as its own block. */
+  .uydu-map-wrap { height: auto; overflow: visible; border: none; background: transparent; }
+  .uydu-map { position: relative; inset: auto; height: clamp(340px, 62vh, 540px); border-radius: var(--radius); overflow: hidden; background: #000; border: 1px solid var(--border); }
+  .uydu-side-panel { position: static; width: auto; max-height: none; margin-top: 0.75rem; background: #10151c; backdrop-filter: none; }
 }
 </style>
 </head>
@@ -4451,6 +4453,12 @@ function uyduInit() {
     uyduRenderCatalog();
   });
   on('uyduCatalogMore', 'click', () => { uydu.catalogLimit += UYDU_CATALOG_PAGE; uyduRenderCatalog(); });
+  // rotating a phone / resizing the window changes the map's size
+  let resizeTimer = null;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => { if (currentPage === 'uydu') uyduResizeRenderer(); }, 150);
+  });
 }
 uyduInit();
 

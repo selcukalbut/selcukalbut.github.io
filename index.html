@@ -10,7 +10,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Karla:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/proj4@2.9.0/dist/proj4.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/mgrs@2.0.0/dist/mgrs.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/satellite.js@5.0.0/dist/satellite.min.js"></script>
 <script type="importmap">
 {
   "imports": {
@@ -1148,7 +1147,7 @@ html[lang="en"] [data-lang="en"] { display: revert; }
 .uydu-stat-value { font-size: 1.5rem; font-weight: 800; color: var(--primary); font-family: 'JetBrains Mono', monospace; }
 .uydu-stat-label { font-size: 0.68rem; color: var(--text-muted); margin-top: 0.15rem; }
 
-.uydu-sat-list { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem; max-height: 260px; overflow-y: auto; padding-right: 4px; }
+.uydu-sat-list { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1rem; max-height: 210px; overflow-y: auto; padding-right: 4px; }
 .uydu-catalog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
 .uydu-sat-pill {
   display: flex; align-items: center; gap: 0.6rem;
@@ -1170,6 +1169,42 @@ html[lang="en"] [data-lang="en"] { display: revert; }
 
 .uydu-analysis-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; max-width: 520px; }
 .uydu-pass-result { margin-top: 0.9rem; font-size: 0.85rem; color: var(--primary); min-height: 1.2em; }
+
+/* panel controls (inside .uydu-side-panel, so they pick up its light-on-dark variables) */
+.uydu-fold { margin-bottom: 0.75rem; }
+.uydu-fold > summary { cursor: pointer; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 0.4rem; list-style: none; }
+.uydu-fold > summary::-webkit-details-marker { display: none; }
+.uydu-fold > summary::before { content: '▾ '; }
+.uydu-fold:not([open]) > summary::before { content: '▸ '; }
+.uydu-layers { display: flex; flex-direction: column; gap: 0.1rem; }
+.uydu-layer { display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; color: var(--text); padding: 0.18rem 0.1rem; cursor: pointer; }
+.uydu-layer input { accent-color: #fff; flex-shrink: 0; }
+.uydu-layer .uydu-dot { width: 9px; height: 9px; border: none; box-shadow: none; flex-shrink: 0; }
+.uydu-layer-name { flex: 1; }
+.uydu-layer em { font-style: normal; font-size: 0.7rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; }
+.uydu-search { width: 100%; background: var(--card); border: 1px solid var(--border); color: var(--text); border-radius: 8px; padding: 0.45rem 0.65rem; font-size: 0.8rem; font-family: inherit; margin-bottom: 0.6rem; }
+.uydu-search::placeholder { color: var(--text-muted); }
+.uydu-track-mode { display: flex; align-items: center; gap: 0.35rem; font-size: 0.72rem; color: var(--text-muted); margin-bottom: 0.35rem; }
+.uydu-track-mode span { margin-right: 0.15rem; }
+.uydu-track-mode button { background: var(--card); border: 1px solid var(--border); color: var(--text); border-radius: 6px; padding: 0.2rem 0.6rem; font-size: 0.72rem; font-family: inherit; cursor: pointer; }
+.uydu-track-mode button.active { border-color: var(--primary); box-shadow: 0 0 0 1px var(--primary) inset; font-weight: 700; }
+.uydu-track-hint { font-size: 0.68rem; color: var(--text-muted); min-height: 0.9rem; margin-bottom: 0.4rem; line-height: 1.3; }
+.uydu-more { background: none; border: 1px dashed var(--border); color: var(--text-muted); border-radius: 8px; padding: 0.4rem; font-size: 0.75rem; font-family: inherit; cursor: pointer; }
+.uydu-empty { font-size: 0.78rem; color: var(--text-muted); padding: 0.4rem 0.2rem; }
+.uydu-selected-wide { grid-column: 1 / -1; }
+.uydu-sel-groups { font-family: inherit; font-size: 0.82rem; font-weight: 600; }
+
+/* catalog filters + compact cards */
+.uydu-catalog-filters { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1rem; }
+.uydu-catalog-filters button { background: var(--card); border: 1px solid var(--border); color: var(--text-muted); border-radius: 999px; padding: 0.3rem 0.8rem; font-size: 0.78rem; font-weight: 600; font-family: inherit; cursor: pointer; }
+.uydu-catalog-filters button em { font-style: normal; font-weight: 400; opacity: 0.7; margin-left: 0.2rem; }
+.uydu-catalog-filters button.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+.uydu-catalog-more { text-align: center; margin-top: 1.25rem; }
+.uydu-catalog-card.compact { padding: 0.9rem 1.1rem; }
+.uydu-catalog-card.compact .app-icon { width: 44px; height: 44px; font-size: 1.3rem; border-radius: 12px; }
+.uydu-catalog-card.compact h3 { font-size: 0.92rem; margin-bottom: 0.35rem; }
+.uydu-usage-more { font-size: 0.72rem; color: var(--text-muted); align-self: center; padding: 0 0.3rem; }
+.uydu-usage-note { font-size: 0.78rem !important; font-style: italic; margin: -0.4rem 0 1rem !important; }
 
 .uydu-usage-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.25rem; }
 .uydu-usage-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; }
@@ -2095,8 +2130,8 @@ html[lang="en"] [data-lang="en"] { display: revert; }
         <div class="eyebrow" data-lang="en">Tool</div>
         <h1 data-lang="tr">Uydu Takip — Yörünge Atlası</h1>
         <h1 data-lang="en">Satellite Tracker — Orbit Atlas</h1>
-        <p data-lang="tr">Aktif yer gözlem uydularının anlık yörünge konumunu, gerçek TLE verisi ve SGP4 modeliyle tarayıcınızda hesaplayıp canlı izleyin.</p>
-        <p data-lang="en">Track active Earth observation satellites' real-time orbital position, computed live in your browser from real TLE data with the SGP4 model.</p>
+        <p data-lang="tr">Yer gözlem, navigasyon (GPS ve diğerleri), hava ve istasyon uydularının anlık yörünge konumunu, gerçek yörünge verisi ve SGP4 modeliyle tarayıcınızda hesaplayıp canlı izleyin.</p>
+        <p data-lang="en">Track the real-time orbital position of Earth-observation, navigation (GPS and others), weather and space-station satellites, computed live in your browser from real orbital data with the SGP4 model.</p>
       </div>
 
       <div id="uyduStatusBanner" class="uydu-status-banner" style="display:none"></div>
@@ -2128,15 +2163,22 @@ html[lang="en"] [data-lang="en"] { display: revert; }
             <div class="uydu-stat-row">
               <div class="uydu-stat">
                 <div class="uydu-stat-value" id="uyduTrackedCount">—</div>
-                <div class="uydu-stat-label" data-lang="tr">Takip edilen uydu</div>
-                <div class="uydu-stat-label" data-lang="en">Tracked satellites</div>
+                <div class="uydu-stat-label" data-lang="tr">Görünen uydu</div>
+                <div class="uydu-stat-label" data-lang="en">Satellites shown</div>
               </div>
               <div class="uydu-stat">
-                <div class="uydu-stat-value" id="uyduLiveCount">—</div>
-                <div class="uydu-stat-label" data-lang="tr">Canlı veri alınan</div>
-                <div class="uydu-stat-label" data-lang="en">With live data</div>
+                <div class="uydu-stat-value" id="uyduDataAge">—</div>
+                <div class="uydu-stat-label" data-lang="tr">Veri yaşı</div>
+                <div class="uydu-stat-label" data-lang="en">Data age</div>
               </div>
             </div>
+            <details class="uydu-fold" open>
+              <summary id="uyduLayersTitle">Katmanlar</summary>
+              <div id="uyduLayers" class="uydu-layers"></div>
+            </details>
+            <input id="uyduSearch" class="uydu-search" type="search" autocomplete="off">
+            <div id="uyduTrackMode" class="uydu-track-mode"></div>
+            <div id="uyduTrackHint" class="uydu-track-hint"></div>
             <div id="uyduSatList" class="uydu-sat-list"></div>
             <div class="uydu-selected-card">
               <h3 id="uyduSelName">—</h3>
@@ -2147,11 +2189,14 @@ html[lang="en"] [data-lang="en"] { display: revert; }
                 <div><span data-lang="tr">Eğim</span><span data-lang="en">Inclination</span><b id="uyduSelIncl">—</b></div>
                 <div><span data-lang="tr">Enlem</span><span data-lang="en">Latitude</span><b id="uyduSelLat">—</b></div>
                 <div><span data-lang="tr">Boylam</span><span data-lang="en">Longitude</span><b id="uyduSelLon">—</b></div>
+                <div><span>NORAD</span><b id="uyduSelNorad">—</b></div>
+                <div><span data-lang="tr">Eleman yaşı</span><span data-lang="en">Element age</span><b id="uyduSelEpoch">—</b></div>
+                <div class="uydu-selected-wide"><span data-lang="tr">Grup</span><span data-lang="en">Group</span><b id="uyduSelGroups" class="uydu-sel-groups">—</b></div>
               </div>
             </div>
             <div class="uydu-source-note">
-              <span data-lang="tr">Konumlar CelesTrak TLE verisi ve SGP4 modeliyle tarayıcınızda hesaplanır, ~2 sn'de bir güncellenir.</span>
-              <span data-lang="en">Positions are computed in your browser from CelesTrak TLE data using the SGP4 model, refreshed every ~2s.</span>
+              <span data-lang="tr">Yörünge verisi CelesTrak'tan 2 saatte bir alınır; konumlar tarayıcınızda SGP4 modeliyle hesaplanır ve ~2 sn'de bir güncellenir.</span>
+              <span data-lang="en">Orbital data is pulled from CelesTrak every 2 hours; positions are computed in your browser with the SGP4 model and refreshed every ~2 s.</span>
             </div>
           </div>
         </div>
@@ -2159,7 +2204,9 @@ html[lang="en"] [data-lang="en"] { display: revert; }
 
       <!-- CATALOG -->
       <div class="uydu-tab-panel" data-tab="catalog">
+        <div id="uyduCatalogFilters" class="uydu-catalog-filters"></div>
         <div id="uyduCatalogGrid" class="uydu-catalog-grid"></div>
+        <div class="uydu-catalog-more"><button id="uyduCatalogMore" class="calc-add-btn" style="display:none"></button></div>
         <div class="apps-note" style="margin-top:1rem">
           <span data-lang="tr">💡 Bir uyduya tıklayarak Canlı Takip sekmesinde onu seçili hale getirebilirsiniz.</span>
           <span data-lang="en">💡 Click a satellite to select it on the Live Tracking tab.</span>
@@ -3059,18 +3106,6 @@ function koordInit() {
 koordInit();
 
 /* ══════════ UYDU TAKİP (Yörünge Atlası) ══════════ */
-// Even, well-spread hue per satellite so N colors stay visually distinct without hand-picking hex
-// values one by one; kept as real hex strings (not hsl()) so the existing `color + '22'` alpha
-// trick used for catalog icon backgrounds keeps working.
-function uyduHslToHex(h, s, l) {
-  s /= 100; l /= 100;
-  const k = n => (n + h / 30) % 12;
-  const a = s * Math.min(l, 1 - l);
-  const f = n => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
-  const toHex = x => Math.round(255 * x).toString(16).padStart(2, '0');
-  return '#' + toHex(f(0)) + toHex(f(8)) + toHex(f(4));
-}
-
 // NORAD catalog numbers verified against live CelesTrak data (https://celestrak.org/NORAD/elements/gp.php)
 // before adding — satellites without a currently-published TLE (e.g. HISUI, TELEOS-1) were left out.
 const SATELLITES_RAW = [
@@ -3288,21 +3323,47 @@ const SATELLITES_RAW = [
             en: 'Member of a small-satellite constellation collecting hyperspectral data for environment and resource monitoring.' } },
 ];
 
-SATELLITES_RAW.sort((a, b) => a.name.localeCompare(b.name, 'tr'));
-const SATELLITES = SATELLITES_RAW.map((sat, i) => ({
-  ...sat,
-  color: uyduHslToHex(Math.round((360 * i) / SATELLITES_RAW.length), 78, 58),
-}));
+// SATELLITES_RAW above is only the hand-written metadata for the 53 "curated" satellites. The full
+// catalog (~600 satellites) is built at runtime from the data snapshot, with these entries merged
+// in by NORAD id (see uyduBuildCatalog).
+const CURATED_BY_NORAD = new Map(SATELLITES_RAW.map(s => [s.noradId, s]));
+let SATELLITES = [];
 
-// Groups the tracked satellites by imaging type/resolution class and links each group to the
-// kinds of scientific/practical work it's typically used for — grounded in the satellites this
-// tool actually tracks (satIds), not generic examples.
+// Groups the tracker can show. A satellite can belong to several (e.g. a weather satellite that
+// is also in the Earth-resources list). `color` identifies a group in lists and chips only — on
+// the globe every satellite shares the same icon.
+const UYDU_GROUPS = [
+  { id: 'stations', color: '#eab308', name: { tr: 'Uzay İstasyonları', en: 'Space Stations' } },
+  { id: 'gps', color: '#3b82f6', name: { tr: 'GPS (ABD)', en: 'GPS (USA)' } },
+  { id: 'glonass', color: '#8b5cf6', name: { tr: 'GLONASS (Rusya)', en: 'GLONASS (Russia)' } },
+  { id: 'galileo', color: '#14b8a6', name: { tr: 'Galileo (AB)', en: 'Galileo (EU)' } },
+  { id: 'beidou', color: '#ec4899', name: { tr: 'BeiDou (Çin)', en: 'BeiDou (China)' } },
+  { id: 'weather', color: '#06b6d4', name: { tr: 'Hava ve İklim', en: 'Weather & Climate' } },
+  { id: 'resource', color: '#22c55e', name: { tr: 'Yer Kaynakları', en: 'Earth Resources' } },
+  { id: 'sar', color: '#a16207', name: { tr: 'Radar (SAR)', en: 'Radar (SAR)' } },
+  { id: 'science', color: '#6366f1', name: { tr: 'Bilim', en: 'Science' } },
+  { id: 'turkey', color: '#ea580c', name: { tr: 'Türkiye', en: 'Türkiye' } },
+];
+const UYDU_GROUP_BY_ID = Object.fromEntries(UYDU_GROUPS.map(g => [g.id, g]));
+// Which group a satellite is listed/colored under when it belongs to several.
+const UYDU_PRIMARY_ORDER = ['stations', 'gps', 'glonass', 'galileo', 'beidou', 'weather', 'sar', 'resource', 'science', 'turkey'];
+// CelesTrak names are plain ASCII; give the Turkish ones their proper names.
+const UYDU_NAME_OVERRIDES = {
+  33056: 'Türksat 3A', 39522: 'Türksat 4A', 40984: 'Türksat 4B', 47306: 'Türksat 5A', 50212: 'Türksat 5B',
+  60233: 'Türksat 6A', 56178: 'İMECE', 55012: 'Connecta T1.2', 37791: 'RASAT',
+};
+
+// Groups the tracked satellites by what they are used for and links each group to the kinds of
+// scientific/practical work it supports. Entries list either curated satellites by id (satIds) or
+// whole snapshot groups (groups).
 const USAGE_CATEGORIES = [
   {
     title: { tr: 'Çok Yüksek Çözünürlüklü Optik (~0.3–1 m)', en: 'Very High-Resolution Optical (~0.3–1 m)' },
     desc: { tr: 'Tek tek bina, araç ve yol detayını ayırt edebilen en keskin ticari/sivil görüntüler.',
             en: 'The sharpest commercial/civil imagery — sharp enough to resolve individual buildings, vehicles and roads.' },
     satIds: ['worldview1', 'worldview2', 'worldview3', 'geoeye1', 'gokturk1', 'pleiades1a', 'pleiades1b', 'cartosat3', 'cartosat2f', 'kompsat2', 'kompsat3', 'kompsat3a', 'deimos2', 'erosc3', 'skysatc1', 'superview1', 'jilin1', 'nusat26', 'kazeosat1'],
+    note: { tr: 'Diğer yer gözlem uydularını Canlı Takip\'teki "Yer Kaynakları" ve "Radar" katmanlarından açabilirsiniz.',
+            en: 'More Earth-observation satellites are available through the "Earth Resources" and "Radar" layers on the Live Tracking tab.' },
     uses: [
       { tr: ['Kentsel Planlama ve Kadastro', 'Bina tespiti, parselasyon, yol ağı analizi ve mülk takibi.'], en: ['Urban Planning & Cadastre', 'Building detection, parcel mapping, road-network analysis and property tracking.'] },
       { tr: ['Savunma ve İstihbarat', 'Hedef tespiti, sınır güvenliği ve askerî hareketlilik izleme.'], en: ['Defense & Intelligence', 'Target detection, border security and monitoring military activity.'] },
@@ -3314,6 +3375,8 @@ const USAGE_CATEGORIES = [
     desc: { tr: 'Geniş alanları düzenli olarak tarayan, uzun dönemli ve karşılaştırılabilir arşivler sunan uydular.',
             en: 'Satellites that regularly scan wide areas, building long-term, comparable archives.' },
     satIds: ['landsat9', 'landsat8', 'landsat7', 'terra', 'aqua', 'sentinel2a', 'gokturk2', 'formosat5', 'deimos1', 'gaofen1', 'gaofen2', 'grus1a', 'spot6', 'spot7', 'theos', 'resourcesat2', 'kazeosat2', 'gaofen4', 'gaofen6', 'gaofen7'],
+    note: { tr: 'Sentinel-2B/2C, Sentinel-3, SMAP, SWOT, ICESat-2 gibi diğer yer gözlem uyduları "Yer Kaynakları" katmanında.',
+            en: 'Other Earth-observation satellites such as Sentinel-2B/2C, Sentinel-3, SMAP, SWOT and ICESat-2 are in the "Earth Resources" layer.' },
     uses: [
       { tr: ['Arazi Örtüsü ve Kullanımı', 'Orman, tarım ve su yüzeyi değişimlerinin uzun dönemli izlenmesi.'], en: ['Land Cover & Land Use', 'Long-term monitoring of forest, agricultural and water-surface change.'] },
       { tr: ['Tarım ve Ormancılık', 'Bitki sağlığı (NDVI) analizleri, rekolte tahmini ve ormansızlaşma takibi.'], en: ['Agriculture & Forestry', 'Vegetation-health (NDVI) analysis, yield estimation and deforestation tracking.'] },
@@ -3325,6 +3388,8 @@ const USAGE_CATEGORIES = [
     desc: { tr: 'Bulut örtüsü ve karanlıktan etkilenmeyen, radar sinyaliyle görüntüleme yapan uydular.',
             en: 'Satellites that image with radar signals, unaffected by cloud cover or darkness.' },
     satIds: ['sentinel1a', 'alos2', 'alos4', 'asnaro2', 'capella', 'cosmoskymed1', 'gaofen3', 'kompsat5', 'paz', 'radarsat2', 'tandemx'],
+    note: { tr: 'ICEYE, Capella, Umbra, Sentinel-1C/1D, NISAR gibi onlarca radar uydusu "Radar (SAR)" katmanında.',
+            en: 'Dozens more radar satellites (ICEYE, Capella, Umbra, Sentinel-1C/1D, NISAR…) are in the "Radar (SAR)" layer.' },
     uses: [
       { tr: ['Afet Müdahalesi', 'Sel, deprem ve heyelanları hava koşulundan bağımsız, gece-gündüz izleme.'], en: ['Disaster Response', 'Monitoring floods, earthquakes and landslides day or night, in any weather.'] },
       { tr: ['Deniz ve Buz İzleme', 'Gemi tespiti, petrol sızıntısı ve kutup buzu hareketlerinin takibi.'], en: ['Maritime & Ice Monitoring', 'Ship detection, oil-spill tracking and polar-ice movement.'] },
@@ -3342,20 +3407,84 @@ const USAGE_CATEGORIES = [
       { tr: ['Su Kalitesi', 'Göl ve kıyı sularında klorofil, sediman ve kirlilik düzeyinin izlenmesi.'], en: ['Water Quality', 'Monitoring chlorophyll, sediment and pollution levels in lakes and coastal waters.'] },
     ],
   },
+  {
+    title: { tr: 'Konumlandırma ve Navigasyon (GNSS)', en: 'Positioning & Navigation (GNSS)' },
+    desc: { tr: 'GPS, GLONASS, Galileo ve BeiDou ~20.000 km yükseklikte (MEO) küresel konum, hız ve zaman sinyali yayar.',
+            en: 'GPS, GLONASS, Galileo and BeiDou broadcast global position, velocity and time signals from ~20,000 km (MEO).' },
+    groups: ['gps', 'glonass', 'galileo', 'beidou'],
+    uses: [
+      { tr: ['Haritalama ve Kadastro (CBS)', 'Arazi ölçümü, RTK/PPP ile santimetre düzeyi konum ve saha verisi toplama.'], en: ['Mapping & Cadastre (GIS)', 'Land surveying, centimetre-level positioning with RTK/PPP and field data collection.'] },
+      { tr: ['Hassas Tarım ve Sulama', 'Otomatik traktör yönlendirme, değişken oranlı gübreleme/sulama ve parsel sınırı haritalama.'], en: ['Precision Agriculture & Irrigation', 'Auto-steering tractors, variable-rate fertilising/irrigation and field-boundary mapping.'] },
+      { tr: ['Zaman ve Jeodinamik', 'Şebekeler için hassas zaman damgası; plaka hareketi, yüzey deformasyonu ve atmosferik nem ölçümü.'], en: ['Timing & Geodynamics', 'Precise time-stamping for networks; plate motion, surface deformation and atmospheric water-vapour sensing.'] },
+    ],
+  },
+  {
+    title: { tr: 'Meteoroloji ve İklim', en: 'Meteorology & Climate' },
+    desc: { tr: 'Kutupsal (NOAA, MetOp, FY-3, Suomi NPP) ve jeostasyoner (GOES, Meteosat, Himawari) hava uyduları.',
+            en: 'Polar-orbiting (NOAA, MetOp, FY-3, Suomi NPP) and geostationary (GOES, Meteosat, Himawari) weather satellites.' },
+    groups: ['weather'],
+    uses: [
+      { tr: ['Hava Tahmini', 'Bulut, nem ve sıcaklık profilleri sayısal tahmin modellerine girdi sağlar.'], en: ['Weather Forecasting', 'Cloud, humidity and temperature profiles feed numerical forecast models.'] },
+      { tr: ['Fırtına ve Afet İzleme', 'Kasırga, sel, yangın ve volkanik kül bulutlarının neredeyse gerçek zamanlı takibi.'], en: ['Storm & Hazard Monitoring', 'Near-real-time tracking of cyclones, floods, fires and volcanic ash clouds.'] },
+      { tr: ['İklim Kayıtları', 'Deniz yüzeyi sıcaklığı, kar/buz örtüsü ve bulut değişimlerinin onlarca yıllık serileri.'], en: ['Climate Records', 'Decades-long series of sea-surface temperature, snow/ice cover and cloud change.'] },
+    ],
+  },
+  {
+    title: { tr: 'Uzay İstasyonları ve İnsanlı Uçuş', en: 'Space Stations & Crewed Spaceflight' },
+    desc: { tr: 'ISS ve Tiangong ile bunlara kenetli ikmal ve mürettebat araçları (Soyuz, Progress, Dragon, Tianzhou, Shenzhou).',
+            en: 'The ISS and Tiangong plus the cargo and crew vehicles docked to them (Soyuz, Progress, Dragon, Tianzhou, Shenzhou).' },
+    groups: ['stations'],
+    uses: [
+      { tr: ['Mikroyerçekimi Araştırmaları', 'Malzeme, biyoloji ve tıp deneyleri; uzun süreli insan uçuşunun etkileri.'], en: ['Microgravity Research', 'Materials, biology and medicine experiments; effects of long-duration human spaceflight.'] },
+      { tr: ['Dünya Gözlemi', 'Astronot fotoğrafları ve istasyon dışı sensörlerle şehir ışığı, afet ve çevre görüntüleri.'], en: ['Earth Observation', 'City-light, disaster and environmental imagery from astronaut photography and external sensors.'] },
+      { tr: ['Görünür Geçişler', 'İstasyonlar gün doğumu/batımında çıplak gözle görülebilen en parlak uydulardır; geçişleri önceden hesaplanabilir.'], en: ['Visible Passes', 'Stations are among the brightest objects at dawn/dusk; their passes can be predicted in advance.'] },
+    ],
+  },
+  {
+    title: { tr: 'Bilim ve Uzay Gözlemevleri', en: 'Science & Space Observatories' },
+    desc: { tr: 'Hubble, Chandra, SDO gibi astronomi ve güneş fiziği görevleri ile yer sistemi bilimi uyduları.',
+            en: 'Astronomy and solar-physics missions such as Hubble, Chandra and SDO, plus Earth-system science satellites.' },
+    groups: ['science'],
+    uses: [
+      { tr: ['Astronomi ve Astrofizik', 'Teleskoplarla galaksi, kara delik ve gezegen sistemi gözlemleri.'], en: ['Astronomy & Astrophysics', 'Telescope observations of galaxies, black holes and planetary systems.'] },
+      { tr: ['Güneş ve Uzay Havası', 'Güneş patlamaları ve manyetosfer ölçümleriyle uzay havası tahmini (SDO, MMS, Hinode).'], en: ['Solar & Space Weather', 'Solar flare and magnetosphere measurements for space-weather forecasting (SDO, MMS, Hinode).'] },
+      { tr: ['Yer Sistemi Bilimi', 'Buz, okyanus, karbon ve manyetik alan ölçümleri (CryoSat-2, OCO-2, Swarm).'], en: ['Earth-System Science', 'Ice, ocean, carbon and magnetic-field measurements (CryoSat-2, OCO-2, Swarm).'] },
+    ],
+  },
+  {
+    title: { tr: 'Türkiye\'nin Uyduları', en: 'Türkiye\'s Satellites' },
+    desc: { tr: 'Haberleşme (Türksat 3A–6A), yer gözlem (Göktürk-1/2, İMECE, RASAT) ve nesnelerin interneti (Connecta) uyduları.',
+            en: 'Communications (Türksat 3A–6A), Earth observation (Göktürk-1/2, İMECE, RASAT) and IoT (Connecta) satellites.' },
+    groups: ['turkey'],
+    uses: [
+      { tr: ['Haberleşme ve Yayıncılık', 'Türksat serisiyle televizyon, genişbant ve kurumsal haberleşme hizmetleri.'], en: ['Communications & Broadcasting', 'Television, broadband and enterprise communications through the Türksat series.'] },
+      { tr: ['Yer Gözlem ve Güvenlik', 'Göktürk, İMECE ve RASAT ile sivil ve savunma amaçlı görüntüleme, afet haritalama.'], en: ['Earth Observation & Security', 'Civil and defense imaging and disaster mapping with Göktürk, İMECE and RASAT.'] },
+      { tr: ['Nesnelerin İnterneti', 'Connecta uydularıyla düşük yörüngeden IoT bağlantısı.'], en: ['Internet of Things', 'IoT connectivity from low orbit through the Connecta satellites.'] },
+    ],
+  },
 ];
+
+const UYDU_USAGE_MAX_CHIPS = 60;
+
+function uyduUsageMembers(cat) {
+  if (cat.satIds) return cat.satIds.map(id => uydu.byId.get(id)).filter(Boolean);
+  return SATELLITES.filter(s => s.groups.some(g => cat.groups.includes(g)));
+}
 
 function uyduBuildUsageGuide() {
   const el = document.getElementById('uyduUsageGuide');
   if (!el) return;
   el.innerHTML = USAGE_CATEGORIES.map(cat => {
-    const chips = cat.satIds
-      .map(id => SATELLITES.find(s => s.id === id))
-      .filter(Boolean)
+    const members = uyduUsageMembers(cat);
+    const chips = members.slice(0, UYDU_USAGE_MAX_CHIPS)
       .map(sat =>
         '<button class="uydu-usage-chip" onclick="uyduOpenFromCatalog(\'' + sat.id + '\')">' +
           '<span style="width:8px;height:8px;border-radius:50%;flex-shrink:0;background:' + sat.color + '"></span>' + sat.name +
         '</button>'
-      ).join('');
+      ).join('') +
+      (members.length > UYDU_USAGE_MAX_CHIPS
+        ? '<span class="uydu-usage-more">+' + (members.length - UYDU_USAGE_MAX_CHIPS) + ' ' + tesvikT('uydu daha — Canlı Takip\'te', 'more — on Live Tracking') + '</span>'
+        : '');
     const uses = cat.uses.map(u => {
       const t = u[currentLang] || u.tr;
       return '<div class="uydu-usage-use"><b>' + t[0] + '</b><span>' + t[1] + '</span></div>';
@@ -3365,7 +3494,8 @@ function uyduBuildUsageGuide() {
         '<h3>' + cat.title[currentLang] + '</h3>' +
         '<p>' + cat.desc[currentLang] + '</p>' +
         '<div class="uydu-usage-label">' + tesvikT('Örnek uydular', 'Example satellites') + '</div>' +
-        '<div class="uydu-usage-chips">' + chips + '</div>' +
+        '<div class="uydu-usage-chips">' + (chips || '<span class="uydu-usage-more">' + tesvikT('Veri yükleniyor…', 'Loading data…') + '</span>') + '</div>' +
+        (cat.note ? '<p class="uydu-usage-note">' + cat.note[currentLang] + '</p>' : '') +
         '<div class="uydu-usage-label">' + tesvikT('Kullanım alanları', 'Use cases') + '</div>' +
         '<div class="uydu-usage-uses">' + uses + '</div>' +
       '</div>'
@@ -3373,8 +3503,19 @@ function uyduBuildUsageGuide() {
   }).join('');
 }
 
-const UYDU_EARTH_RADIUS_KM = 6371;
-const UYDU_ALT_EXAGGERATION = 3; // real LEO altitude is ~11% of Earth's radius — barely visible without this
+const UYDU_ALT_SCALE = 0.0124;      // globe radius = 1 + SCALE·√altitude_km (compresses LEO→GEO so all fit one view)
+const UYDU_MAX_POINTS = 1500;       // capacity of the shared satellite Points buffer
+const UYDU_TRACK_GROUP_MAX = 120;   // draw muted tracks for the selected satellite's group only up to this size
+const UYDU_TRACK_SAMPLES = 90;      // segments per orbit track
+const UYDU_TRACK_REFRESH_MS = 30000;
+const UYDU_LIST_PAGE = 60;
+const UYDU_CATALOG_PAGE = 60;
+const UYDU_SNAPSHOT_URL = '/api/gp';
+const UYDU_SEED_URL = 'assets/data/gp-seed.json';
+const UYDU_SNAPSHOT_CACHE_KEY = 'uydu_snapshot_v1';
+const UYDU_SATJS_URL = 'https://cdn.jsdelivr.net/npm/satellite.js@7.1.0/+esm';
+
+let satellite = null; // satellite.js, loaded lazily (ES module) together with the data snapshot
 
 const uydu = {
   three: null,
@@ -3384,19 +3525,34 @@ const uydu = {
   controls: null,
   earthMesh: null,
   starPoints: null,
-  raycaster: null,
-  pointer: null,
-  satSprites: {},
-  baseTrackLines: {},
-  selectedTrackLine: null,
+  satPoints: null,        // one THREE.Points for every visible satellite
+  pointSats: [],          // pointSats[i] = satellite drawn at buffer slot i
+  pointXYZ: null,         // Float32Array mirror of the Points buffer (also used for picking)
+  mutedTracks: null,      // one LineSegments holding every muted orbit track
+  selectedIcon: null,     // big icon sprite on the selected satellite
   selectionRing: null,
+  selectedTrackLine: null,
   animating: false,
   loadingThree: false,
-  selectedId: SATELLITES[0].id,
-  tles: {},
-  fetchStatus: {},
+  // data
+  dataPromise: null,
+  dataState: 'idle',      // idle | loading | ready | error
+  snapshot: null,         // { generatedAt: Date, via: 'network' | 'cache' | 'seed' }
+  satrecs: new Map(),     // sat.id -> satellite.js satrec
+  byId: new Map(),
+  visible: [],            // satellites whose group layer is switched on
+  // ui state
+  selectedId: 'landsat9',
+  visibleGroups: new Set(UYDU_GROUPS.map(g => g.id)),
+  search: '',
+  listLimit: UYDU_LIST_PAGE,
+  trackMode: 'group',     // group | selected
+  catalogFilter: 'curated',
+  catalogLimit: UYDU_CATALOG_PAGE,
+  trackDirty: true,
+  lastTrackAt: 0,
   tickTimer: null,
-  fetched: false,
+  dragStart: null,
 };
 
 // Standard equirectangular lat/lon → 3D conversion matching THREE.SphereGeometry's default UV
@@ -3491,45 +3647,117 @@ function uyduMakeRingTexture(THREE, color) {
   return new THREE.CanvasTexture(canvas);
 }
 
-function uyduCacheKey(sat) { return 'uydu_tle_' + sat.id; }
+// ── Data: visitors never talk to CelesTrak. A scheduled Netlify function (netlify/functions) pulls the
+// groups every 2 hours into one snapshot, served at /api/gp. Fallbacks: last snapshot cached in this
+// browser, then a seed file committed to the repo.
+async function uyduLoadLibs() {
+  if (!satellite) satellite = await import(UYDU_SATJS_URL);
+}
 
-async function uyduFetchOne(sat) {
+function uyduValidSnapshot(s) {
+  return !!s && s.schema === 1 && Array.isArray(s.sats) && s.sats.length >= 50 && !!s.groups && !!s.generatedAt;
+}
+
+async function uyduFetchJson(url) {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('http ' + res.status);
+  return res.json();
+}
+
+async function uyduLoadSnapshot() {
   try {
-    const res = await fetch('https://celestrak.org/NORAD/elements/gp.php?CATNR=' + sat.noradId + '&FORMAT=TLE');
-    if (!res.ok) throw new Error('http ' + res.status);
-    const text = await res.text();
-    const lines = text.trim().split(/\r?\n/).filter(l => l.trim().length > 0);
-    if (lines.length < 3) throw new Error('unexpected TLE response');
-    const entry = { line1: lines[lines.length - 2], line2: lines[lines.length - 1], fetchedAt: Date.now() };
-    localStorage.setItem(uyduCacheKey(sat), JSON.stringify(entry));
-    uydu.tles[sat.id] = entry;
-    uydu.fetchStatus[sat.id] = 'ok';
-  } catch (e) {
-    const cachedRaw = localStorage.getItem(uyduCacheKey(sat));
-    if (cachedRaw) {
-      uydu.tles[sat.id] = JSON.parse(cachedRaw);
-      uydu.fetchStatus[sat.id] = 'stale';
-    } else {
-      uydu.fetchStatus[sat.id] = 'error';
+    const s = await uyduFetchJson(UYDU_SNAPSHOT_URL);
+    if (uyduValidSnapshot(s)) {
+      try {
+        localStorage.setItem(UYDU_SNAPSHOT_CACHE_KEY, JSON.stringify(s));
+        Object.keys(localStorage).filter(k => k.startsWith('uydu_tle_')).forEach(k => localStorage.removeItem(k)); // old per-satellite TLE cache
+      } catch (e) { /* storage unavailable/full: not essential */ }
+      return { snapshot: s, via: 'network' };
+    }
+  } catch (e) { /* fall through to the cache */ }
+  try {
+    const raw = localStorage.getItem(UYDU_SNAPSHOT_CACHE_KEY);
+    if (raw) { const s = JSON.parse(raw); if (uyduValidSnapshot(s)) return { snapshot: s, via: 'cache' }; }
+  } catch (e) { /* fall through to the seed */ }
+  try {
+    const s = await uyduFetchJson(UYDU_SEED_URL);
+    if (uyduValidSnapshot(s)) return { snapshot: s, via: 'seed' };
+  } catch (e) { /* nothing left to try */ }
+  return null;
+}
+
+// Merges the snapshot with the hand-written metadata of the curated satellites into SATELLITES.
+function uyduBuildCatalog(snapshot, via) {
+  const memberOf = new Map();
+  for (const [g, ids] of Object.entries(snapshot.groups)) {
+    if (!UYDU_GROUP_BY_ID[g]) continue;
+    for (const id of ids) {
+      if (!memberOf.has(id)) memberOf.set(id, []);
+      memberOf.get(id).push(g);
     }
   }
+  const sats = [], satrecs = new Map(), byId = new Map();
+  for (const omm of snapshot.sats) {
+    const noradId = Number(omm.NORAD_CAT_ID);
+    let satrec = null;
+    try { satrec = satellite.json2satrec(omm); } catch (e) { continue; }
+    if (!satrec || satrec.error) continue;
+    const cur = CURATED_BY_NORAD.get(noradId);
+    const groups = memberOf.has(noradId) ? [...memberOf.get(noradId)] : (cur ? ['resource'] : []);
+    if (!groups.length) continue;
+    const primary = UYDU_PRIMARY_ORDER.find(g => groups.includes(g)) || groups[0];
+    const sat = {
+      id: cur ? cur.id : String(noradId),
+      noradId,
+      name: UYDU_NAME_OVERRIDES[noradId] || (cur && cur.name) || omm.OBJECT_NAME,
+      agency: cur ? cur.agency : null,
+      mission: cur ? cur.mission : null,
+      desc: cur ? cur.desc : null,
+      curated: !!cur,
+      groups, group: primary,
+      color: UYDU_GROUP_BY_ID[primary].color,
+      epochMs: Date.parse(String(omm.EPOCH) + 'Z'),
+    };
+    sats.push(sat); satrecs.set(sat.id, satrec); byId.set(sat.id, sat);
+  }
+  sats.sort((a, b) => a.name.localeCompare(b.name, 'tr'));
+  SATELLITES = sats;
+  uydu.satrecs = satrecs;
+  uydu.byId = byId;
+  uydu.snapshot = { generatedAt: new Date(snapshot.generatedAt), via };
+  if (!byId.has(uydu.selectedId) && sats.length) uydu.selectedId = sats[0].id;
+  uyduApplyFilters();
 }
 
-async function uyduFetchAll() {
-  await Promise.all(SATELLITES.map(uyduFetchOne));
-  uydu.fetched = true;
-  uyduRenderAll();
+function uyduApplyFilters() {
+  uydu.visible = SATELLITES.filter(s => s.groups.some(g => uydu.visibleGroups.has(g)));
+  uydu.trackDirty = true;
 }
 
-function uyduSatrec(sat) {
-  const tle = uydu.tles[sat.id];
-  if (!tle) return null;
-  if (!tle.satrec) tle.satrec = satellite.twoline2satrec(tle.line1, tle.line2);
-  return tle.satrec;
+function uyduEnsureData() {
+  if (uydu.dataPromise) return uydu.dataPromise;
+  uydu.dataState = 'loading';
+  uydu.dataPromise = (async () => {
+    try {
+      await uyduLoadLibs();
+      const loaded = await uyduLoadSnapshot();
+      if (!loaded) { uydu.dataState = 'error'; return; }
+      uyduBuildCatalog(loaded.snapshot, loaded.via);
+      uydu.dataState = 'ready';
+    } catch (e) {
+      console.error('uydu: data load failed', e);
+      uydu.dataState = 'error';
+    }
+    uyduBuildStaticUI();
+    uyduRenderAll();
+  })();
+  return uydu.dataPromise;
 }
+
+function uyduSatrec(sat) { return uydu.satrecs.get(sat.id) || null; }
 
 function uyduPositionAt(sat, date) {
-  const satrec = uyduSatrec(sat);
+  const satrec = satellite && uyduSatrec(sat);
   if (!satrec) return null;
   const pv = satellite.propagate(satrec, date);
   if (!pv || !pv.position) return null;
@@ -3548,6 +3776,22 @@ function uyduPositionAt(sat, date) {
 }
 
 function uyduFormatNum(n, digits) { return (n == null || isNaN(n)) ? '—' : n.toFixed(digits); }
+
+function uyduFormatAge(ms) {
+  const min = Math.max(0, Math.round(ms / 60000));
+  if (min < 90) return min + ' ' + tesvikT('dk', 'min');
+  const h = ms / 3600000;
+  if (h < 48) return Math.round(h) + ' ' + tesvikT('sa', 'h');
+  return Math.round(h / 24) + ' ' + tesvikT('gün', 'd');
+}
+
+// Search folding that ignores case and accents without depending on the browser locale: with a Turkish
+// locale 'GALILEO'.toLowerCase() is 'galıleo' (dotless ı), which would never match a typed 'galileo'.
+function uyduFold(s) {
+  return String(s).replace(/[İIı]/g, 'i').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
+function uyduGroupName(id) { const g = UYDU_GROUP_BY_ID[id]; return g ? g.name[currentLang] : id; }
 
 // ── 3D globe (WebGL needs a visible, sized container: created only once #page-uydu is shown).
 // Three.js + OrbitControls are loaded lazily via dynamic import — only visitors who open this
@@ -3569,14 +3813,14 @@ async function uyduEnsureMap() {
   el.appendChild(renderer.domElement);
 
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
-  camera.position.set(0, 0.4, 2.6);
+  const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 200);
+  camera.position.set(0, 0.5, 3.4);
 
   const controls = new OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
   controls.dampingFactor = 0.08;
   controls.minDistance = 1.3;
-  controls.maxDistance = 6;
+  controls.maxDistance = 9;
   controls.autoRotate = true;
   controls.autoRotateSpeed = 0.6;
   controls.addEventListener('start', () => { controls.autoRotate = false; });
@@ -3623,7 +3867,7 @@ async function uyduEnsureMap() {
   const starCount = 2000;
   const starPositions = new Float32Array(starCount * 3);
   for (let i = 0; i < starCount; i++) {
-    const r = 40 + Math.random() * 20;
+    const r = 80 + Math.random() * 40;
     const theta = Math.random() * Math.PI * 2;
     const phi = Math.acos(2 * Math.random() - 1);
     starPositions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
@@ -3632,47 +3876,51 @@ async function uyduEnsureMap() {
   }
   const starGeo = new THREE.BufferGeometry();
   starGeo.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
-  uydu.starPoints = new THREE.Points(starGeo, new THREE.PointsMaterial({ color: 0xffffff, size: 0.06 }));
+  uydu.starPoints = new THREE.Points(starGeo, new THREE.PointsMaterial({ color: 0xffffff, size: 0.12 }));
   scene.add(uydu.starPoints);
 
-  // Satellite markers: one shared icon texture/material for every satellite (uniform look at
-  // 53-satellite scale), plus a single reusable ring sprite repositioned to whichever one is
-  // selected, and one muted ground-track line per satellite.
-  const satIconMaterial = new THREE.SpriteMaterial({
-    map: uyduMakeSatIconTexture(THREE), transparent: true, depthWrite: false,
-  });
-  SATELLITES.forEach(sat => {
-    const sprite = new THREE.Sprite(satIconMaterial);
-    sprite.scale.set(0.1, 0.1, 1);
-    sprite.userData.satId = sat.id;
-    scene.add(sprite);
-    uydu.satSprites[sat.id] = sprite;
+  // Every satellite is one point of a single THREE.Points (one draw call) drawn with the shared icon;
+  // per-satellite Sprites/Lines stop being viable beyond a few hundred satellites.
+  const iconTexture = uyduMakeSatIconTexture(THREE);
+  uydu.pointXYZ = new Float32Array(UYDU_MAX_POINTS * 3);
+  const pointsGeo = new THREE.BufferGeometry();
+  pointsGeo.setAttribute('position', new THREE.BufferAttribute(uydu.pointXYZ, 3));
+  pointsGeo.setDrawRange(0, 0);
+  uydu.satPoints = new THREE.Points(pointsGeo, new THREE.PointsMaterial({
+    map: iconTexture, size: 18, sizeAttenuation: false, transparent: true, alphaTest: 0.05, depthWrite: false,
+  }));
+  uydu.satPoints.frustumCulled = false;
+  scene.add(uydu.satPoints);
 
-    const line = new THREE.Line(
-      new THREE.BufferGeometry(),
-      new THREE.LineBasicMaterial({ color: 0x6b5643, transparent: true, opacity: 0.55 })
-    );
-    scene.add(line);
-    uydu.baseTrackLines[sat.id] = line;
-  });
+  // Muted orbit tracks of the selected satellite's peers, merged into one LineSegments.
+  const mutedGeo = new THREE.BufferGeometry();
+  uydu.mutedArray = new Float32Array(UYDU_TRACK_GROUP_MAX * UYDU_TRACK_SAMPLES * 6);
+  mutedGeo.setAttribute('position', new THREE.BufferAttribute(uydu.mutedArray, 3));
+  mutedGeo.setDrawRange(0, 0);
+  uydu.mutedTracks = new THREE.LineSegments(mutedGeo, new THREE.LineBasicMaterial({ color: 0x6b5643, transparent: true, opacity: 0.55 }));
+  uydu.mutedTracks.frustumCulled = false;
+  scene.add(uydu.mutedTracks);
+
+  // The selected satellite: bigger icon, red ring, red orbit track (all reused for whichever is selected).
+  uydu.selectedIcon = new THREE.Sprite(new THREE.SpriteMaterial({ map: iconTexture, transparent: true, depthWrite: false }));
+  uydu.selectedIcon.visible = false;
+  scene.add(uydu.selectedIcon);
   uydu.selectionRing = new THREE.Sprite(new THREE.SpriteMaterial({
     map: uyduMakeRingTexture(THREE, '#e63946'), transparent: true, depthWrite: false,
   }));
-  uydu.selectionRing.scale.set(0.17, 0.17, 1);
+  uydu.selectionRing.visible = false;
   scene.add(uydu.selectionRing);
-  // Drawn on top of every satellite's muted base track to highlight whichever one is selected.
   uydu.selectedTrackLine = new THREE.Line(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({ color: 0xe63946 }));
+  uydu.selectedTrackLine.frustumCulled = false;
   scene.add(uydu.selectedTrackLine);
 
-  uydu.raycaster = new THREE.Raycaster();
-  uydu.pointer = new THREE.Vector2();
+  // Click-to-select (ignored when the click ended a drag-rotate).
+  renderer.domElement.addEventListener('pointerdown', ev => { uydu.dragStart = { x: ev.clientX, y: ev.clientY }; });
   renderer.domElement.addEventListener('click', ev => {
-    const rect = renderer.domElement.getBoundingClientRect();
-    uydu.pointer.x = ((ev.clientX - rect.left) / rect.width) * 2 - 1;
-    uydu.pointer.y = -((ev.clientY - rect.top) / rect.height) * 2 + 1;
-    uydu.raycaster.setFromCamera(uydu.pointer, camera);
-    const hits = uydu.raycaster.intersectObjects(Object.values(uydu.satSprites));
-    if (hits.length > 0) uyduSelect(hits[0].object.userData.satId);
+    const d = uydu.dragStart;
+    if (d && Math.hypot(ev.clientX - d.x, ev.clientY - d.y) > 5) return;
+    const sat = uyduPickAt(ev.clientX, ev.clientY);
+    if (sat) uyduSelect(sat.id);
   });
 
   uydu.scene = scene;
@@ -3703,6 +3951,13 @@ function uyduAnimate() {
     requestAnimationFrame(frame);
     if (currentPage !== 'uydu') return;
     uydu.controls.update();
+    // keep the selected icon/ring the same size on screen however far the camera is
+    if (uydu.selectedIcon.visible) {
+      const dist = uydu.camera.position.distanceTo(uydu.selectedIcon.position);
+      const s = dist * 0.05;
+      uydu.selectedIcon.scale.set(s, s, 1);
+      uydu.selectionRing.scale.set(s * 1.7, s * 1.7, 1);
+    }
     uydu.renderer.render(uydu.scene, uydu.camera);
   }
   frame();
@@ -3717,7 +3972,7 @@ function uyduAnimate() {
 function uyduGroundTrack(sat, minutesBack, minutesFwd, stepMin) {
   const now = Date.now();
   const samples = [];
-  for (let m = -minutesBack; m <= minutesFwd; m += stepMin) {
+  for (let m = -minutesBack; m <= minutesFwd + 1e-9; m += stepMin) {
     const pos = uyduPositionAt(sat, new Date(now + m * 60000));
     if (pos) samples.push({ m, lat: pos.lat, lon: pos.lon, altKm: pos.altKm });
   }
@@ -3743,8 +3998,18 @@ function uyduGroundTrack(sat, minutesBack, minutesFwd, stepMin) {
   return samples.map((s, i) => [s.lat, unwrapped[i], s.altKm]);
 }
 
+// One full orbit centred on "now" (so LEO, MEO and GEO tracks are all a closed loop), sampled
+// UYDU_TRACK_SAMPLES times. Period comes from the satellite's mean motion.
+function uyduTrackWindow(sat) {
+  const satrec = uyduSatrec(sat);
+  const periodMin = satrec && satrec.no > 0 ? (2 * Math.PI) / satrec.no : 100;
+  const half = Math.min(Math.max(periodMin / 2, 20), 720);
+  return { half, step: (2 * half) / UYDU_TRACK_SAMPLES };
+}
+
 function uyduSelect(id) {
   uydu.selectedId = id;
+  uydu.trackDirty = true;
   document.querySelectorAll('.uydu-sat-pill').forEach(p => p.classList.toggle('active', p.dataset.satId === id));
   const sel = document.getElementById('uyduAnalysisSelect');
   if (sel) sel.value = id;
@@ -3760,54 +4025,162 @@ function uyduShowTab(tab) {
   document.querySelectorAll('#page-uydu .uydu-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
   document.querySelectorAll('#page-uydu .uydu-tab-panel').forEach(p => p.classList.toggle('active', p.dataset.tab === tab));
   if (tab === 'live') setTimeout(uyduResizeRenderer, 50);
+  if (tab === 'catalog') uyduRenderCatalogLive();
 }
 
-function uyduAltToRadius(altKm) { return 1 + (altKm * UYDU_ALT_EXAGGERATION) / UYDU_EARTH_RADIUS_KM; }
+// Radius on the globe for a given altitude: 1 + k·√alt. Real LEO height is ~10% of Earth's radius
+// (barely off the surface) while GEO is ~5.6 radii out; the square root keeps both in one view.
+function uyduAltToRadius(altKm) { return 1 + UYDU_ALT_SCALE * Math.sqrt(Math.max(0, altKm)); }
+
+// Same lat/lon → xyz as uyduLatLonToVector3, written straight into a Float32Array (no allocation).
+function uyduLatLonToXYZ(lat, lon, radius, out, o) {
+  const phi = (90 - lat) * Math.PI / 180;
+  const theta = (lon + 180) * Math.PI / 180;
+  out[o] = -radius * Math.sin(phi) * Math.cos(theta);
+  out[o + 1] = radius * Math.cos(phi);
+  out[o + 2] = radius * Math.sin(phi) * Math.sin(theta);
+}
 
 // Each track point carries its own altitude (p[2]), so the line is drawn at the satellite's real
 // orbital height rather than glued to the Earth's surface.
-function uyduTrackToPositions(THREE, track) {
+function uyduTrackToPositions(track) {
   const positions = new Float32Array(track.length * 3);
-  track.forEach((p, i) => {
-    const v = uyduLatLonToVector3(THREE, p[0], p[1], uyduAltToRadius(p[2]));
-    positions[i * 3] = v.x; positions[i * 3 + 1] = v.y; positions[i * 3 + 2] = v.z;
-  });
+  track.forEach((p, i) => uyduLatLonToXYZ(p[0], p[1], uyduAltToRadius(p[2]), positions, i * 3));
   return positions;
 }
 
+// Which other satellites get a muted orbit track: the selected satellite's peers (the curated set for
+// a curated one, otherwise its primary group) — unless that would be too many lines to read.
+function uyduTrackPeers(sel) {
+  uydu.trackLimited = false;
+  if (uydu.trackMode !== 'group' || !sel) return [];
+  const peers = sel.curated ? uydu.visible.filter(s => s.curated) : uydu.visible.filter(s => s.group === sel.group);
+  if (peers.length > UYDU_TRACK_GROUP_MAX) { uydu.trackLimited = true; return []; }
+  return peers.filter(s => s.id !== sel.id);
+}
+
+function uyduRefreshTracks() {
+  const THREE = uydu.three;
+  uydu.trackDirty = false;
+  uydu.lastTrackAt = performance.now();
+  const sel = uydu.byId.get(uydu.selectedId);
+
+  if (sel) {
+    const w = uyduTrackWindow(sel);
+    const track = uyduGroundTrack(sel, w.half, w.half, w.step);
+    uydu.selectedTrackLine.geometry.setAttribute('position', new THREE.BufferAttribute(uyduTrackToPositions(track), 3));
+  } else {
+    uydu.selectedTrackLine.geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(0), 3));
+  }
+
+  const arr = uydu.mutedArray;
+  let o = 0;
+  for (const peer of uyduTrackPeers(sel)) {
+    const w = uyduTrackWindow(peer);
+    const track = uyduGroundTrack(peer, w.half, w.half, w.step);
+    for (let i = 0; i + 1 < track.length && o + 6 <= arr.length; i++) {
+      uyduLatLonToXYZ(track[i][0], track[i][1], uyduAltToRadius(track[i][2]), arr, o);
+      uyduLatLonToXYZ(track[i + 1][0], track[i + 1][1], uyduAltToRadius(track[i + 1][2]), arr, o + 3);
+      o += 6;
+    }
+  }
+  uydu.mutedTracks.geometry.setDrawRange(0, o / 3);
+  uydu.mutedTracks.geometry.attributes.position.needsUpdate = true;
+  uyduRenderTrackHint();
+}
+
 function uyduRenderMap() {
-  if (!uydu.renderer) return;
+  if (!uydu.renderer || uydu.dataState !== 'ready') return;
   const THREE = uydu.three;
   const now = new Date();
 
   const sun = uyduSubsolarPoint(now);
   uydu.earthMesh.material.uniforms.sunDirection.value.copy(uyduLatLonToVector3(THREE, sun.lat, sun.lon, 1).normalize());
 
-  SATELLITES.forEach(sat => {
+  // every visible satellite → one slot of the shared Points buffer
+  const xyz = uydu.pointXYZ;
+  let k = 0;
+  uydu.pointSats.length = 0;
+  for (const sat of uydu.visible) {
+    if (k >= UYDU_MAX_POINTS) break;
     const pos = uyduPositionAt(sat, now);
-    const sprite = uydu.satSprites[sat.id];
-    if (sprite) {
-      if (pos) {
-        const spritePos = uyduLatLonToVector3(THREE, pos.lat, pos.lon, uyduAltToRadius(pos.altKm));
-        sprite.position.copy(spritePos);
-        sprite.material.opacity = 1;
-        if (sat.id === uydu.selectedId && uydu.selectionRing) uydu.selectionRing.position.copy(spritePos);
-      } else {
-        sprite.material.opacity = 0.25;
-      }
+    if (!pos) continue;
+    uyduLatLonToXYZ(pos.lat, pos.lon, uyduAltToRadius(pos.altKm), xyz, k * 3);
+    uydu.pointSats[k] = sat;
+    k++;
+  }
+  uydu.satPoints.geometry.setDrawRange(0, k);
+  uydu.satPoints.geometry.attributes.position.needsUpdate = true;
+
+  // the selected satellite (drawn even if its layer is switched off)
+  const sel = uydu.byId.get(uydu.selectedId);
+  const selPos = sel ? uyduPositionAt(sel, now) : null;
+  if (selPos) {
+    const v = uyduLatLonToVector3(THREE, selPos.lat, selPos.lon, uyduAltToRadius(selPos.altKm));
+    uydu.selectedIcon.position.copy(v);
+    uydu.selectionRing.position.copy(v);
+  }
+  uydu.selectedIcon.visible = uydu.selectionRing.visible = !!selPos;
+
+  if (uydu.trackDirty || performance.now() - uydu.lastTrackAt > UYDU_TRACK_REFRESH_MS) uyduRefreshTracks();
+}
+
+// Nearest visible satellite within 14 px of the click, ignoring ones hidden behind the Earth.
+function uyduPickAt(clientX, clientY) {
+  if (!uydu.satPoints) return null;
+  const THREE = uydu.three, cam = uydu.camera, cp = cam.position;
+  const rect = uydu.renderer.domElement.getBoundingClientRect();
+  const xyz = uydu.pointXYZ, n = uydu.satPoints.geometry.drawRange.count;
+  const v = new THREE.Vector3();
+  let best = null, bestDist = 14;
+  cam.updateMatrixWorld();
+  for (let i = 0; i < n; i++) {
+    const x = xyz[i * 3], y = xyz[i * 3 + 1], z = xyz[i * 3 + 2];
+    const dx = x - cp.x, dy = y - cp.y, dz = z - cp.z;
+    const a = dx * dx + dy * dy + dz * dz;
+    const b = 2 * (cp.x * dx + cp.y * dy + cp.z * dz);
+    const c = cp.x * cp.x + cp.y * cp.y + cp.z * cp.z - 1;
+    const disc = b * b - 4 * a * c;
+    if (disc > 0) { const t = (-b - Math.sqrt(disc)) / (2 * a); if (t > 0 && t < 1) continue; }
+    v.set(x, y, z).project(cam);
+    if (v.z > 1) continue;
+    const sx = (v.x + 1) / 2 * rect.width + rect.left;
+    const sy = (1 - v.y) / 2 * rect.height + rect.top;
+    const d = Math.hypot(sx - clientX, sy - clientY);
+    if (d < bestDist) { bestDist = d; best = uydu.pointSats[i]; }
+  }
+  return best;
+}
+
+function uyduRenderBanner() {
+  const banner = document.getElementById('uyduStatusBanner');
+  if (!banner) return;
+  let text = '';
+  if (uydu.dataState === 'idle' || uydu.dataState === 'loading') {
+    text = tesvikT('Uydu verisi yükleniyor…', 'Loading satellite data…');
+  } else if (uydu.dataState === 'error') {
+    text = tesvikT('Uydu verisi alınamadı. Lütfen daha sonra tekrar deneyin.', 'Satellite data could not be loaded. Please try again later.');
+  } else if (uydu.snapshot) {
+    const ageMs = Date.now() - uydu.snapshot.generatedAt.getTime();
+    const age = uyduFormatAge(ageMs);
+    if (uydu.snapshot.via === 'seed') {
+      text = tesvikT('Yedek veri kullanılıyor (' + age + ' önce alınmış); konumlar gerçek konumdan sapmış olabilir.', 'Using fallback data (taken ' + age + ' ago); positions may be off.');
+    } else if (ageMs > 6 * 3600000) {
+      text = tesvikT('Uydu verisi ' + age + ' önce güncellendi; konumlar bir miktar sapabilir.', 'Satellite data was updated ' + age + ' ago; positions may drift slightly.');
     }
-    const track = uyduGroundTrack(sat, 45, 45, 1);
-    const positions = uyduTrackToPositions(THREE, track);
-    const baseLine = uydu.baseTrackLines[sat.id];
-    if (baseLine) baseLine.geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    if (sat.id === uydu.selectedId && uydu.selectedTrackLine) {
-      uydu.selectedTrackLine.geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    }
-  });
+  }
+  banner.textContent = text;
+  banner.style.display = text ? 'block' : 'none';
+}
+
+function uyduRenderTrackHint() {
+  const el = document.getElementById('uyduTrackHint');
+  if (!el) return;
+  el.textContent = uydu.trackLimited ? tesvikT('Bu grup çok büyük; yalnızca seçili uydunun rotası gösteriliyor.', 'This group is too large; only the selected satellite\'s track is shown.') : '';
 }
 
 function uyduRenderSidePanel() {
-  const sat = SATELLITES.find(s => s.id === uydu.selectedId);
+  const sat = uydu.byId.get(uydu.selectedId);
   const pos = sat ? uyduPositionAt(sat, new Date()) : null;
   const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
   set('uyduSelName', sat ? sat.name : '—');
@@ -3817,23 +4190,20 @@ function uyduRenderSidePanel() {
   set('uyduSelIncl', pos ? uyduFormatNum(pos.inclinationDeg, 1) + '°' : '—');
   set('uyduSelLat', pos ? uyduFormatNum(pos.lat, 2) + '°' : '—');
   set('uyduSelLon', pos ? uyduFormatNum(pos.lon, 2) + '°' : '—');
-  set('uyduTrackedCount', String(SATELLITES.length));
-  set('uyduLiveCount', String(SATELLITES.filter(s => uydu.fetchStatus[s.id] === 'ok').length));
-
-  const anyStale = SATELLITES.some(s => uydu.fetchStatus[s.id] === 'stale');
-  const anyError = SATELLITES.some(s => uydu.fetchStatus[s.id] === 'error');
-  const banner = document.getElementById('uyduStatusBanner');
-  if (banner) {
-    if (!uydu.fetched) { banner.textContent = tesvikT('Uydu verisi yükleniyor…', 'Loading satellite data…'); banner.style.display = 'block'; }
-    else if (anyStale) { banner.textContent = tesvikT('Bazı uydular için canlı veri alınamadı, son bilinen konum gösteriliyor.', 'Live data unavailable for some satellites — showing last known position.'); banner.style.display = 'block'; }
-    else if (anyError) { banner.textContent = tesvikT('Bazı uydular için veri alınamadı.', 'Data unavailable for some satellites.'); banner.style.display = 'block'; }
-    else { banner.style.display = 'none'; }
-  }
+  set('uyduSelNorad', sat ? String(sat.noradId) : '—');
+  set('uyduSelEpoch', sat && sat.epochMs ? uyduFormatAge(Date.now() - sat.epochMs) : '—');
+  set('uyduSelGroups', sat ? sat.groups.map(uyduGroupName).join(' · ') : '—');
+  set('uyduTrackedCount', String(uydu.visible.length));
+  set('uyduDataAge', uydu.snapshot ? uyduFormatAge(Date.now() - uydu.snapshot.generatedAt.getTime()) : '—');
+  uyduRenderBanner();
 }
 
+// Live altitude/period badges of the catalog cards currently on screen (only while that tab is open).
 function uyduRenderCatalogLive() {
-  SATELLITES.forEach(sat => {
-    const pos = uyduPositionAt(sat, new Date());
+  if (!document.querySelector('#page-uydu .uydu-tab-panel[data-tab="catalog"].active')) return;
+  const now = new Date();
+  (uydu.catalogShown || []).forEach(sat => {
+    const pos = uyduPositionAt(sat, now);
     const altEl = document.getElementById('uyduCatAlt-' + sat.id);
     const perEl = document.getElementById('uyduCatPeriod-' + sat.id);
     if (altEl) altEl.textContent = pos ? uyduFormatNum(pos.altKm, 0) + ' km' : '—';
@@ -3844,7 +4214,7 @@ function uyduRenderCatalogLive() {
 function uyduAnalysisRender() {
   const sel = document.getElementById('uyduAnalysisSelect');
   if (!sel) return;
-  const sat = SATELLITES.find(s => s.id === sel.value);
+  const sat = uydu.byId.get(sel.value);
   const pos = sat ? uyduPositionAt(sat, new Date()) : null;
   const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
   set('uyduAnAlt', pos ? uyduFormatNum(pos.altKm, 0) + ' km' : '—');
@@ -3856,10 +4226,10 @@ function uyduAnalysisRender() {
 let uyduPassToken = 0;
 function uyduFindNextPass() {
   const sel = document.getElementById('uyduAnalysisSelect');
-  const sat = sel && SATELLITES.find(s => s.id === sel.value);
+  const sat = sel && uydu.byId.get(sel.value);
   const resultEl = document.getElementById('uyduNextPassResult');
   if (!resultEl) return;
-  if (!sat || !uyduSatrec(sat)) { resultEl.textContent = tesvikT('Uydu verisi henüz hazır değil.', 'Satellite data not ready yet.'); return; }
+  if (!sat || !satellite || !uyduSatrec(sat)) { resultEl.textContent = tesvikT('Uydu verisi henüz hazır değil.', 'Satellite data not ready yet.'); return; }
   if (!navigator.geolocation) { resultEl.textContent = tesvikT('Tarayıcınız konum servisini desteklemiyor.', 'Your browser does not support geolocation.'); return; }
   resultEl.textContent = tesvikT('Konum isteniyor…', 'Requesting location…');
   const myToken = ++uyduPassToken;
@@ -3898,21 +4268,73 @@ function uyduFindNextPass() {
   }, { timeout: 10000 });
 }
 
-function uyduBuildStaticUI() {
-  const listEl = document.getElementById('uyduSatList');
-  if (listEl) {
-    listEl.innerHTML = SATELLITES.map(sat =>
-      '<button class="uydu-sat-pill' + (sat.id === uydu.selectedId ? ' active' : '') + '" data-sat-id="' + sat.id + '" onclick="uyduSelect(\'' + sat.id + '\')">' +
-        '<span class="uydu-dot" style="background:' + sat.color + '"></span>' +
-        '<span>' + sat.name + '</span>' +
-      '</button>'
-    ).join('');
-  }
+// ── UI builders ──
+function uyduRenderLayers() {
+  const el = document.getElementById('uyduLayers');
+  if (!el) return;
+  el.innerHTML = UYDU_GROUPS.map(g => {
+    const count = SATELLITES.filter(s => s.groups.includes(g.id)).length;
+    return '<label class="uydu-layer">' +
+      '<input type="checkbox" data-group="' + g.id + '"' + (uydu.visibleGroups.has(g.id) ? ' checked' : '') + '>' +
+      '<span class="uydu-dot" style="background:' + g.color + '"></span>' +
+      '<span class="uydu-layer-name">' + g.name[currentLang] + '</span>' +
+      '<em>' + count + '</em>' +
+    '</label>';
+  }).join('');
+  const title = document.getElementById('uyduLayersTitle');
+  if (title) title.textContent = tesvikT('Katmanlar', 'Layers');
+}
 
+function uyduRenderList() {
+  const listEl = document.getElementById('uyduSatList');
+  if (!listEl) return;
+  const q = uyduFold(uydu.search.trim());
+  const matches = q
+    ? uydu.visible.filter(s => uyduFold(s.name + ' ' + s.groups.map(uyduGroupName).join(' ')).includes(q) || String(s.noradId).includes(q))
+    : uydu.visible;
+  const shown = matches.slice(0, uydu.listLimit);
+  listEl.innerHTML = shown.map(sat =>
+    '<button class="uydu-sat-pill' + (sat.id === uydu.selectedId ? ' active' : '') + '" data-sat-id="' + sat.id + '" onclick="uyduSelect(\'' + sat.id + '\')">' +
+      '<span class="uydu-dot" style="background:' + sat.color + '"></span>' +
+      '<span>' + sat.name + '</span>' +
+    '</button>'
+  ).join('') + (matches.length > shown.length
+    ? '<button class="uydu-more" onclick="uydu.listLimit += UYDU_LIST_PAGE; uyduRenderList()">' + (matches.length - shown.length) + ' ' + tesvikT('uydu daha…', 'more…') + '</button>'
+    : '') + (!matches.length && uydu.dataState === 'ready' ? '<div class="uydu-empty">' + tesvikT('Eşleşen uydu yok.', 'No matching satellites.') + '</div>' : '');
+}
+
+function uyduRenderTrackMode() {
+  const el = document.getElementById('uyduTrackMode');
+  if (!el) return;
+  el.innerHTML = '<span>' + tesvikT('Rota', 'Tracks') + '</span>' +
+    [['selected', tesvikT('Seçili', 'Selected')], ['group', tesvikT('Grup', 'Group')]].map(m =>
+      '<button data-mode="' + m[0] + '" class="' + (uydu.trackMode === m[0] ? 'active' : '') + '">' + m[1] + '</button>'
+    ).join('');
+}
+
+function uyduCatalogMatches() {
+  const f = uydu.catalogFilter;
+  if (f === 'curated') return SATELLITES.filter(s => s.curated);
+  if (f === 'all') return SATELLITES;
+  return SATELLITES.filter(s => s.groups.includes(f));
+}
+
+function uyduRenderCatalog() {
+  const filtersEl = document.getElementById('uyduCatalogFilters');
+  if (filtersEl) {
+    const chip = (id, label, count) => '<button data-filter="' + id + '" class="' + (uydu.catalogFilter === id ? 'active' : '') + '">' + label + ' <em>' + count + '</em></button>';
+    filtersEl.innerHTML =
+      chip('curated', tesvikT('Seçilmişler', 'Featured'), SATELLITES.filter(s => s.curated).length) +
+      chip('all', tesvikT('Tümü', 'All'), SATELLITES.length) +
+      UYDU_GROUPS.map(g => chip(g.id, g.name[currentLang], SATELLITES.filter(s => s.groups.includes(g.id)).length)).join('');
+  }
   const catalogEl = document.getElementById('uyduCatalogGrid');
-  if (catalogEl) {
-    catalogEl.innerHTML = SATELLITES.map(sat =>
-      '<div class="app-card uydu-catalog-card" onclick="uyduOpenFromCatalog(\'' + sat.id + '\')">' +
+  if (!catalogEl) return;
+  const matches = uyduCatalogMatches();
+  const shown = matches.slice(0, uydu.catalogLimit);
+  uydu.catalogShown = shown;
+  catalogEl.innerHTML = shown.map(sat => sat.curated
+    ? '<div class="app-card uydu-catalog-card" onclick="uyduOpenFromCatalog(\'' + sat.id + '\')">' +
         '<div class="app-icon" style="background:' + sat.color + '22">🛰️</div>' +
         '<div class="app-info">' +
           '<h3>' + sat.name + ' <span style="color:var(--text-muted);font-weight:400;font-size:0.78rem">— ' + sat.agency + '</span></h3>' +
@@ -3924,15 +4346,47 @@ function uyduBuildStaticUI() {
           '</div>' +
         '</div>' +
       '</div>'
-    ).join('');
+    : '<div class="app-card uydu-catalog-card compact" onclick="uyduOpenFromCatalog(\'' + sat.id + '\')">' +
+        '<div class="app-icon" style="background:' + sat.color + '22">🛰️</div>' +
+        '<div class="app-info">' +
+          '<h3>' + sat.name + '</h3>' +
+          '<div class="platform-tags">' +
+            sat.groups.map(g => '<span class="ptag">' + uyduGroupName(g) + '</span>').join('') +
+            '<span class="ptag live" id="uyduCatAlt-' + sat.id + '">—</span>' +
+            '<span class="ptag" id="uyduCatPeriod-' + sat.id + '">—</span>' +
+          '</div>' +
+        '</div>' +
+      '</div>'
+  ).join('');
+  const moreBtn = document.getElementById('uyduCatalogMore');
+  if (moreBtn) {
+    moreBtn.style.display = matches.length > shown.length ? '' : 'none';
+    moreBtn.textContent = tesvikT('Daha fazla göster', 'Show more') + ' (' + (matches.length - shown.length) + ')';
   }
+  uyduRenderCatalogLive();
+}
 
+function uyduRenderAnalysisSelect() {
   const sel = document.getElementById('uyduAnalysisSelect');
-  if (sel) {
-    sel.innerHTML = SATELLITES.map(sat => '<option value="' + sat.id + '">' + sat.name + '</option>').join('');
-    sel.value = uydu.selectedId;
-  }
+  if (!sel) return;
+  sel.innerHTML = UYDU_GROUPS.map(g => {
+    const members = SATELLITES.filter(s => s.group === g.id);
+    return members.length
+      ? '<optgroup label="' + g.name[currentLang] + '">' + members.map(s => '<option value="' + s.id + '">' + s.name + '</option>').join('') + '</optgroup>'
+      : '';
+  }).join('');
+  if (uydu.byId.has(uydu.selectedId)) sel.value = uydu.selectedId;
+}
 
+function uyduBuildStaticUI() {
+  uyduRenderLayers();
+  uyduRenderTrackMode();
+  uyduRenderTrackHint();
+  const search = document.getElementById('uyduSearch');
+  if (search) search.placeholder = tesvikT('Uydu ara (ad veya NORAD)…', 'Search satellites (name or NORAD)…');
+  uyduRenderList();
+  uyduRenderCatalog();
+  uyduRenderAnalysisSelect();
   uyduBuildUsageGuide();
 }
 
@@ -3945,13 +4399,14 @@ function uyduRenderAll() {
 
 function uyduStartTicking() {
   if (uydu.tickTimer) return;
-  uyduRenderAll();
-  uydu.tickTimer = setInterval(uyduRenderAll, 2000);
+  uydu.tickTimer = setInterval(() => { if (currentPage === 'uydu') uyduRenderAll(); }, 2000);
 }
 
 function uyduOnShow() {
+  uyduEnsureData();
   uyduEnsureMap();
   uyduStartTicking();
+  uyduRenderAll();
   setTimeout(uyduResizeRenderer, 50);
 }
 
@@ -3963,11 +4418,38 @@ function uyduRefreshLang() {
 
 function uyduInit() {
   uyduBuildStaticUI();
-  const sel = document.getElementById('uyduAnalysisSelect');
-  if (sel) sel.addEventListener('change', uyduAnalysisRender);
-  const passBtn = document.getElementById('uyduNextPassBtn');
-  if (passBtn) passBtn.addEventListener('click', uyduFindNextPass);
-  uyduFetchAll();
+  // on phones the open layer list would cover most of the globe; start it folded there
+  const fold = document.querySelector('.uydu-fold');
+  if (fold && window.matchMedia('(max-width: 860px)').matches) fold.removeAttribute('open');
+  const on = (id, type, fn) => { const el = document.getElementById(id); if (el) el.addEventListener(type, fn); };
+  on('uyduAnalysisSelect', 'change', uyduAnalysisRender);
+  on('uyduNextPassBtn', 'click', uyduFindNextPass);
+  on('uyduLayers', 'change', ev => {
+    const cb = ev.target.closest('input[data-group]');
+    if (!cb) return;
+    if (cb.checked) uydu.visibleGroups.add(cb.dataset.group); else uydu.visibleGroups.delete(cb.dataset.group);
+    uyduApplyFilters();
+    uydu.listLimit = UYDU_LIST_PAGE;
+    uyduRenderList();
+    uyduRenderAll();
+  });
+  on('uyduSearch', 'input', ev => { uydu.search = ev.target.value; uydu.listLimit = UYDU_LIST_PAGE; uyduRenderList(); });
+  on('uyduTrackMode', 'click', ev => {
+    const btn = ev.target.closest('button[data-mode]');
+    if (!btn) return;
+    uydu.trackMode = btn.dataset.mode;
+    uydu.trackDirty = true;
+    uyduRenderTrackMode();
+    uyduRenderAll();
+  });
+  on('uyduCatalogFilters', 'click', ev => {
+    const btn = ev.target.closest('button[data-filter]');
+    if (!btn) return;
+    uydu.catalogFilter = btn.dataset.filter;
+    uydu.catalogLimit = UYDU_CATALOG_PAGE;
+    uyduRenderCatalog();
+  });
+  on('uyduCatalogMore', 'click', () => { uydu.catalogLimit += UYDU_CATALOG_PAGE; uyduRenderCatalog(); });
 }
 uyduInit();
 
@@ -3982,8 +4464,8 @@ const AP_APPS = [
    "en": "Satellite Tracker — Orbit Atlas"
   },
   "tagline": {
-   "tr": "53 yer gözlem uydusunu 3B dünyada canlı izleyin",
-   "en": "Track 53 Earth observation satellites live on a 3D globe"
+   "tr": "GPS, hava, istasyon ve yer gözlem dahil 500+ uyduyu 3B dünyada canlı izleyin",
+   "en": "Track 500+ satellites — GPS, weather, stations and Earth observation — live on a 3D globe"
   },
   "tint": "navy",
   "icon": null,
@@ -3994,8 +4476,8 @@ const AP_APPS = [
   "isNew": true,
   "extraTags": [
    {
-    "tr": "🛰️ 53 uydu",
-    "en": "🛰️ 53 satellites"
+    "tr": "🛰️ 500+ uydu",
+    "en": "🛰️ 500+ satellites"
    },
    {
     "tr": "🌍 3B canlı harita",
@@ -4016,8 +4498,8 @@ const AP_APPS = [
   "shots": [],
   "qr": null,
   "desc": {
-   "tr": "Landsat, Sentinel, Göktürk, Cartosat, WorldView, Gaofen ve daha fazlası — 53 aktif yer gözlem uydusunun anlık yörünge konumunu gerçek TLE verisi ve SGP4 modeliyle 3B dünya üzerinde canlı izleyin; kataloğu ve yörünge analizlerini inceleyin.",
-   "en": "Landsat, Sentinel, Göktürk, Cartosat, WorldView, Gaofen and more — track 53 active Earth observation satellites live on a 3D globe, computed from real TLE data with the SGP4 model. Browse the catalog and orbit analysis."
+   "tr": "Landsat, Sentinel, Göktürk, GPS, Galileo, Türksat, uzay istasyonları ve hava uyduları dahil 500'den fazla uydunun anlık yörünge konumunu gerçek yörünge verisi ve SGP4 modeliyle 3B dünya üzerinde canlı izleyin; kataloğu, yörünge analizlerini ve kullanım rehberini inceleyin.",
+   "en": "Landsat, Sentinel, Göktürk, GPS, Galileo, Türksat, space stations, weather satellites and more — track the live orbital position of 500+ satellites on a 3D globe, computed from real orbital data with the SGP4 model. Browse the catalog, orbit analysis and usage guide."
   }
  },
  {

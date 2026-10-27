@@ -56,3 +56,11 @@ export const REQUIRED_GROUPS = ['stations', 'gps', 'galileo', 'weather', 'resour
 // killed at 30 s, so give up cleanly a little before that.
 export const REQUEST_GAP_MS = 500;
 export const TIME_BUDGET_MS = 25_000;
+export const REQUEST_TIMEOUT_MS = 6_000;
+
+// Satellites that no group covers (some curated ones, İMECE, Connecta) cost one request each. The
+// first run fetches them all; after that each run only refreshes the ones older than this, at most
+// MAX_INDIVIDUAL_PER_RUN of them, and carries the rest over from the previous snapshot. Orbital
+// elements this old are still fine for a visualisation (LEO drift is a few km per day).
+export const INDIVIDUAL_MAX_AGE_MS = 6 * 3600 * 1000;
+export const MAX_INDIVIDUAL_PER_RUN = 5;

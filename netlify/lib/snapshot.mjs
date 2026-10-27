@@ -1,6 +1,7 @@
 import {
   CELESTRAK_GP_URL, USER_AGENT, GROUP_PLAN, TURKEY_SOURCE_GROUP, TURKEY_IDS, CURATED_IDS,
-  MIN_TOTAL_SATS, REQUIRED_GROUPS, REQUEST_GAP_MS, TIME_BUDGET_MS,
+  MIN_TOTAL_SATS, REQUIRED_GROUPS, REQUEST_GAP_MS, TIME_BUDGET_MS, REQUEST_TIMEOUT_MS,
+  INDIVIDUAL_MAX_AGE_MS, MAX_INDIVIDUAL_PER_RUN,
 } from './plan.mjs';
 
 // Thrown for anything that must stop the whole run (non-200, unparseable body, time budget...).
@@ -22,6 +23,8 @@ export async function buildSnapshot(opts = {}) {
     now = Date.now,
     gapMs = REQUEST_GAP_MS,
     budgetMs = TIME_BUDGET_MS,
+    requestTimeoutMs = REQUEST_TIMEOUT_MS,
+    previous = null, // last published snapshot, used to carry over records instead of re-requesting them
     minTotal = MIN_TOTAL_SATS,
     requiredGroups = REQUIRED_GROUPS,
     log = () => {},
@@ -35,7 +38,15 @@ export async function buildSnapshot(opts = {}) {
     if (requests > 0) await sleep(gapMs);
     requests++;
     const url = `${CELESTRAK_GP_URL}?${query}&FORMAT=json`;
-    const res = await fetchImpl(url, { headers: { 'User-Agent': USER_AGENT, Accept: 'application/json' } });
+    let res;
+    try {
+      res = await fetchImpl(url, {
+        headers: { 'User-Agent': USER_AGENT, Accept: 'application/json' },
+        signal: AbortSignal.timeout(requestTimeoutMs),
+      });
+    } catch (err) {
+      throw new SnapshotAbort(`request failed or timed out for ${query}: ${err.name || err.message}`);
+    }
     if (res.status !== 200) throw new SnapshotAbort(`HTTP ${res.status} for ${query}`);
     return res.text();
   }
@@ -80,19 +91,39 @@ export async function buildSnapshot(opts = {}) {
   const geo = await fetchGroup(TURKEY_SOURCE_GROUP);
   for (const record of geo) if (wanted.has(Number(record.NORAD_CAT_ID))) add(record);
 
-  // Anything we must have (curated + Turkish) that the groups did not cover: one request each.
+  // Anything we must have (curated + Turkish) that the groups did not cover.
+  const prevById = new Map(((previous && previous.sats) || []).map(r => [Number(r.NORAD_CAT_ID), r]));
+  const prevRefreshed = (previous && previous.refreshedAt) || {};
+  const refreshedAt = {};
   const mustHave = [...new Set([...CURATED_IDS, ...TURKEY_IDS])];
   const missing = mustHave.filter(id => !sats.has(id));
-  let completed = 0;
-  for (const id of missing) {
+  const ageOf = id => (prevRefreshed[id] ? now() - Date.parse(prevRefreshed[id]) : Infinity);
+
+  const neverSeen = missing.filter(id => !prevById.has(id));
+  const stale = missing.filter(id => prevById.has(id) && ageOf(id) >= INDIVIDUAL_MAX_AGE_MS)
+    .sort((a, b) => ageOf(b) - ageOf(a));
+  const toFetch = [...neverSeen, ...stale.slice(0, MAX_INDIVIDUAL_PER_RUN)];
+
+  let fetched = 0;
+  for (const id of toFetch) {
     // The groups above are the essential part. If time is nearly up, publish what we have rather
-    // than lose the whole run; the next run (2 h later) tries the remaining ids again.
-    if (now() - startedAt > budgetMs) { log(`time budget reached; skipped ${missing.length - completed} individual lookups`); break; }
+    // than lose the whole run; the next run tries the remaining ids again.
+    if (now() - startedAt > budgetMs) { log(`time budget reached; skipped ${toFetch.length - fetched} individual lookups`); break; }
     const record = await fetchCatnr(id);
-    completed++;
-    if (record) add(record); else log(`no GP data for ${id}`);
+    fetched++;
+    if (record) { add(record); refreshedAt[id] = new Date(now()).toISOString(); }
+    else log(`no GP data for ${id}`);
   }
-  log(`completed ${completed}/${missing.length} missing ids individually`);
+  // Whatever is still missing (not requested this run, or the request came back empty) is carried
+  // over from the previous snapshot so a satellite never drops out just because we skipped it.
+  let carried = 0;
+  for (const id of missing) {
+    if (sats.has(id) || !prevById.has(id)) continue;
+    add(prevById.get(id));
+    if (prevRefreshed[id]) refreshedAt[id] = prevRefreshed[id];
+    carried++;
+  }
+  log(`individual lookups: fetched ${fetched}, carried over ${carried}, of ${missing.length} not in any group`);
 
   groups.turkey = TURKEY_IDS.filter(id => sats.has(id)).sort((a, b) => a - b);
 
@@ -109,6 +140,7 @@ export async function buildSnapshot(opts = {}) {
     generatedAt: new Date(now()).toISOString(),
     source: 'celestrak.org GP (JSON/OMM)',
     groups,
+    refreshedAt,
     sats: satList,
   };
 }

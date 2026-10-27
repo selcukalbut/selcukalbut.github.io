@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { buildSnapshot, SnapshotAbort } from './snapshot.mjs';
-import { CURATED_IDS, TURKEY_IDS, GROUP_PLAN } from './plan.mjs';
+import { CURATED_IDS, TURKEY_IDS, GROUP_PLAN, MAX_INDIVIDUAL_PER_RUN } from './plan.mjs';
 
 // ---- helpers: a fake CelesTrak (no network, per CelesTrak's usage policy) ----
 const rec = (id, name = `SAT ${id}`, epoch = '2026-10-27T10:00:00.000000') => ({
@@ -125,4 +125,49 @@ test('if the time budget runs out during the individual lookups, it still publis
   // the first lookup happens before the clock jumps; everything after it is skipped
   assert.ok(snap.sats.some(s => s.NORAD_CAT_ID === CURATED_IDS[0]));
   assert.ok(!snap.sats.some(s => s.NORAD_CAT_ID === CURATED_IDS[CURATED_IDS.length - 1]), 'later individual lookups should have been skipped');
+});
+
+// ---- carry-over / per-run cap / timeout ----
+const MUST_HAVE = [...new Set([...CURATED_IDS, ...TURKEY_IDS])];
+const catnrAll = () => { const c = {}; for (const id of MUST_HAVE) c[id] = rec(id, `SAT ${id}`, '2026-10-27T12:00:00.000000'); return c; };
+const previousSnapshot = ageHours => {
+  const at = new Date(Date.now() - ageHours * 3600 * 1000).toISOString();
+  return {
+    sats: MUST_HAVE.map(id => rec(id, `OLD ${id}`, '2026-10-26T00:00:00.000000')),
+    refreshedAt: Object.fromEntries(MUST_HAVE.map(id => [id, at])),
+  };
+};
+const catnrCalls = calls => calls.filter(c => c.startsWith('CATNR=')).length;
+
+test('records refreshed recently are carried over from the previous snapshot — no CATNR requests', async () => {
+  const { fetchImpl, calls } = fakeCelesTrak({ groups: baseGroups(), catnr: catnrAll() });
+  const snap = await buildSnapshot(opts({ fetchImpl, previous: previousSnapshot(1) }));
+  assert.equal(catnrCalls(calls), 0);
+  for (const id of MUST_HAVE) assert.ok(snap.sats.some(s => s.NORAD_CAT_ID === id), `missing ${id}`);
+  assert.ok(snap.refreshedAt[CURATED_IDS[0]], 'carried-over ids keep their refresh time');
+});
+
+test('stale records are refreshed at most MAX_INDIVIDUAL_PER_RUN per run; the rest are still carried over', async () => {
+  const { fetchImpl, calls } = fakeCelesTrak({ groups: baseGroups(), catnr: catnrAll() });
+  const snap = await buildSnapshot(opts({ fetchImpl, previous: previousSnapshot(10) }));
+  assert.equal(catnrCalls(calls), MAX_INDIVIDUAL_PER_RUN);
+  for (const id of MUST_HAVE) assert.ok(snap.sats.some(s => s.NORAD_CAT_ID === id), `missing ${id}`);
+  const refreshedNow = snap.sats.filter(s => MUST_HAVE.includes(s.NORAD_CAT_ID) && s.OBJECT_NAME.startsWith('SAT '));
+  assert.equal(refreshedNow.length, MAX_INDIVIDUAL_PER_RUN);
+});
+
+test('a satellite whose individual lookup comes back empty keeps its previous record instead of vanishing', async () => {
+  const catnr = catnrAll();
+  const previous = previousSnapshot(10);
+  const oldest = MUST_HAVE[0];
+  previous.refreshedAt[oldest] = new Date(Date.now() - 100 * 3600 * 1000).toISOString(); // refreshed first
+  delete catnr[oldest];
+  const { fetchImpl } = fakeCelesTrak({ groups: baseGroups(), catnr });
+  const snap = await buildSnapshot(opts({ fetchImpl, previous }));
+  assert.equal(snap.sats.find(s => s.NORAD_CAT_ID === oldest).OBJECT_NAME, `OLD ${oldest}`);
+});
+
+test('a request that hangs is aborted by the per-request timeout and the whole run fails safely', async () => {
+  const fetchImpl = (url, { signal }) => new Promise((_, reject) => signal.addEventListener('abort', () => reject(signal.reason)));
+  await assert.rejects(buildSnapshot(opts({ fetchImpl, requestTimeoutMs: 20 })), SnapshotAbort);
 });

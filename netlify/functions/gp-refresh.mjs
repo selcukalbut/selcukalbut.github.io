@@ -6,8 +6,10 @@ import { buildSnapshot } from '../lib/snapshot.mjs';
 // the snapshot this function stores, via /api/gp.
 export default async () => {
   try {
-    const snapshot = await buildSnapshot({ log: msg => console.log(`gp-refresh: ${msg}`) });
-    await getStore('gp').setJSON('snapshot', snapshot);
+    const store = getStore('gp');
+    const previous = await store.get('snapshot', { type: 'json' }).catch(() => null);
+    const snapshot = await buildSnapshot({ previous, log: msg => console.log(`gp-refresh: ${msg}`) });
+    await store.setJSON('snapshot', snapshot);
     console.log(`gp-refresh: stored ${snapshot.sats.length} satellites in ${Object.keys(snapshot.groups).length} groups (${snapshot.generatedAt})`);
   } catch (err) {
     // Keep serving the previous snapshot; CelesTrak asks clients to stop (not retry) on errors.

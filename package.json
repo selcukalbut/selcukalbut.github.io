@@ -1,0 +1,16 @@
+{
+  "name": "selcukalbut-site",
+  "private": true,
+  "type": "module",
+  "description": "Static site; the only server-side code is the satellite-data snapshot functions under netlify/functions.",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "test": "node --test netlify/lib/*.test.mjs",
+    "make-seed": "node scripts/make-seed.mjs"
+  },
+  "dependencies": {
+    "@netlify/blobs": "^11.1.6"
+  }
+}

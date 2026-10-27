@@ -1,18 +1,28 @@
 import {
   CELESTRAK_GP_URL, USER_AGENT, GROUP_PLAN, TURKEY_SOURCE_GROUP, TURKEY_IDS, CURATED_IDS,
   MIN_TOTAL_SATS, REQUIRED_GROUPS, REQUEST_GAP_MS, TIME_BUDGET_MS, REQUEST_TIMEOUT_MS,
-  INDIVIDUAL_MAX_AGE_MS, MAX_INDIVIDUAL_PER_RUN,
+  SOURCE_MIN_AGE_MS, INDIVIDUAL_MAX_AGE_MS, MAX_INDIVIDUAL_PER_RUN,
 } from './plan.mjs';
 
-// Thrown for anything that must stop the whole run (non-200, unparseable body, time budget...).
-// CelesTrak's policy: on the first non-200, stop and don't retry — the caller keeps the old snapshot.
+// Thrown when a CelesTrak request fails (non-200, timeout, unparseable body). CelesTrak's policy:
+// on the first failure stop querying and don't retry — whatever was fetched before is still kept.
 export class SnapshotAbort extends Error {}
 
 const sleepMs = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 /**
- * Builds one snapshot from CelesTrak GP data (OMM/JSON — never TLE: objects numbered 100000+
- * have no TLE). Requests are sequential and spaced out; any non-200 aborts the run.
+ * Builds the next snapshot from CelesTrak GP data (OMM/JSON — never TLE: objects numbered 100000+
+ * have no TLE), incrementally.
+ *
+ * Every CelesTrak request is a "source" (a group, the `geo` group, or a single satellite by NORAD
+ * id) with its own last-fetched time, kept in `previous.sources`. A run only fetches the sources
+ * that are due (older than SOURCE_MIN_AGE_MS, i.e. CelesTrak has published an update since), oldest
+ * first, one request at a time, until it runs out of time budget or a request fails. Everything it
+ * did not refresh is carried over from `previous`. So a slow or flaky CelesTrak only delays some
+ * sources until a later run; it can't starve them or cost the whole snapshot.
+ *
+ * Returns the new snapshot, or null when nothing was due. Throws SnapshotAbort when nothing could
+ * be refreshed or the result would be too poor to publish.
  *
  * @param {object} [opts] everything is injectable so tests never touch the network
  */
@@ -24,7 +34,7 @@ export async function buildSnapshot(opts = {}) {
     gapMs = REQUEST_GAP_MS,
     budgetMs = TIME_BUDGET_MS,
     requestTimeoutMs = REQUEST_TIMEOUT_MS,
-    previous = null, // last published snapshot, used to carry over records instead of re-requesting them
+    previous = null,
     minTotal = MIN_TOTAL_SATS,
     requiredGroups = REQUIRED_GROUPS,
     log = () => {},
@@ -34,7 +44,6 @@ export async function buildSnapshot(opts = {}) {
   let requests = 0;
 
   async function get(query) {
-    if (now() - startedAt > budgetMs) throw new SnapshotAbort('time budget exceeded');
     if (requests > 0) await sleep(gapMs);
     requests++;
     const url = `${CELESTRAK_GP_URL}?${query}&FORMAT=json`;
@@ -69,65 +78,91 @@ export async function buildSnapshot(opts = {}) {
     } catch { return null; }
   }
 
-  const sats = new Map(); // NORAD_CAT_ID -> OMM record (latest EPOCH wins on duplicates)
+  // ---- start from the previous snapshot; fresh data overwrites it source by source ----
+  const sats = new Map(((previous && previous.sats) || []).map(r => [Number(r.NORAD_CAT_ID), r]));
   const groups = {};
+  for (const { id } of GROUP_PLAN) groups[id] = [...((previous && previous.groups && previous.groups[id]) || [])];
+  let geoIds = [...((previous && previous.geoIds) || [])];
+  const sources = { ...((previous && previous.sources) || {}) };
+  const ageOf = key => (sources[key] ? now() - Date.parse(sources[key]) : Infinity);
+  const stamp = () => new Date(now()).toISOString();
 
   function add(record) {
     const id = Number(record.NORAD_CAT_ID);
     if (!Number.isFinite(id)) return null;
     const prev = sats.get(id);
-    if (!prev || String(record.EPOCH) > String(prev.EPOCH)) sats.set(id, record);
+    if (!prev || String(record.EPOCH) >= String(prev.EPOCH)) sats.set(id, record);
     return id;
   }
 
-  for (const { id, celestrak } of GROUP_PLAN) {
-    const records = await fetchGroup(celestrak);
-    groups[id] = [...new Set(records.map(add).filter(id2 => id2 !== null))].sort((a, b) => a - b);
-    log(`group ${id}: ${groups[id].length}`);
-  }
-
-  // Türkiye: pick the wanted ids out of the large `geo` group (not kept as a group itself).
-  const wanted = new Set(TURKEY_IDS);
-  const geo = await fetchGroup(TURKEY_SOURCE_GROUP);
-  for (const record of geo) if (wanted.has(Number(record.NORAD_CAT_ID))) add(record);
-
-  // Anything we must have (curated + Turkish) that the groups did not cover.
-  const prevById = new Map(((previous && previous.sats) || []).map(r => [Number(r.NORAD_CAT_ID), r]));
-  const prevRefreshed = (previous && previous.refreshedAt) || {};
-  const refreshedAt = {};
-  const mustHave = [...new Set([...CURATED_IDS, ...TURKEY_IDS])];
-  const missing = mustHave.filter(id => !sats.has(id));
-  const ageOf = id => (prevRefreshed[id] ? now() - Date.parse(prevRefreshed[id]) : Infinity);
-
-  const neverSeen = missing.filter(id => !prevById.has(id));
-  const stale = missing.filter(id => prevById.has(id) && ageOf(id) >= INDIVIDUAL_MAX_AGE_MS)
-    .sort((a, b) => ageOf(b) - ageOf(a));
-  const toFetch = [...neverSeen, ...stale.slice(0, MAX_INDIVIDUAL_PER_RUN)];
-
   let fetched = 0;
-  for (const id of toFetch) {
-    // The groups above are the essential part. If time is nearly up, publish what we have rather
-    // than lose the whole run; the next run tries the remaining ids again.
-    if (now() - startedAt > budgetMs) { log(`time budget reached; skipped ${toFetch.length - fetched} individual lookups`); break; }
-    const record = await fetchCatnr(id);
-    fetched++;
-    if (record) { add(record); refreshedAt[id] = new Date(now()).toISOString(); }
-    else log(`no GP data for ${id}`);
-  }
-  // Whatever is still missing (not requested this run, or the request came back empty) is carried
-  // over from the previous snapshot so a satellite never drops out just because we skipped it.
-  let carried = 0;
-  for (const id of missing) {
-    if (sats.has(id) || !prevById.has(id)) continue;
-    add(prevById.get(id));
-    if (prevRefreshed[id]) refreshedAt[id] = prevRefreshed[id];
-    carried++;
-  }
-  log(`individual lookups: fetched ${fetched}, carried over ${carried}, of ${missing.length} not in any group`);
+  let stoppedBy = null;
+  const overBudget = () => now() - startedAt > budgetMs;
 
+  // Runs one fetch; returns false (and records why) when the run should stop.
+  async function step(work) {
+    if (overBudget()) { stoppedBy = 'time budget reached'; return false; }
+    try { await work(); fetched++; return true; } catch (err) {
+      if (!(err instanceof SnapshotAbort)) throw err;
+      stoppedBy = err.message;
+      return false;
+    }
+  }
+
+  // ---- 1. groups (+ geo), oldest first ----
+  const groupSources = [
+    ...GROUP_PLAN.map(g => ({ key: `group:${g.celestrak}`, kind: 'group', id: g.id, celestrak: g.celestrak })),
+    { key: `group:${TURKEY_SOURCE_GROUP}`, kind: 'geo', celestrak: TURKEY_SOURCE_GROUP },
+  ];
+  const dueGroups = groupSources.filter(s => ageOf(s.key) >= SOURCE_MIN_AGE_MS).sort((a, b) => ageOf(b.key) - ageOf(a.key));
+  const wanted = new Set(TURKEY_IDS);
+
+  for (const s of dueGroups) {
+    const ok = await step(async () => {
+      const records = await fetchGroup(s.celestrak);
+      if (s.kind === 'group') {
+        groups[s.id] = [...new Set(records.map(add).filter(id => id !== null))].sort((a, b) => a - b);
+        log(`group ${s.id}: ${groups[s.id].length}`);
+      } else {
+        geoIds = [];
+        for (const record of records) if (wanted.has(Number(record.NORAD_CAT_ID))) { add(record); geoIds.push(Number(record.NORAD_CAT_ID)); }
+        log(`geo: ${geoIds.length} wanted satellites`);
+      }
+      sources[s.key] = stamp();
+    });
+    if (!ok) break;
+  }
+
+  // ---- 2. individual lookups for must-have satellites no group/geo list covers ----
+  if (!stoppedBy) {
+    const covered = new Set([...Object.values(groups).flat(), ...geoIds]);
+    const uncovered = [...new Set([...CURATED_IDS, ...TURKEY_IDS])].filter(id => !covered.has(id));
+    const key = id => `catnr:${id}`;
+    const neverSeen = uncovered.filter(id => !sats.has(id));
+    const stale = uncovered.filter(id => sats.has(id) && ageOf(key(id)) >= INDIVIDUAL_MAX_AGE_MS)
+      .sort((a, b) => ageOf(key(b)) - ageOf(key(a)));
+    for (const id of [...neverSeen, ...stale.slice(0, MAX_INDIVIDUAL_PER_RUN)]) {
+      const ok = await step(async () => {
+        const record = await fetchCatnr(id);
+        if (record) { add(record); sources[key(id)] = stamp(); } else log(`no GP data for ${id}`);
+      });
+      if (!ok) break;
+    }
+  }
+
+  log(`fetched ${fetched} source(s)${stoppedBy ? `; stopped early: ${stoppedBy}` : ''}`);
+  if (fetched === 0) {
+    if (stoppedBy) throw new SnapshotAbort(stoppedBy);
+    log('nothing due; snapshot unchanged');
+    return null;
+  }
+
+  // ---- assemble: keep only satellites that are still in some list or that we must have ----
+  const keep = new Set([...Object.values(groups).flat(), ...geoIds, ...CURATED_IDS, ...TURKEY_IDS]);
   groups.turkey = TURKEY_IDS.filter(id => sats.has(id)).sort((a, b) => a - b);
-
-  const satList = [...sats.values()].sort((a, b) => Number(a.NORAD_CAT_ID) - Number(b.NORAD_CAT_ID));
+  const satList = [...sats.values()]
+    .filter(r => keep.has(Number(r.NORAD_CAT_ID)))
+    .sort((a, b) => Number(a.NORAD_CAT_ID) - Number(b.NORAD_CAT_ID));
   if (satList.length < minTotal) {
     throw new SnapshotAbort(`only ${satList.length} satellites (< ${minTotal}); refusing to publish`);
   }
@@ -135,12 +170,16 @@ export async function buildSnapshot(opts = {}) {
     if (!groups[g] || groups[g].length === 0) throw new SnapshotAbort(`required group "${g}" is empty; refusing to publish`);
   }
 
+  // dataAt = the oldest group refresh: how old the stalest part of this snapshot really is.
+  const groupTimes = GROUP_PLAN.map(g => sources[`group:${g.celestrak}`]).filter(Boolean).map(Date.parse);
   return {
     schema: 1,
-    generatedAt: new Date(now()).toISOString(),
+    generatedAt: stamp(),
+    dataAt: groupTimes.length ? new Date(Math.min(...groupTimes)).toISOString() : stamp(),
     source: 'celestrak.org GP (JSON/OMM)',
     groups,
-    refreshedAt,
+    geoIds,
+    sources,
     sats: satList,
   };
 }

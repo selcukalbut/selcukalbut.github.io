@@ -52,15 +52,21 @@ export const CURATED_IDS = [
 export const MIN_TOTAL_SATS = 400;
 export const REQUIRED_GROUPS = ['stations', 'gps', 'galileo', 'weather', 'resource', 'sar'];
 
-// CelesTrak usage policy: be gentle, and stop at the first non-200. Scheduled functions are
-// killed at 30 s, so give up cleanly a little before that.
+// CelesTrak usage policy: be gentle, and stop at the first failure. Scheduled functions are killed
+// at 30 s, so no new request starts after TIME_BUDGET_MS; the last one can still take up to
+// REQUEST_TIMEOUT_MS (+ the gap and the blob write), which keeps the worst case under the limit.
 export const REQUEST_GAP_MS = 500;
-export const TIME_BUDGET_MS = 25_000;
+export const TIME_BUDGET_MS = 20_000;
 export const REQUEST_TIMEOUT_MS = 6_000;
 
-// Satellites that no group covers (some curated ones, İMECE, Connecta) cost one request each. The
-// first run fetches them all; after that each run only refreshes the ones older than this, at most
-// MAX_INDIVIDUAL_PER_RUN of them, and carries the rest over from the previous snapshot. Orbital
-// elements this old are still fine for a visualisation (LEO drift is a few km per day).
+// CelesTrak publishes new GP data every 2 hours and asks for each dataset at most once per update.
+// A source (group) is "due" once its last fetch is at least this old (a little under 2 h so an
+// hourly schedule always lands on the next update). A run with nothing due makes no requests.
+export const SOURCE_MIN_AGE_MS = 110 * 60 * 1000;
+
+// Satellites that no group covers (some curated ones, İMECE, Connecta) cost one request each. Ones
+// never seen before are always fetched; after that a run only refreshes those older than this, at
+// most MAX_INDIVIDUAL_PER_RUN of them. Orbital elements this old are still fine for a
+// visualisation (LEO drift is a few km per day).
 export const INDIVIDUAL_MAX_AGE_MS = 6 * 3600 * 1000;
 export const MAX_INDIVIDUAL_PER_RUN = 5;

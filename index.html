@@ -3724,7 +3724,8 @@ function uyduBuildCatalog(snapshot, via) {
   SATELLITES = sats;
   uydu.satrecs = satrecs;
   uydu.byId = byId;
-  uydu.snapshot = { generatedAt: new Date(snapshot.generatedAt), via };
+  // dataAt = when the stalest group in the snapshot was fetched (older than generatedAt after a partial refresh)
+  uydu.snapshot = { generatedAt: new Date(snapshot.dataAt || snapshot.generatedAt), via };
   if (!byId.has(uydu.selectedId) && sats.length) uydu.selectedId = sats[0].id;
   uyduApplyFilters();
 }

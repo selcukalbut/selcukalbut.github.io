@@ -7,8 +7,9 @@
     "node": ">=22.12.0"
   },
   "scripts": {
-    "test": "node --test netlify/lib/*.test.mjs",
-    "make-seed": "node scripts/make-seed.mjs"
+    "test": "node --test netlify/lib/*.test.mjs scripts/lib/*.test.mjs",
+    "make-seed": "node scripts/make-seed.mjs",
+    "make-info": "node scripts/make-satellite-info.mjs"
   },
   "dependencies": {
     "@netlify/blobs": "^11.1.6"

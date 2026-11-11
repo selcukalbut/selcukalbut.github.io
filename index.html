@@ -1356,9 +1356,9 @@ html[lang="en"] [data-lang="en"] { display: revert; }
             <span data-lang="en">Published Books</span>
           </div>
           <div class="stat green">
-            <b>11</b>
-            <span data-lang="tr">Uygulama (5 iOS + 3 Web + 2 Mac + 1 QGIS)</span>
-            <span data-lang="en">Apps (5 iOS + 3 Web + 2 Mac + 1 QGIS)</span>
+            <b>13</b>
+            <span data-lang="tr">Uygulama (6 iOS + 3 Web + 2 Mac + 2 QGIS)</span>
+            <span data-lang="en">Apps (6 iOS + 3 Web + 2 Mac + 2 QGIS)</span>
           </div>
         </div>
       </div>
@@ -2002,11 +2002,11 @@ html[lang="en"] [data-lang="en"] { display: revert; }
             <div class="ap-eyebrow" data-lang="en">Apps</div>
             <h1 data-lang="tr">Geliştirdiğim uygulamalar</h1>
             <h1 data-lang="en">Apps I've built</h1>
-            <p class="ap-lede" data-lang="tr">Tarayıcıda çalışan web araçları, Swift ile yazdığım iOS ve Mac uygulamaları ve CBS iş akışları için QGIS eklentisi.</p>
-            <p class="ap-lede" data-lang="en">Web tools that run in your browser, iOS and Mac apps I've written in Swift, and a QGIS plugin for GIS workflows.</p>
+            <p class="ap-lede" data-lang="tr">Tarayıcıda çalışan web araçları, Swift ile yazdığım iOS ve Mac uygulamaları ve CBS iş akışları için QGIS eklentileri.</p>
+            <p class="ap-lede" data-lang="en">Web tools that run in your browser, iOS and Mac apps I've written in Swift, and QGIS plugins for GIS workflows.</p>
             <p class="ap-stats" id="apStats"></p>
           </div>
-          <div class="ap-cluster" aria-hidden="true"><img src="assets/app-icons/cabinok.png" alt=""><img src="assets/app-icons/kalorimatik-ai.png" alt=""><img src="assets/app-icons/gst-cycling.png" alt=""><img src="assets/app-icons/diskbreeze.png" alt=""><img src="assets/app-icons/sayac-ve-takvim.png" alt=""><img src="assets/app-icons/global-sports-tracker.png" alt=""><img src="assets/app-icons/thiessen-qgis-plugin.png" alt=""><img src="assets/app-icons/orbit-atlas.png" alt=""></div>
+          <div class="ap-cluster" aria-hidden="true"><img src="assets/app-icons/cabinok.png" alt=""><img src="assets/app-icons/kalorimatik-ai.png" alt=""><img src="assets/app-icons/gst-cycling.png" alt=""><img src="assets/app-icons/diskbreeze.png" alt=""><img src="assets/app-icons/sayac-ve-takvim.png" alt=""><img src="assets/app-icons/global-sports-tracker.png" alt=""><img src="assets/app-icons/thiessen-qgis-plugin.png" alt=""><img src="assets/app-icons/fao56-cwr-mapper.png" alt=""><img src="assets/app-icons/orbit-atlas.png" alt=""></div>
         </div>
         <div class="ap-filters" id="apFilters" role="group" aria-label="Filter"></div>
       </header>
@@ -5133,6 +5133,57 @@ const AP_APPS = [
   "desc": {
    "tr": "İstasyon noktalarından (yağış, su ihtiyacı, debi vb.) Thiessen/Voronoi poligonları üretip isteğe bağlı bir sulama alanı sınırına göre keser, her hücrenin gerçek (elipsoidal) alanına göre alan ağırlıklı ortalamayı hesaplar. QGIS Processing'in yerleşik Voronoi algoritmasını sarmalayan, arayüzlü ve açık kaynaklı bir Python eklentisi.",
    "en": "Generates Thiessen (Voronoi) polygons from station points (rainfall, irrigation water requirement, discharge, etc.), optionally clips them to an irrigation area boundary, and computes the area-weighted average based on each cell's true ellipsoidal area. An open-source Python plugin with a GUI, built on top of QGIS Processing's native Voronoi algorithm."
+  },
+  "page": null,
+  "emoji": ""
+ },
+ {
+  "id": "fao56cwr",
+  "cat": "qgis",
+  "name": {
+   "tr": "FAO-56 Bitki Su İhtiyacı Haritalayıcı",
+   "en": "FAO-56 Crop Water Requirement Mapper"
+  },
+  "tagline": {
+   "tr": "QGIS'te parsel bazında bitki su ve sulama ihtiyacı",
+   "en": "Crop water and net irrigation needs per field in QGIS"
+  },
+  "tint": "blue",
+  "icon": "assets/app-icons/fao56-cwr-mapper.png",
+  "platforms": [
+   "QGIS 3.22+"
+  ],
+  "isNew": true,
+  "extraTags": [],
+  "status": [
+   {
+    "kind": "exp",
+    "tr": "Deneysel Sürüm",
+    "en": "Experimental Release"
+   },
+   {
+    "kind": "",
+    "tr": "Açık Kaynak (GPLv2+)",
+    "en": "Open Source (GPLv2+)"
+   }
+  ],
+  "url": "https://plugins.qgis.org/plugins/fao56_cwr_mapper/",
+  "act": {
+   "tr": "Eklenti ↗",
+   "en": "Plugin ↗"
+  },
+  "cta": {
+   "tr": "🧩 plugins.qgis.org'da Görüntüle",
+   "en": "🧩 View on plugins.qgis.org"
+  },
+  "shots": [
+   "assets/screenshots/fao56-cwr-mapper/01-dialog.png",
+   "assets/screenshots/fao56-cwr-mapper/02-map.png"
+  ],
+  "qr": "assets/qrcodes/fao56-cwr-mapper.png",
+  "desc": {
+   "tr": "Parsel (poligon) veya nokta katmanları için FAO-56 Penman-Monteith yöntemiyle referans ve bitki su tüketimini (ETo, ETc), etkili yağışı ve net sulama suyu ihtiyacını hesaplayıp haritalar. İklim verisini NASA POWER'dan kendisi indirir (API anahtarı gerekmez); FAO-56 Tablo 11 ve 12'deki bitki katsayıları ve gelişme dönemleri basılı kaynakla tek tek karşılaştırılmıştır. Sonuçları mm, m³, m³/da ve m³/ha olarak renklendirilmiş bir katmana, günlük ve dekadlık CSV dosyalarına ve yöntemi, veri kaynağını ve uyarıları içeren bir HTML rapora yazar. QGIS Processing aracı olduğu için toplu çalıştırmada ve Grafik Modelleyici'de de kullanılabilir.",
+   "en": "Computes and maps FAO-56 Penman-Monteith reference and crop evapotranspiration (ETo, ETc), effective rainfall and net irrigation requirement for field (polygon) or point layers. It downloads NASA POWER climate data itself (no API key); the FAO-56 Table 11 and 12 crop coefficients and stage lengths were checked one by one against the printed publication. Results go to a styled layer in mm, m³, m³/da and m³/ha, to daily and dekad CSV files and to an HTML run report with the method, data source and warnings. As a QGIS Processing tool it also works in batch mode and in the Graphical Modeler."
   },
   "page": null,
   "emoji": ""

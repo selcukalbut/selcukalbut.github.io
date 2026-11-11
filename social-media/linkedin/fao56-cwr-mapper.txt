@@ -1,0 +1,33 @@
+QGIS'te parsel bazında bitki su ihtiyacı ve net sulama haritası
+
+Sulama planlamasında sık sorulan "bu parsel bu sezon ne kadar su ister?" sorusunu QGIS içinde, birçok parsel için tek seferde yanıtlayan yeni bir açık kaynak eklenti yayımladım: FAO-56 Crop Water Requirement Mapper.
+
+🌦️ İklim verisini NASA POWER'dan kendisi indirir (API anahtarı gerekmez); günlük ETo'yu FAO-56 Penman-Monteith yöntemiyle hesaplar
+🌱 FAO-56 Tablo 11 ve 12'deki gelişme dönemleri ve bitki katsayıları basılı kaynakla tek tek karşılaştırıldı
+💧 Etkili yağışı düşer, net sulama ihtiyacını CROPWAT'taki gibi dekadlık (isteğe bağlı günlük) hesaplar; sonucu mm, m³, m³/da ve m³/ha olarak verir
+🗺️ Parsel katmanını net sulamaya göre renklendirir; günlük ve dekadlık CSV ile yöntem, veri kaynağı ve uyarıları içeren bir HTML rapor üretir
+⚙️ QGIS Processing aracıdır: toplu çalıştırma ve Grafik Modelleyici ile kullanılabilir; alan hesabı elipsoidaldir
+✅ Hesap çekirdeği FAO-56'daki çözümlü örneklerle birim testinden geçirildi; eklenti QGIS güvenlik taraması ve Qt6 uyumluluk kontrolünden sorunsuz geçti
+
+Deneysel sürümdür. NASA POWER kaba çözünürlüklü küresel bir veri setidir; yerel istasyon verisi desteği bir sonraki sürümde gelecek. Sulama, tarımsal su yönetimi ve CBS alanında çalışan meslektaşlarımın deneyip geri bildirim vermesinden memnuniyet duyarım.
+
+----------------
+
+Field-level crop water requirement and net irrigation maps in QGIS
+
+"How much water will this field need this season?" is a question that comes up all the time in irrigation planning. I've released a new open-source QGIS plugin that answers it for many fields at once: FAO-56 Crop Water Requirement Mapper.
+
+🌦️ Downloads NASA POWER climate data by itself (no API key) and computes daily ETo with the FAO-56 Penman-Monteith method
+🌱 FAO-56 Table 11 and 12 stage lengths and crop coefficients were checked one by one against the printed publication
+💧 Subtracts effective rainfall and computes the net irrigation requirement per dekad as in CROPWAT (or per day), in mm, m³, m³/da and m³/ha
+🗺️ Styles the field layer by net irrigation and writes daily and dekad CSV files plus an HTML report with the method, data source and warnings
+⚙️ A QGIS Processing tool: works in batch mode and in the Graphical Modeler; areas are ellipsoidal
+✅ The calculation core is unit-tested against the FAO-56 worked examples; the plugin passed the QGIS security scan and the Qt6 compatibility check
+
+This is an experimental release. NASA POWER is a coarse global dataset; support for local station data is coming in the next version. Feedback from colleagues working in irrigation, agricultural water management and GIS is very welcome.
+
+#QGIS #GIS #CBS #Sulama #Irrigation #FAO56 #Evapotranspiration #CropWater #WaterResources #OpenSource
+
+----------------
+
+(İlk yorum / First comment): 🔗 Eklenti / Plugin: https://plugins.qgis.org/plugins/fao56_cwr_mapper/ · Kaynak kod / Source: https://github.com/selcukalbut/qgis_FAO56_CWR_Mapper
